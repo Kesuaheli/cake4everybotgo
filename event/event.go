@@ -1,4 +1,4 @@
-// Copyright 2022 Kesuaheli
+// Copyright 2022-2023 Kesuaheli
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,4 +30,5 @@ func Register(s *discordgo.Session, guildID string) error {
 // AddListeners adds all event handlers to the given session s.
 func AddListeners(s *discordgo.Session) {
 	addCommandListeners(s)
+	addVoiceStateListeners(s)
 }
