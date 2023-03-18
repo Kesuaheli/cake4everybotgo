@@ -16,21 +16,11 @@ package event
 
 import (
 	"fmt"
-	"os"
-	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var NO_MIC_CHANNEL_ID string
-
-func init() {
-	f, err := os.ReadFile("lib/noMicChannelID.0")
-	if err != nil {
-		panic("could not read channel ID file (noMicChannelID.0)")
-	}
-	NO_MIC_CHANNEL_ID = strings.Split(string(f), "\n")[0]
-}
 
 func addVoiceStateListeners(s *discordgo.Session) {
 	handler := func(s *discordgo.Session, e *discordgo.VoiceStateUpdate) {

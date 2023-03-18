@@ -15,13 +15,16 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"os/signal"
 
+	"cake4everybot/config"
+	"cake4everybot/database"
 	"cake4everybot/event"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/spf13/viper"
 )
 
 const banner string = "\n" +
@@ -37,52 +40,49 @@ const banner string = "\n" +
 	"   / /_/ / (__  ) /__/ /_/ / /  / /_/ /  /_____/  / /_/ / /_/ / /_         \n" +
 	"  /_____/_/____/\\___/\\____/_/   \\__,_/           /_____/\\____/\\__/         \n" +
 	"\n" +
-	"Cake4Everybot, developed by @Kesuaheli#5868 and the ideas of the community ♥\n" +
-	"Copyright 2022 Kesuaheli\n\n"
+	"%s\n" +
+	"Copyright 2022-2023 Kesuaheli\n\n"
+
+func init() {
+	config.Load("config.yaml")
+}
 
 func main() {
+	log.Printf(banner, viper.GetString("discord.credits"))
 
-	fmt.Print(banner)
+	database.Connect()
+	defer database.Close()
 
-	dcToken, err := os.ReadFile("lib/dcToken.0")
+	log.Println("Logging in to Discord")
+	s, err := discordgo.New("Bot " + viper.GetString("discord.token"))
 	if err != nil {
-		panic("could not read token file")
-	}
-	s, err := discordgo.New("Bot " + string(dcToken))
-	if err != nil {
-		panic(fmt.Sprintf("invalid bot parameters: %v", err))
+		log.Fatalf("invalid bot parameters: %v", err)
 	}
 
 	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
-		fmt.Printf("Logged in as %s#%s\n", s.State.User.Username, s.State.User.Discriminator)
+		log.Printf("Logged in to Discord as %s#%s\n", s.State.User.Username, s.State.User.Discriminator)
 	})
 
-	// Add event listeners
 	event.AddListeners(s)
 
 	// open connection to Discord and login
 	err = s.Open()
 	if err != nil {
-		panic(fmt.Sprintf("could not open the discord session: %v", err))
+		log.Fatalf("could not open the discord session: %v", err)
 	}
 	defer s.Close()
 
-	// register all command and co.
-
-	dcGuildID, err := os.ReadFile("lib/dcGuildID.0")
+	// register all events.
+	err = event.Register(s, viper.GetString("discord.guildID"))
 	if err != nil {
-		panic("could not read guildID file")
-	}
-	err = event.Register(s, string(dcGuildID))
-	if err != nil {
-		panic(fmt.Sprintf("Error: %v", err))
+		log.Printf("Error registering events: %v\n", err)
 	}
 
 	// Wait to end the bot
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
-	fmt.Println("Press Ctrl+C to exit")
+	log.Println("Press Ctrl+C to exit")
 	<-stop
 
-	fmt.Println("\nGracefully shutting down. Byee")
+	log.Println("\nGracefully shutting down. Byee")
 }
