@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package command
+package birthday
 
 import (
 	"fmt"
@@ -20,6 +20,8 @@ import (
 	"strconv"
 
 	"github.com/bwmarrin/discordgo"
+
+	"cake4everybot/event/command/util"
 )
 
 type Birthday struct{}
@@ -92,7 +94,7 @@ func (c Birthday) CmdHandler() func(s *discordgo.Session, i *discordgo.Interacti
 
 func birthdaySetHandler(s *discordgo.Session, i *discordgo.InteractionCreate, options []*discordgo.ApplicationCommandInteractionDataOption) {
 	var (
-		iu    InteractionUtil = InteractionUtil{session: s, interaction: i}
+		iu    util.InteractionUtil = util.InteractionUtil{Session: s, Interaction: i}
 		day   *discordgo.ApplicationCommandInteractionDataOption
 		month *discordgo.ApplicationCommandInteractionDataOption
 		year  *discordgo.ApplicationCommandInteractionDataOption

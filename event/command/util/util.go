@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package command
+package util
 
 import (
 	"fmt"
@@ -21,8 +21,8 @@ import (
 )
 
 type InteractionUtil struct {
-	session     *discordgo.Session
-	interaction *discordgo.InteractionCreate
+	Session     *discordgo.Session
+	Interaction *discordgo.InteractionCreate
 	response    *discordgo.InteractionResponse
 }
 
@@ -70,7 +70,7 @@ func (i *InteractionUtil) ReplyHidden(message string) {
 // type outside form an applicationCommandAutocomplete
 // nothing will happen.
 func (i *InteractionUtil) ReplyAutocomplete(choices []*discordgo.ApplicationCommandOptionChoice) {
-	if i.interaction.Type != discordgo.InteractionApplicationCommandAutocomplete {
+	if i.Interaction.Type != discordgo.InteractionApplicationCommandAutocomplete {
 		return
 	}
 
@@ -88,7 +88,7 @@ func (i *InteractionUtil) ReplyError() {
 }
 
 func (i *InteractionUtil) respond() {
-	err := i.session.InteractionRespond(i.interaction.Interaction, i.response)
+	err := i.Session.InteractionRespond(i.Interaction.Interaction, i.response)
 	if err != nil {
 		fmt.Printf("Error while sending command response: %v", err)
 	}

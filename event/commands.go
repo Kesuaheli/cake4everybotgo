@@ -15,10 +15,12 @@
 package event
 
 import (
-	"cake4everybot/event/command"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
+
+	"cake4everybot/event/command"
+	"cake4everybot/event/command/birthday"
 )
 
 func registerCommands(s *discordgo.Session, guildID string) error {
@@ -28,7 +30,7 @@ func registerCommands(s *discordgo.Session, guildID string) error {
 	// appending the struct (which must implement the interface
 	// command.Command) to the list, i.e.:
 	// commandsList = append(commandsList, command.MyCommand{})
-	commandsList = append(commandsList, command.Birthday{})
+	commandsList = append(commandsList, birthday.Birthday{})
 
 	// early return when there're no commands to add, and remove all previously registered commands
 	if len(commandsList) == 0 {
