@@ -1,0 +1,7 @@
+additionalConfigs:
+  - config_env.yaml # For tokens and access keys
+  - database/connection_env.yaml # Connection data for mySQL databse
+
+discord:
+  name: Cake4Everybot
+  credits: Cake4Everybot, developed by @Kesuaheli#5868 and the ideas of the community ♥

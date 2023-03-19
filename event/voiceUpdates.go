@@ -15,29 +15,19 @@
 package event
 
 import (
+	"cake4everybot/database"
 	"fmt"
-	"os"
-	"strings"
+	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
-
-var NO_MIC_CHANNEL_ID string
-
-func init() {
-	f, err := os.ReadFile("lib/noMicChannelID.0")
-	if err != nil {
-		panic("could not read channel ID file (noMicChannelID.0)")
-	}
-	NO_MIC_CHANNEL_ID = strings.Split(string(f), "\n")[0]
-}
 
 func addVoiceStateListeners(s *discordgo.Session) {
 	handler := func(s *discordgo.Session, e *discordgo.VoiceStateUpdate) {
 
 		isAfk, err := isAfkVoiceChannel(s, e)
 		if err != nil {
-			fmt.Print(err)
+			log.Println(err)
 			return
 		}
 
@@ -65,19 +55,23 @@ func isAfkVoiceChannel(s *discordgo.Session, e *discordgo.VoiceStateUpdate) (boo
 }
 
 func setNoMicPermission(s *discordgo.Session, e *discordgo.VoiceStateUpdate, state bool) {
-	var err error
+	var NO_MIC_CHANNEL_ID uint64
+	err := database.QueryRow("SELECT no_mic_id FROM guilds WHERE id = ?", e.GuildID).Scan(&NO_MIC_CHANNEL_ID)
+	if err != nil {
+		log.Printf("Error on no mic permission database call: %v\n", err)
+	}
 	if state {
-		err = s.ChannelPermissionSet(NO_MIC_CHANNEL_ID,
+		err = s.ChannelPermissionSet(fmt.Sprint(NO_MIC_CHANNEL_ID),
 			e.Member.User.ID,
 			discordgo.PermissionOverwriteTypeMember,
 			discordgo.PermissionViewChannel,
 			0)
 	} else {
-		err = s.ChannelPermissionDelete(NO_MIC_CHANNEL_ID, e.Member.User.ID)
+		err = s.ChannelPermissionDelete(fmt.Sprint(NO_MIC_CHANNEL_ID), e.Member.User.ID)
 	}
 
 	if err != nil {
-		fmt.Printf("Error on no mic permission: %v\n", err)
+		log.Printf("Error on no mic permission: %v\n", err)
 		return
 	}
 }
