@@ -65,6 +65,24 @@ func (i *InteractionUtil) ReplyHidden(message string) {
 	i.respond()
 }
 
+// ReplyAutocomplete returns the given choices to
+// the user. When this is called on an interaction
+// type outside form an applicationCommandAutocomplete
+// nothing will happen.
+func (i *InteractionUtil) ReplyAutocomplete(choices []*discordgo.ApplicationCommandOptionChoice) {
+	if i.interaction.Type != discordgo.InteractionApplicationCommandAutocomplete {
+		return
+	}
+
+	i.response = &discordgo.InteractionResponse{
+		Type: discordgo.InteractionApplicationCommandAutocompleteResult,
+		Data: &discordgo.InteractionResponseData{
+			Choices: choices,
+		},
+	}
+	i.respond()
+}
+
 func (i *InteractionUtil) ReplyError() {
 	i.ReplyHidden("Somthing went wrong :(")
 }
