@@ -15,7 +15,6 @@
 package birthday
 
 import (
-	"database/sql"
 	"log"
 
 	"cake4everybot/database"
@@ -35,12 +34,8 @@ func (cmd Birthday) getBirthday(id uint64) (day int, month int, year int, visibl
 // hasBirthday returns true whether the given
 // user id has entered their birthday.
 func (cmd Birthday) hasBirthday(id uint64) (hasBirthday bool, err error) {
-	err = database.QueryRow("SELECT id FROM birthdays WHERE id=?", id).Err()
-
-	if err == sql.ErrNoRows {
-		return false, nil
-	}
-	return err == nil, err
+	err = database.QueryRow("SELECT EXISTS(SELECT id FROM birthdays WHERE id=?)", id).Scan(&hasBirthday)
+	return hasBirthday, err
 }
 
 // setBirthday inserts a new birthday entry with
@@ -57,7 +52,7 @@ func (cmd Birthday) setBirthday(id uint64, day int, month int, year int, visible
 	if visible {
 		cmd.Replyf("Added your Birthday on %d.%d.%d!", day, month, year)
 	} else {
-		cmd.ReplyHiddenf("Added your Birthday on %d.%d.%d!\nYour can close this now", day, month, year)
+		cmd.ReplyHiddenf("Added your Birthday on %d.%d.%d!\nYou can close this now", day, month, year)
 	}
 }
 
@@ -75,6 +70,31 @@ func (cmd Birthday) updateBirthday(id uint64, day int, month int, year int, visi
 	if visible {
 		cmd.Replyf("Updated your Birthday to '%d.%d.%d'!", day, month, year)
 	} else {
-		cmd.ReplyHiddenf("Updated your Birthday to '%d.%d.%d'!\nYour can close this now.", day, month, year)
+		cmd.ReplyHiddenf("Updated your Birthday to '%d.%d.%d'!\nYou can close this now.", day, month, year)
+	}
+}
+
+// removeBirthday deletes the existing birthday
+// entry for the given id.
+func (cmd Birthday) removeBirthday(id uint64) {
+	day, month, year, visible, err := cmd.getBirthday(id)
+	if err != nil {
+		log.Printf("Error on remove birthday: %v\n", err)
+		cmd.ReplyError()
+		return
+	}
+
+	_, err = database.Exec("DELETE FROM birthdays WHERE id=?;", id)
+	if err != nil {
+		log.Printf("Error on remove birthday: %v\n", err)
+		cmd.ReplyError()
+		return
+	}
+
+	// notify the user
+	if visible {
+		cmd.Replyf("Removed your Birthday from the bot!\nWas on '%d.%d.%d'.", day, month, year)
+	} else {
+		cmd.ReplyHiddenf("Removed your Birthday from the bot!\nWas on '%d.%d.%d'.\nYou can close this now.", day, month, year)
 	}
 }

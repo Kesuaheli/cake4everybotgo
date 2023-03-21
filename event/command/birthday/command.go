@@ -79,3 +79,11 @@ func commandOptionSetVisible() *discordgo.ApplicationCommandOption {
 		Choices:     choices,
 	}
 }
+
+func subCommandRemove() *discordgo.ApplicationCommandOption {
+	return &discordgo.ApplicationCommandOption{
+		Type:        discordgo.ApplicationCommandOptionSubCommand,
+		Name:        "remove",
+		Description: "Remove your entered Birthday from the bot",
+	}
+}

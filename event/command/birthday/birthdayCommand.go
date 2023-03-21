@@ -42,6 +42,7 @@ func (cmd Birthday) AppCmd() *discordgo.ApplicationCommand {
 
 	options := []*discordgo.ApplicationCommandOption{
 		subCommandSet(),
+		subCommandRemove(),
 	}
 
 	return &discordgo.ApplicationCommand{
@@ -69,6 +70,8 @@ func (cmd Birthday) CmdHandler() func(s *discordgo.Session, i *discordgo.Interac
 		switch subcommandName {
 		case "set":
 			sub = cmd.subcommandSet()
+		case "remove":
+			sub = cmd.subcommandRemove()
 		default:
 			return
 		}
