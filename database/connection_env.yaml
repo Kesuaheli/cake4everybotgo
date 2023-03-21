@@ -1,0 +1,7 @@
+mysql:
+  user: user
+  password: password
+  # Host and port defaults to localhost:3306 when left out here
+  #host: localhost
+  #port: 3306
+  database: discord
