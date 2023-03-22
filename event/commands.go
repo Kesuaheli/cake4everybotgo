@@ -25,12 +25,18 @@ import (
 
 func registerCommands(s *discordgo.Session, guildID string) error {
 
-	var commandsList []command.Command
 	// This is the list of commands to use. Add a command via simply
 	// appending the struct (which must implement the interface
 	// command.Command) to the list, i.e.:
+	//
 	// commandsList = append(commandsList, command.MyCommand{})
-	commandsList = append(commandsList, birthday.Birthday{})
+	var commandsList []command.Command
+
+	// chat (slash) commands
+	commandsList = append(commandsList, birthday.Chat{})
+	// messsage commands
+	// user commands
+	commandsList = append(commandsList, birthday.UserShow{})
 
 	// early return when there're no commands to add, and remove all previously registered commands
 	if len(commandsList) == 0 {

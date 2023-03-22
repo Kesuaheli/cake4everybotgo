@@ -24,16 +24,16 @@ import (
 // The remove subcommand. Used when executing the
 // slash-command "/birthday remove".
 type subcommandRemove struct {
-	Birthday
+	Chat
 	*discordgo.ApplicationCommandInteractionDataOption
 }
 
 // Constructor for subcommandremove, the struct for
 // the slash-command "/birthday remove".
-func (cmd Birthday) subcommandRemove() subcommandRemove {
+func (cmd Chat) subcommandRemove() subcommandRemove {
 	subcommand := cmd.Interaction.ApplicationCommandData().Options[0]
 	return subcommandRemove{
-		Birthday:                                cmd,
+		Chat:                                    cmd,
 		ApplicationCommandInteractionDataOption: subcommand,
 	}
 }

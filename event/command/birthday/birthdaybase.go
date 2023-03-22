@@ -17,15 +17,24 @@ package birthday
 import (
 	"log"
 
+	"github.com/bwmarrin/discordgo"
+
 	"cake4everybot/database"
+	"cake4everybot/event/command/util"
 )
+
+type birthdayBase struct {
+	util.InteractionUtil
+	member *discordgo.Member
+	user   *discordgo.User
+}
 
 // getBirthday returns all birthday fields of
 // the given user id.
 //
 // If that user is not found it returns
 // sql.ErrNoRows.
-func (cmd Birthday) getBirthday(id uint64) (day int, month int, year int, visible bool, err error) {
+func (cmd birthdayBase) getBirthday(id uint64) (day int, month int, year int, visible bool, err error) {
 	row := database.QueryRow("SELECT day,month,year,visible FROM birthdays WHERE id=?", id)
 	err = row.Scan(&day, &month, &year, &visible)
 	return
@@ -33,14 +42,14 @@ func (cmd Birthday) getBirthday(id uint64) (day int, month int, year int, visibl
 
 // hasBirthday returns true whether the given
 // user id has entered their birthday.
-func (cmd Birthday) hasBirthday(id uint64) (hasBirthday bool, err error) {
+func (cmd birthdayBase) hasBirthday(id uint64) (hasBirthday bool, err error) {
 	err = database.QueryRow("SELECT EXISTS(SELECT id FROM birthdays WHERE id=?)", id).Scan(&hasBirthday)
 	return hasBirthday, err
 }
 
 // setBirthday inserts a new birthday entry with
 // the given values into the database.
-func (cmd Birthday) setBirthday(id uint64, day int, month int, year int, visible bool) {
+func (cmd birthdayBase) setBirthday(id uint64, day int, month int, year int, visible bool) {
 	_, err := database.Exec("INSERT INTO birthdays(id,day,month,year,visible) VALUES(?,?,?,?,?);", id, day, month, year, visible)
 	if err != nil {
 		log.Printf("Error on set birthday: %v", err)
@@ -58,7 +67,7 @@ func (cmd Birthday) setBirthday(id uint64, day int, month int, year int, visible
 
 // updateBirthday updates an existing birthday
 // entry with the given values to database.
-func (cmd Birthday) updateBirthday(id uint64, day int, month int, year int, visible bool) {
+func (cmd birthdayBase) updateBirthday(id uint64, day int, month int, year int, visible bool) {
 	_, err := database.Exec("UPDATE birthdays SET day=?,month=?,year=?,visible=? WHERE id=?;", day, month, year, visible, id)
 	if err != nil {
 		log.Printf("Error on update birthday: %v\n", err)
@@ -76,7 +85,7 @@ func (cmd Birthday) updateBirthday(id uint64, day int, month int, year int, visi
 
 // removeBirthday deletes the existing birthday
 // entry for the given id.
-func (cmd Birthday) removeBirthday(id uint64) {
+func (cmd birthdayBase) removeBirthday(id uint64) {
 	day, month, year, visible, err := cmd.getBirthday(id)
 	if err != nil {
 		log.Printf("Error on remove birthday: %v\n", err)

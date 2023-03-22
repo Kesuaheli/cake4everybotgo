@@ -20,17 +20,19 @@ import (
 	"cake4everybot/event/command/util"
 )
 
-type Birthday struct {
-	util.InteractionUtil
-	member *discordgo.Member
-	user   *discordgo.User
+// The chat (slash) command of the birthday
+// package. Has a few sub commands and options
+// to use all features through a single chat
+// command.
+type Chat struct {
+	birthdayBase
 }
 
 type subcommand interface {
 	handler()
 }
 
-func (cmd Birthday) AppCmd() *discordgo.ApplicationCommand {
+func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
 
 	names := map[discordgo.Locale]string{
 		discordgo.German: "geburtstag",
@@ -54,7 +56,7 @@ func (cmd Birthday) AppCmd() *discordgo.ApplicationCommand {
 	}
 }
 
-func (cmd Birthday) CmdHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	return func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		cmd.InteractionUtil = util.InteractionUtil{Session: s, Interaction: i}

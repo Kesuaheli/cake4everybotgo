@@ -24,7 +24,7 @@ import (
 // The set subcommand. Used when executing the
 // slash-command "/birthday set".
 type subcommandSet struct {
-	Birthday
+	Chat
 	*discordgo.ApplicationCommandInteractionDataOption
 
 	day     *discordgo.ApplicationCommandInteractionDataOption // reqired
@@ -35,10 +35,10 @@ type subcommandSet struct {
 
 // Constructor for subcommandSet, the struct for
 // the slash-command "/birthday set".
-func (cmd Birthday) subcommandSet() subcommandSet {
+func (cmd Chat) subcommandSet() subcommandSet {
 	subcommand := cmd.Interaction.ApplicationCommandData().Options[0]
 	return subcommandSet{
-		Birthday:                                cmd,
+		Chat:                                    cmd,
 		ApplicationCommandInteractionDataOption: subcommand,
 	}
 }
