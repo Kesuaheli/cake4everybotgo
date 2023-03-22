@@ -29,6 +29,14 @@ type birthdayBase struct {
 	user   *discordgo.User
 }
 
+type birthdayEntry struct {
+	id      uint64
+	day     int
+	month   int
+	year    int
+	visible bool
+}
+
 // getBirthday returns all birthday fields of
 // the given user id.
 //
@@ -106,4 +114,34 @@ func (cmd birthdayBase) removeBirthday(id uint64) {
 	} else {
 		cmd.ReplyHiddenf("Removed your Birthday from the bot!\nWas on '%d.%d.%d'.\nYou can close this now.", day, month, year)
 	}
+}
+
+func (cmd birthdayBase) getBirthdaysMonth(month int) (birthdays []birthdayEntry, err error) {
+	var numOfEntries int64
+	err = database.QueryRow("SELECT COUNT(*) FROM birthdays WHERE month=?", month).Scan(&numOfEntries)
+	if err != nil {
+		return nil, err
+	}
+
+	birthdays = make([]birthdayEntry, numOfEntries)
+	if len(birthdays) == 0 {
+		return birthdays, nil
+	}
+
+	rows, err := database.Query("SELECT id,day,year,visible FROM birthdays WHERE month=?", month)
+	if err != nil {
+		return birthdays, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		b := birthdayEntry{month: month}
+		err = rows.Scan(&b.id, &b.day, &b.year, &b.visible)
+		if err != nil {
+			return birthdays, err
+		}
+		birthdays = append(birthdays, b)
+	}
+
+	return birthdays, nil
 }

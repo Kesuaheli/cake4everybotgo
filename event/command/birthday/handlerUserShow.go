@@ -30,9 +30,6 @@ func (cmd UserShow) handler() {
 	target := cmd.data.Resolved.Members[cmd.data.TargetID]
 	target.User = cmd.data.Resolved.Users[cmd.data.TargetID]
 
-	log.Println("mem", target)
-	log.Println("usr", target.User)
-
 	hasBDay, err := cmd.hasBirthday(targetID)
 	if err != nil {
 		log.Printf("Error on show birthday: %v\n", err)

@@ -45,6 +45,7 @@ func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
 	options := []*discordgo.ApplicationCommandOption{
 		subCommandSet(),
 		subCommandRemove(),
+		subCommandList(),
 	}
 
 	return &discordgo.ApplicationCommand{
@@ -74,6 +75,8 @@ func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.Interaction
 			sub = cmd.subcommandSet()
 		case "remove":
 			sub = cmd.subcommandRemove()
+		case "list":
+			sub = cmd.subcommandList()
 		default:
 			return
 		}

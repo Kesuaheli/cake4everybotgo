@@ -87,3 +87,33 @@ func subCommandRemove() *discordgo.ApplicationCommandOption {
 		Description: "Remove your entered Birthday from the bot",
 	}
 }
+
+func subCommandList() *discordgo.ApplicationCommandOption {
+	options := []*discordgo.ApplicationCommandOption{
+		commandOptionListMonth(),
+	}
+
+	return &discordgo.ApplicationCommandOption{
+		Type:        discordgo.ApplicationCommandOptionSubCommand,
+		Name:        "list",
+		Description: "List entered Birthdays of a specified month",
+		Options:     options,
+	}
+}
+
+func commandOptionListMonth() *discordgo.ApplicationCommandOption {
+	var choices []*discordgo.ApplicationCommandOptionChoice
+	for m := 0; m <= 12; m++ {
+		choices = append(choices, monthChoice(m))
+	}
+
+	return &discordgo.ApplicationCommandOption{
+		Type:        discordgo.ApplicationCommandOptionInteger,
+		Name:        "month",
+		Description: "The month to list all birthdays from",
+		Required:    true,
+		Choices:     choices,
+		MinValue:    &minValue,
+		MaxValue:    12,
+	}
+}
