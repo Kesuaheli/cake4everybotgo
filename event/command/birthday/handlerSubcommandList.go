@@ -17,7 +17,6 @@ package birthday
 import (
 	"fmt"
 	"log"
-	"sort"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -56,10 +55,6 @@ func (cmd subcommandList) handler() {
 		cmd.ReplyError()
 		return
 	}
-
-	sort.Slice(birthdays, func(i, j int) bool {
-		return birthdays[i].day < birthdays[j].day
-	})
 
 	msg := "birthdays in '" + fmt.Sprint(month) + "'"
 	for i, b := range birthdays {

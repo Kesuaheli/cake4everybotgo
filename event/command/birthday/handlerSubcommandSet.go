@@ -117,20 +117,20 @@ func (cmd subcommandSet) interactionHandler() {
 		return
 	}
 
-	var (
-		newDay     int = int(cmd.day.IntValue())
-		newMonth   int = int(cmd.month.IntValue())
-		newYear    int
-		newVisible bool = true
-	)
+	b := birthdayEntry{
+		id:      authorID,
+		day:     int(cmd.day.IntValue()),
+		month:   int(cmd.month.IntValue()),
+		visible: true,
+	}
 	if cmd.year != nil {
-		newYear = int(cmd.year.IntValue())
+		b.year = int(cmd.year.IntValue())
 	}
 	if cmd.visible != nil {
-		newVisible = cmd.visible.BoolValue()
+		b.visible = cmd.visible.BoolValue()
 	}
 
-	hasBDay, err := cmd.hasBirthday(authorID)
+	hasBDay, err := cmd.hasBirthday(b.id)
 	if err != nil {
 		log.Printf("Error on getting birthday data: %v\n", err)
 		cmd.ReplyError()
@@ -138,8 +138,8 @@ func (cmd subcommandSet) interactionHandler() {
 	}
 
 	if hasBDay {
-		cmd.updateBirthday(authorID, newDay, newMonth, newYear, newVisible)
+		cmd.updateBirthday(b)
 	} else {
-		cmd.setBirthday(authorID, newDay, newMonth, newYear, newVisible)
+		cmd.setBirthday(b)
 	}
 }
