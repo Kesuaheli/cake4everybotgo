@@ -5,3 +5,6 @@ additionalConfigs:
 discord:
   name: Cake4Everybot
   credits: Cake4Everybot, developed by @Kesuaheli#5868 and the ideas of the community ♥
+
+event:
+  birthday_hour: 8 # Time to trigger daily birthday check (24h format)

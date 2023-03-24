@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Kesuaheli
+// Copyright 2023 Kesuaheli
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,22 +15,31 @@
 package event
 
 import (
+	"time"
+
 	"github.com/bwmarrin/discordgo"
+	"github.com/spf13/viper"
+
+	"cake4everybot/event/command/birthday"
 )
 
-func Register(s *discordgo.Session, guildID string) error {
-	err := registerCommands(s, guildID)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func addScheduledTriggers(s *discordgo.Session) {
+	go scheduleBirthdayCheck(s)
 }
 
-// AddListeners adds all event handlers to the given session s.
-func AddListeners(s *discordgo.Session) {
-	addCommandListeners(s)
-	addVoiceStateListeners(s)
+func scheduleBirthdayCheck(s *discordgo.Session) {
+	HOUR := viper.GetInt("event.birthday_hour")
 
-	addScheduledTriggers(s)
+	time.Sleep(time.Second * 5)
+	for {
+		now := time.Now()
+
+		nextRun := time.Date(now.Year(), now.Month(), now.Day(), HOUR, 0, 0, 0, now.Location())
+		if nextRun.Before(now) {
+			nextRun = nextRun.Add(time.Hour * 24)
+		}
+		time.Sleep(nextRun.Sub(now))
+
+		birthday.Check(s)
+	}
 }

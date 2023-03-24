@@ -124,8 +124,8 @@ func (cmd birthdayBase) getBirthdaysMonth(month int) (birthdays []birthdayEntry,
 		return nil, err
 	}
 
-	birthdays = make([]birthdayEntry, numOfEntries)
-	if len(birthdays) == 0 {
+	birthdays = make([]birthdayEntry, 0, numOfEntries)
+	if numOfEntries == 0 {
 		return birthdays, nil
 	}
 
@@ -147,6 +147,38 @@ func (cmd birthdayBase) getBirthdaysMonth(month int) (birthdays []birthdayEntry,
 	sort.Slice(birthdays, func(i, j int) bool {
 		return birthdays[i].day < birthdays[j].day
 	})
+
+	return birthdays, nil
+}
+
+// getBirthdaysDate return a slice of birthday
+// entries that matches the given date.
+func getBirthdaysDate(day int, month int) (birthdays []birthdayEntry, err error) {
+	var numOfEntries int64
+	err = database.QueryRow("SELECT COUNT(*) FROM birthdays WHERE day=? AND month=?", day, month).Scan(&numOfEntries)
+	if err != nil {
+		return nil, err
+	}
+
+	birthdays = make([]birthdayEntry, 0, numOfEntries)
+	if numOfEntries == 0 {
+		return birthdays, nil
+	}
+
+	rows, err := database.Query("SELECT id,year,visible FROM birthdays WHERE day=? AND month=?", day, month)
+	if err != nil {
+		return birthdays, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		b := birthdayEntry{day: day, month: month}
+		err = rows.Scan(&b.id, &b.year, &b.visible)
+		if err != nil {
+			return birthdays, err
+		}
+		birthdays = append(birthdays, b)
+	}
 
 	return birthdays, nil
 }
