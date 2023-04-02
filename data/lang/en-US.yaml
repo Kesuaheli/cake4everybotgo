@@ -1,0 +1,43 @@
+# American english translations
+
+discord.command:
+  generic:
+    yes: Yes
+    no: No
+
+  birthday:
+    base: birthday
+    base.desciption: Various settings for the birthday bot
+
+    option.set: set
+    option.set.description: Enter or change your birthday
+    option.set.option.day: day
+    option.set.option.day.description: On wich day of month is your birthday?
+    option.set.option.month: month
+    option.set.option.month.description: On wich month of the year is your birthday?
+    option.set.option.year: year
+    option.set.option.year.description: In wich year were you born?
+    option.set.option.visible: visible
+    option.set.option.visible.description: Should your name and birthday be discoverable by others? (defaults to \"Yes\")
+
+    option.remove: remove
+    option.remove.description: Remove your entered Birthday from the bot
+
+    option.list: list
+    option.list.description: List entered Birthdays of a specified month
+    option.list.option.month: month
+    option.list.option.month.description: The month to list all birthdays from
+
+    month:
+      - January
+      - February
+      - March
+      - April
+      - May
+      - June
+      - July
+      - August
+      - September
+      - October
+      - November
+      - December

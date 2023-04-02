@@ -18,8 +18,13 @@ import (
 	"log"
 
 	"github.com/spf13/viper"
+
+	"cake4everybot/data/lang"
 )
 
+// Load loads the given configuration file as the global config. It
+// also loads:
+//   - the languages from lang.Load() (see cake4everybot/data/lang)
 func Load(config string) {
 	log.Println("Loading configuration file(s)...")
 	log.Printf("Loading config '%s'\n", config)
@@ -43,4 +48,7 @@ func Load(config string) {
 	}
 
 	log.Println("Loaded configuration file(s)!")
+
+	// additional loadings
+	lang.Load()
 }
