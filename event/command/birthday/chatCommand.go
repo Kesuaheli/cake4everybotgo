@@ -17,6 +17,7 @@ package birthday
 import (
 	"github.com/bwmarrin/discordgo"
 
+	"cake4everybot/data/lang"
 	"cake4everybot/event/command/util"
 )
 
@@ -33,15 +34,6 @@ type subcommand interface {
 }
 
 func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
-
-	names := map[discordgo.Locale]string{
-		discordgo.German: "geburtstag",
-	}
-
-	descriptions := map[discordgo.Locale]string{
-		discordgo.German: "Verschiedene Einstellungen für den Geburtstagsbot",
-	}
-
 	options := []*discordgo.ApplicationCommandOption{
 		subCommandSet(),
 		subCommandRemove(),
@@ -49,10 +41,10 @@ func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
 	}
 
 	return &discordgo.ApplicationCommand{
-		Name:                     "birthday",
-		NameLocalizations:        &names,
-		Description:              "Various settings for the birthday bot",
-		DescriptionLocalizations: &descriptions,
+		Name:                     lang.GetDefault(tp + "base"),
+		NameLocalizations:        util.TranslateLocalization(tp + "base"),
+		Description:              lang.GetDefault(tp + "base.description"),
+		DescriptionLocalizations: util.TranslateLocalization(tp + "base.description"),
 		Options:                  options,
 	}
 }
@@ -71,11 +63,11 @@ func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.Interaction
 		var sub subcommand
 
 		switch subcommandName {
-		case "set":
+		case lang.GetDefault(tp + "option.set"):
 			sub = cmd.subcommandSet()
-		case "remove":
+		case lang.GetDefault(tp + "option.remove"):
 			sub = cmd.subcommandRemove()
-		case "list":
+		case lang.GetDefault(tp + "option.list"):
 			sub = cmd.subcommandList()
 		default:
 			return

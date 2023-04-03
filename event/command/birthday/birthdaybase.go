@@ -24,6 +24,12 @@ import (
 	"cake4everybot/event/command/util"
 )
 
+const (
+	// Prefix for translation key, i.e.:
+	//   key := tp+"base" // => birthday
+	tp = "discord.command.birthday."
+)
+
 type birthdayBase struct {
 	util.InteractionUtil
 	member *discordgo.Member

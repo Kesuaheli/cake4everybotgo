@@ -16,11 +16,26 @@ package lang
 
 import (
 	"log"
+	"strings"
 
 	"github.com/spf13/viper"
 )
 
-var langs = map[string]*viper.Viper{}
+var langsMap = map[string]*viper.Viper{}
+
+// Unify takes and returns a string wich defines a language, i.e.
+// 'en_us', and changes it to a uniform format.
+//
+// Currently only lowercases everything and replaces '-' (dashes)
+// with '_' (underscores).
+//
+// This function is called on every lang input internally, so calling
+// it on a lang name before passing it to a function is pointless.
+func Unify(lang string) string {
+	lang = strings.ToLower(lang)
+	lang = strings.ReplaceAll(lang, "-", "_")
+	return lang
+}
 
 // Load loads (and reloads) the language files defined in the global
 // config.
@@ -28,8 +43,8 @@ func Load() {
 	log.Println("Loading languages...")
 
 	// clear all existing languages
-	for k := range langs {
-		delete(langs, k)
+	for k := range langsMap {
+		delete(langsMap, k)
 	}
 
 	// read language files defined in global config
@@ -37,8 +52,11 @@ func Load() {
 		if langName == "" {
 			continue
 		}
+
+		langName = Unify(langName)
+
 		// skip duplicates
-		if _, ok := langs[langName]; ok {
+		if _, ok := langsMap[langName]; ok {
 			continue
 		}
 
@@ -54,14 +72,38 @@ func Load() {
 			log.Printf("WARNING: Could not load language '%s': %v", langName, err)
 			continue
 		}
-		langs[langName] = lang
+
+		langsMap[langName] = lang
 	}
 
-	if len(langs) == 0 {
+	if len(langsMap) == 0 {
 		log.Fatalln("Could not load languages: needs at least one loaded language!")
 	}
 
-	log.Printf("Loaded %d language(s), with %s beeing the fallback language!\n", len(langs), FallbackLang())
+	log.Printf("Loaded %d language(s), with %s beeing the fallback language!\n", len(langsMap), FallbackLang())
+}
+
+// FallbackLang returns the bots fallback language, which is the
+// first loaded language string in the 'languages' list from the
+// global config.
+//
+// When 'languages' is empty or only has empty string entries, it
+// fails and calls os.Exit(1).
+func FallbackLang() string {
+	for _, langName := range viper.GetStringSlice("languages") {
+		if langName == "" {
+			continue
+		}
+
+		langName = Unify(langName)
+		if _, ok := langsMap[langName]; !ok {
+			continue
+		}
+		return langName
+	}
+
+	log.Fatalln("ERROR: No languages in config")
+	return ""
 }
 
 // Get returns the configured translation for key in the given
@@ -76,14 +118,16 @@ func Load() {
 // In all three of these 'fail cases', Get will print a warning
 // message in the log
 func Get(key, lang string) string {
-	if len(langs) == 0 {
+	if len(langsMap) == 0 {
 		log.Println()
 		log.Printf("ERROR: Tried to get translation, but no language loaded")
 		log.Println()
 		return key
 	}
 
-	v, ok := langs[lang]
+	lang = Unify(lang)
+
+	v, ok := langsMap[lang]
 	fLang := FallbackLang()
 	if !ok {
 		if lang == fLang {
@@ -101,7 +145,7 @@ func Get(key, lang string) string {
 		return val
 	}
 
-	if lang != fLang {
+	if lang == fLang {
 		log.Printf("WARNING: key '%s' is not defined in fallback language '%s'", key, lang)
 		return key
 	}
@@ -109,23 +153,23 @@ func Get(key, lang string) string {
 	return Get(key, fLang)
 }
 
-// FallbackLang returns the bots fallback language, which is the
-// first loaded language string in the 'languages' list from the
-// global config.
-//
-// When 'languages' is empty or only has empty string entries, it
-// fails and calls os.Exit(1).
-func FallbackLang() string {
-	for _, langName := range viper.GetStringSlice("languages") {
-		if langName == "" {
-			continue
-		}
-		if _, ok := langs[langName]; !ok {
-			continue
-		}
-		return langName
-	}
+// GetDefualt is like Get, but with FallbackLang as language
+func GetDefault(key string) string {
+	return Get(key, FallbackLang())
+}
 
-	log.Fatalln("ERROR: No languages in config")
-	return ""
+// GetLangs returns all loaded languages
+func GetLangs() []string {
+	langs := make([]string, 0, len(langsMap))
+	for lang := range langsMap {
+		langs = append(langs, lang)
+	}
+	return langs
+}
+
+// IsLoaded returns true when the given
+func IsLoaded(lang string) bool {
+	lang = Unify(lang)
+	_, ok := langsMap[lang]
+	return ok
 }

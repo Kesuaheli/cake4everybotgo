@@ -7,7 +7,7 @@ discord.command:
 
   birthday:
     base: birthday
-    base.desciption: Various settings for the birthday bot
+    base.description: Various settings for the birthday bot
 
     option.set: set
     option.set.description: Enter or change your birthday

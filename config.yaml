@@ -6,7 +6,8 @@ additionalConfigs:
 # The first one in this list will also be the fallback when trying to
 # read an unloaded language
 languages:
-  - en-US
+  - en_us
+  - de
 
 discord:
   name: Cake4Everybot

@@ -1,0 +1,43 @@
+# German translations
+
+discord.command:
+  generic:
+    yes: Ja
+    no: Nein
+
+  birthday:
+    base: geburtstag
+    base.description: Verschiedene Einstellungen für den Geburtstagsbot
+
+    option.set: setzen
+    option.set.description: Trage deinen Geburtstag ein oder ändere ihn
+    option.set.option.day: tag
+    option.set.option.day.description: An welchen Tag im Monat ist dein Geburtstag?
+    option.set.option.month: monat
+    option.set.option.month.description: In welchem Monat im Jahr ist dein Geburtstag?
+    option.set.option.year: jahr
+    option.set.option.year.description: In welchem Jahr wurdest du geboren?
+    option.set.option.visible: sichtbar
+    option.set.option.visible.description: Darf dein Geburtstag für andere über die Suche auffindbar sein? (Standard "Ja")
+
+    option.remove: entfernen
+    option.remove.description: Entfernt deinen eingetragenen Geburtstag vom Bot
+
+    option.list: liste
+    option.list.description: Listet eingetragene Geburtstage im angegebenen Monat auf
+    option.list.option.month: monat
+    option.list.option.month.description: Der Monat, aus dem alle Geburtstage aufgelistet werden sollen
+
+    month:
+      - Januar
+      - Februar
+      - März
+      - April
+      - Mai
+      - Juni
+      - Juli
+      - August
+      - September
+      - Oktober
+      - November
+      - Dezember

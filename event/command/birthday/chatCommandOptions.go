@@ -14,7 +14,12 @@
 
 package birthday
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"github.com/bwmarrin/discordgo"
+
+	"cake4everybot/data/lang"
+	"cake4everybot/event/command/util"
+)
 
 var minValue = 1.0
 
@@ -27,64 +32,84 @@ func subCommandSet() *discordgo.ApplicationCommandOption {
 	}
 
 	return &discordgo.ApplicationCommandOption{
-		Type:        discordgo.ApplicationCommandOptionSubCommand,
-		Name:        "set",
-		Description: "Enter or change your birthday",
-		Options:     options,
+		Type:                     discordgo.ApplicationCommandOptionSubCommand,
+		Name:                     lang.GetDefault(tp + "option.set"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.set"),
+		Description:              lang.GetDefault(tp + "option.set.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.description"),
+		Options:                  options,
 	}
 }
 
 func commandOptionSetDay() *discordgo.ApplicationCommandOption {
 	return &discordgo.ApplicationCommandOption{
-		Type:         discordgo.ApplicationCommandOptionInteger,
-		Name:         "day",
-		Description:  "On wich day of month is your birthday?",
-		Required:     true,
-		Autocomplete: true,
-		MinValue:     &minValue,
-		MaxValue:     31,
+		Type:                     discordgo.ApplicationCommandOptionInteger,
+		Name:                     lang.GetDefault(tp + "option.set.option.day"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.day"),
+		Description:              lang.GetDefault(tp + "option.set.option.day.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.day.description"),
+		Required:                 true,
+		Autocomplete:             true,
+		MinValue:                 &minValue,
+		MaxValue:                 31,
 	}
 }
 
 func commandOptionSetMonth() *discordgo.ApplicationCommandOption {
 	return &discordgo.ApplicationCommandOption{
-		Type:         discordgo.ApplicationCommandOptionInteger,
-		Name:         "month",
-		Description:  "On wich month of the year is your birthday?",
-		Required:     true,
-		Autocomplete: true,
-		MinValue:     &minValue,
-		MaxValue:     12,
+		Type:                     discordgo.ApplicationCommandOptionInteger,
+		Name:                     lang.GetDefault(tp + "option.set.option.month"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.month"),
+		Description:              lang.GetDefault(tp + "option.set.option.month.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.month.description"),
+		Required:                 true,
+		Autocomplete:             true,
+		MinValue:                 &minValue,
+		MaxValue:                 12,
 	}
 }
 
 func commandOptionSetYear() *discordgo.ApplicationCommandOption {
 	return &discordgo.ApplicationCommandOption{
-		Type:        discordgo.ApplicationCommandOptionInteger,
-		Name:        "year",
-		Description: "In wich year were you born?",
+		Type:                     discordgo.ApplicationCommandOptionInteger,
+		Name:                     lang.GetDefault(tp + "option.set.option.year"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.year"),
+		Description:              lang.GetDefault(tp + "option.set.option.year.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.year.description"),
 	}
 }
 
 func commandOptionSetVisible() *discordgo.ApplicationCommandOption {
 	choices := []*discordgo.ApplicationCommandOptionChoice{
-		{Name: "Yes", Value: true},
-		{Name: "No", Value: false},
+		{
+			Name:              lang.GetDefault("discord.command.generic.yes"),
+			NameLocalizations: *util.TranslateLocalization("discord.command.generic.yes"),
+			Value:             true,
+		},
+		{
+			Name:              lang.GetDefault("discord.command.generic.no"),
+			NameLocalizations: *util.TranslateLocalization("discord.command.generic.no"),
+			Value:             false,
+		},
 	}
 
 	return &discordgo.ApplicationCommandOption{
-		Type:        discordgo.ApplicationCommandOptionBoolean,
-		Name:        "visible",
-		Description: "Should your name and birthday be discoverable by others? (defaults to \"Yes\")",
-		Choices:     choices,
+		Type:                     discordgo.ApplicationCommandOptionBoolean,
+		Name:                     lang.GetDefault(tp + "option.set.option.visible"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.visible"),
+		Description:              lang.GetDefault(tp + "option.set.option.visible.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.visible.description"),
+		Choices:                  choices,
 	}
 }
 
 func subCommandRemove() *discordgo.ApplicationCommandOption {
 	return &discordgo.ApplicationCommandOption{
-		Type:        discordgo.ApplicationCommandOptionSubCommand,
-		Name:        "remove",
-		Description: "Remove your entered Birthday from the bot",
+		Type:                     discordgo.ApplicationCommandOptionSubCommand,
+		Name:                     lang.GetDefault(tp + "option.remove"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.remove"),
+		Description:              lang.GetDefault(tp + "option.remove.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.remove.description"),
 	}
 }
 
@@ -94,10 +119,12 @@ func subCommandList() *discordgo.ApplicationCommandOption {
 	}
 
 	return &discordgo.ApplicationCommandOption{
-		Type:        discordgo.ApplicationCommandOptionSubCommand,
-		Name:        "list",
-		Description: "List entered Birthdays of a specified month",
-		Options:     options,
+		Type:                     discordgo.ApplicationCommandOptionSubCommand,
+		Name:                     lang.GetDefault(tp + "option.list"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.list"),
+		Description:              lang.GetDefault(tp + "option.list.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.list.description"),
+		Options:                  options,
 	}
 }
 
@@ -108,12 +135,14 @@ func commandOptionListMonth() *discordgo.ApplicationCommandOption {
 	}
 
 	return &discordgo.ApplicationCommandOption{
-		Type:        discordgo.ApplicationCommandOptionInteger,
-		Name:        "month",
-		Description: "The month to list all birthdays from",
-		Required:    true,
-		Choices:     choices,
-		MinValue:    &minValue,
-		MaxValue:    12,
+		Type:                     discordgo.ApplicationCommandOptionInteger,
+		Name:                     lang.GetDefault(tp + "option.list.option.month"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.list.option.month"),
+		Description:              lang.GetDefault(tp + "option.list.option.month.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.list.option.month.description"),
+		Required:                 true,
+		Choices:                  choices,
+		MinValue:                 &minValue,
+		MaxValue:                 12,
 	}
 }
