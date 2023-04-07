@@ -58,10 +58,10 @@ func (cmd subcommandList) handler() {
 
 	msg := "birthdays in '" + fmt.Sprint(month) + "'"
 	for i, b := range birthdays {
-		if !b.visible {
+		if !b.Visible {
 			continue
 		}
-		msg = msg + fmt.Sprintf("\n`%3d`: `%d`: %d.%d.%d", i, b.id, b.day, b.month, b.year)
+		msg = msg + fmt.Sprintf("\n`%3d`: `%d`: %d.%d.%d", i, b.ID, b.Day, b.Month, b.Year)
 	}
 
 	cmd.Reply(msg)

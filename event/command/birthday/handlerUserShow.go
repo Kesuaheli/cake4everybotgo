@@ -26,12 +26,12 @@ func (cmd UserShow) handler() {
 		cmd.ReplyError()
 		return
 	}
-	b := birthdayEntry{id: targetID}
+	b := birthdayEntry{ID: targetID}
 
 	target := cmd.data.Resolved.Members[cmd.data.TargetID]
 	target.User = cmd.data.Resolved.Users[cmd.data.TargetID]
 
-	hasBDay, err := cmd.hasBirthday(b.id)
+	hasBDay, err := cmd.hasBirthday(b.ID)
 	if err != nil {
 		log.Printf("Error on show birthday: %v\n", err)
 		cmd.ReplyError()
@@ -46,7 +46,7 @@ func (cmd UserShow) handler() {
 			return
 		}
 		//pretend to have no birthday when its not visible
-		hasBDay = b.visible
+		hasBDay = b.Visible
 	}
 
 	name := target.User.Username
@@ -59,5 +59,5 @@ func (cmd UserShow) handler() {
 		return
 	}
 
-	cmd.Replyf("Birthday of %s is on %d.%d.%d", name, b.day, b.month, b.year)
+	cmd.Replyf("Birthday of %s is on %d.%d.%d", name, b.Day, b.Month, b.Year)
 }

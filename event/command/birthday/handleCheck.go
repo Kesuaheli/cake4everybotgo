@@ -70,18 +70,18 @@ func announceBirthdays(s *discordgo.Session, channel *discordgo.Channel, birthda
 	)
 
 	for _, b := range birthdays {
-		m, err := s.GuildMember(channel.GuildID, fmt.Sprint(b.id))
+		m, err := s.GuildMember(channel.GuildID, fmt.Sprint(b.ID))
 		if err != nil {
 			if !strings.HasPrefix(err.Error(), "HTTP 404 Not Found") {
-				log.Printf("Error on get guild member '%d' in guild '%s': %v\n", b.id, channel.GuildID, err)
+				log.Printf("Error on get guild member '%d' in guild '%s': %v\n", b.ID, channel.GuildID, err)
 			}
 			continue
 		}
 
 		n = n + 1
 		var age string
-		if b.year > 0 {
-			age = fmt.Sprintf(" turns %d", time.Now().Year()-b.year)
+		if b.Year > 0 {
+			age = fmt.Sprintf(" turns %d", time.Now().Year()-b.Year)
 		}
 		msg = fmt.Sprintf("%s\n%s%s!", msg, m.Mention(), age)
 	}

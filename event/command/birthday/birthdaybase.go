@@ -16,7 +16,9 @@ package birthday
 
 import (
 	"log"
+	"reflect"
 	"sort"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -37,9 +39,11 @@ type birthdayBase struct {
 }
 
 type birthdayEntry struct {
-	id               uint64
-	day, month, year int
-	visible          bool
+	ID      uint64 `database:"id"`
+	Day     int    `database:"day"`
+	Month   int    `database:"month"`
+	Year    int    `database:"year"`
+	Visible bool   `database:"visible"`
 }
 
 // getBirthday copies all birthday fields into
@@ -48,8 +52,8 @@ type birthdayEntry struct {
 // If the user from b.id is not found it returns
 // sql.ErrNoRows.
 func (cmd birthdayBase) getBirthday(b *birthdayEntry) (err error) {
-	row := database.QueryRow("SELECT day,month,year,visible FROM birthdays WHERE id=?", b.id)
-	return row.Scan(&b.day, &b.month, &b.year, &b.visible)
+	row := database.QueryRow("SELECT day,month,year,visible FROM birthdays WHERE id=?", b.ID)
+	return row.Scan(&b.Day, &b.Month, &b.Year, &b.Visible)
 }
 
 // hasBirthday returns true whether the given
@@ -62,7 +66,7 @@ func (cmd birthdayBase) hasBirthday(id uint64) (hasBirthday bool, err error) {
 // setBirthday inserts a new database entry with
 // the values from b.
 func (cmd birthdayBase) setBirthday(b birthdayEntry) {
-	_, err := database.Exec("INSERT INTO birthdays(id,day,month,year,visible) VALUES(?,?,?,?,?);", b.id, b.day, b.month, b.year, b.visible)
+	_, err := database.Exec("INSERT INTO birthdays(id,day,month,year,visible) VALUES(?,?,?,?,?);", b.ID, b.Day, b.Month, b.Year, b.Visible)
 	if err != nil {
 		log.Printf("Error on set birthday: %v", err)
 		cmd.ReplyError()
@@ -70,17 +74,52 @@ func (cmd birthdayBase) setBirthday(b birthdayEntry) {
 	}
 
 	// notify the user
-	if b.visible {
-		cmd.Replyf("Added your Birthday on %d.%d.%d!", b.day, b.month, b.year)
+	if b.Visible {
+		cmd.Replyf("Added your Birthday on %d.%d.%d!", b.Day, b.Month, b.Year)
 	} else {
-		cmd.ReplyHiddenf("Added your Birthday on %d.%d.%d!\nYou can close this now", b.day, b.month, b.year)
+		cmd.ReplyHiddenf("Added your Birthday on %d.%d.%d!\nYou can close this now", b.Day, b.Month, b.Year)
 	}
 }
 
 // updateBirthday updates an existing database
 // entry with the values from b.
 func (cmd birthdayBase) updateBirthday(b birthdayEntry) {
-	_, err := database.Exec("UPDATE birthdays SET day=?,month=?,year=?,visible=? WHERE id=?;", b.day, b.month, b.year, b.visible, b.id)
+	bdayOld := b
+	if err := cmd.getBirthday(&bdayOld); err != nil {
+		log.Printf("Error on update birthday: %v\n", err)
+		cmd.ReplyError()
+		return
+	}
+
+	var (
+		updateNames []string
+		updateVars  []any
+		oldV        reflect.Value = reflect.ValueOf(bdayOld)
+		v           reflect.Value = reflect.ValueOf(b)
+	)
+	for i := 0; i < v.NumField(); i++ {
+		var (
+			oldF = oldV.Field(i).Interface()
+			f    = v.Field(i).Interface()
+		)
+		if f != oldF {
+			tag := v.Type().Field(i).Tag.Get("database")
+			if tag == "" {
+				continue
+			}
+			updateNames = append(updateNames, tag)
+			updateVars = append(updateVars, f)
+		}
+
+	}
+
+	if len(updateNames) == 0 {
+		cmd.ReplyHidden("Nothing changed! You set your birthday already to this date.")
+		return
+	}
+
+	updateString := strings.Join(updateNames, "=?,") + "=?"
+	_, err := database.Exec("UPDATE birthdays SET "+updateString+";", updateVars...)
 	if err != nil {
 		log.Printf("Error on update birthday: %v\n", err)
 		cmd.ReplyError()
@@ -88,17 +127,17 @@ func (cmd birthdayBase) updateBirthday(b birthdayEntry) {
 	}
 
 	// notify the user
-	if b.visible {
-		cmd.Replyf("Updated your Birthday to '%d.%d.%d'!", b.day, b.month, b.year)
+	if b.Visible {
+		cmd.Replyf("Updated your Birthday to '%d.%d.%d'!", b.Day, b.Month, b.Year)
 	} else {
-		cmd.ReplyHiddenf("Updated your Birthday to '%d.%d.%d'!\nYou can close this now.", b.day, b.month, b.year)
+		cmd.ReplyHiddenf("Updated your Birthday to '%d.%d.%d'!\nYou can close this now.", b.Day, b.Month, b.Year)
 	}
 }
 
 // removeBirthday deletes the existing birthday
 // entry for the given id.
 func (cmd birthdayBase) removeBirthday(id uint64) {
-	b := birthdayEntry{id: id}
+	b := birthdayEntry{ID: id}
 	err := cmd.getBirthday(&b)
 	if err != nil {
 		log.Printf("Error on remove birthday: %v\n", err)
@@ -106,7 +145,7 @@ func (cmd birthdayBase) removeBirthday(id uint64) {
 		return
 	}
 
-	_, err = database.Exec("DELETE FROM birthdays WHERE id=?;", b.id)
+	_, err = database.Exec("DELETE FROM birthdays WHERE id=?;", b.ID)
 	if err != nil {
 		log.Printf("Error on remove birthday: %v\n", err)
 		cmd.ReplyError()
@@ -114,10 +153,10 @@ func (cmd birthdayBase) removeBirthday(id uint64) {
 	}
 
 	// notify the user
-	if b.visible {
-		cmd.Replyf("Removed your Birthday from the bot!\nWas on '%d.%d.%d'.", b.day, b.month, b.year)
+	if b.Visible {
+		cmd.Replyf("Removed your Birthday from the bot!\nWas on '%d.%d.%d'.", b.Day, b.Month, b.Year)
 	} else {
-		cmd.ReplyHiddenf("Removed your Birthday from the bot!\nWas on '%d.%d.%d'.\nYou can close this now.", b.day, b.month, b.year)
+		cmd.ReplyHiddenf("Removed your Birthday from the bot!\nWas on '%d.%d.%d'.\nYou can close this now.", b.Day, b.Month, b.Year)
 	}
 }
 
@@ -142,8 +181,8 @@ func (cmd birthdayBase) getBirthdaysMonth(month int) (birthdays []birthdayEntry,
 	defer rows.Close()
 
 	for rows.Next() {
-		b := birthdayEntry{month: month}
-		err = rows.Scan(&b.id, &b.day, &b.year, &b.visible)
+		b := birthdayEntry{Month: month}
+		err = rows.Scan(&b.ID, &b.Day, &b.Year, &b.Visible)
 		if err != nil {
 			return birthdays, err
 		}
@@ -151,7 +190,7 @@ func (cmd birthdayBase) getBirthdaysMonth(month int) (birthdays []birthdayEntry,
 	}
 
 	sort.Slice(birthdays, func(i, j int) bool {
-		return birthdays[i].day < birthdays[j].day
+		return birthdays[i].Day < birthdays[j].Day
 	})
 
 	return birthdays, nil
@@ -178,8 +217,8 @@ func getBirthdaysDate(day int, month int) (birthdays []birthdayEntry, err error)
 	defer rows.Close()
 
 	for rows.Next() {
-		b := birthdayEntry{day: day, month: month}
-		err = rows.Scan(&b.id, &b.year, &b.visible)
+		b := birthdayEntry{Day: day, Month: month}
+		err = rows.Scan(&b.ID, &b.Year, &b.Visible)
 		if err != nil {
 			return birthdays, err
 		}

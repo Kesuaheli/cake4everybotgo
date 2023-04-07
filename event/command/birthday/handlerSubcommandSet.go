@@ -118,19 +118,19 @@ func (cmd subcommandSet) interactionHandler() {
 	}
 
 	b := birthdayEntry{
-		id:      authorID,
-		day:     int(cmd.day.IntValue()),
-		month:   int(cmd.month.IntValue()),
-		visible: true,
+		ID:      authorID,
+		Day:     int(cmd.day.IntValue()),
+		Month:   int(cmd.month.IntValue()),
+		Visible: true,
 	}
 	if cmd.year != nil {
-		b.year = int(cmd.year.IntValue())
+		b.Year = int(cmd.year.IntValue())
 	}
 	if cmd.visible != nil {
-		b.visible = cmd.visible.BoolValue()
+		b.Visible = cmd.visible.BoolValue()
 	}
 
-	hasBDay, err := cmd.hasBirthday(b.id)
+	hasBDay, err := cmd.hasBirthday(b.ID)
 	if err != nil {
 		log.Printf("Error on getting birthday data: %v\n", err)
 		cmd.ReplyError()
