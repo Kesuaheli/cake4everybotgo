@@ -133,11 +133,6 @@ func subCommandList() *discordgo.ApplicationCommandOption {
 }
 
 func commandOptionListMonth() *discordgo.ApplicationCommandOption {
-	var choices []*discordgo.ApplicationCommandOptionChoice
-	for m := 1; m <= 12; m++ {
-		choices = append(choices, monthChoice(m))
-	}
-
 	return &discordgo.ApplicationCommandOption{
 		Type:                     discordgo.ApplicationCommandOptionInteger,
 		Name:                     lang.GetDefault(tp + "option.list.option.month"),
@@ -145,7 +140,7 @@ func commandOptionListMonth() *discordgo.ApplicationCommandOption {
 		Description:              lang.GetDefault(tp + "option.list.option.month.description"),
 		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.list.option.month.description"),
 		Required:                 true,
-		Choices:                  choices,
+		Choices:                  monthChoices("", 0, false),
 		MinValue:                 &minValueOne,
 		MaxValue:                 12,
 	}
