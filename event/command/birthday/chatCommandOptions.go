@@ -21,7 +21,8 @@ import (
 	"cake4everybot/event/command/util"
 )
 
-var minValue = 1.0
+var minValueOne = 1.0
+var minValueZero = 0.0
 
 func subCommandSet() *discordgo.ApplicationCommandOption {
 	options := []*discordgo.ApplicationCommandOption{
@@ -50,7 +51,7 @@ func commandOptionSetDay() *discordgo.ApplicationCommandOption {
 		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.day.description"),
 		Required:                 true,
 		Autocomplete:             true,
-		MinValue:                 &minValue,
+		MinValue:                 &minValueOne,
 		MaxValue:                 31,
 	}
 }
@@ -64,7 +65,7 @@ func commandOptionSetMonth() *discordgo.ApplicationCommandOption {
 		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.month.description"),
 		Required:                 true,
 		Autocomplete:             true,
-		MinValue:                 &minValue,
+		MinValue:                 &minValueOne,
 		MaxValue:                 12,
 	}
 }
@@ -85,22 +86,24 @@ func commandOptionSetVisible() *discordgo.ApplicationCommandOption {
 		{
 			Name:              lang.GetDefault("discord.command.generic.yes"),
 			NameLocalizations: *util.TranslateLocalization("discord.command.generic.yes"),
-			Value:             true,
+			Value:             1,
 		},
 		{
 			Name:              lang.GetDefault("discord.command.generic.no"),
 			NameLocalizations: *util.TranslateLocalization("discord.command.generic.no"),
-			Value:             false,
+			Value:             0,
 		},
 	}
 
 	return &discordgo.ApplicationCommandOption{
-		Type:                     discordgo.ApplicationCommandOptionBoolean,
+		Type:                     discordgo.ApplicationCommandOptionInteger,
 		Name:                     lang.GetDefault(tp + "option.set.option.visible"),
 		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.visible"),
 		Description:              lang.GetDefault(tp + "option.set.option.visible.description"),
 		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.visible.description"),
 		Choices:                  choices,
+		MinValue:                 &minValueZero,
+		MaxValue:                 1,
 	}
 }
 
@@ -143,7 +146,7 @@ func commandOptionListMonth() *discordgo.ApplicationCommandOption {
 		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.list.option.month.description"),
 		Required:                 true,
 		Choices:                  choices,
-		MinValue:                 &minValue,
+		MinValue:                 &minValueOne,
 		MaxValue:                 12,
 	}
 }

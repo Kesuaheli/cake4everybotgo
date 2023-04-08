@@ -139,7 +139,7 @@ func (cmd subcommandSet) interactionHandler() {
 		b.Year = int(cmd.year.IntValue())
 	}
 	if cmd.visible != nil {
-		b.Visible = cmd.visible.BoolValue()
+		b.Visible = cmd.visible.IntValue() == 1
 	}
 
 	hasBDay, err := cmd.hasBirthday(b.ID)
