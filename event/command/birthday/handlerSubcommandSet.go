@@ -19,6 +19,8 @@ import (
 	"strconv"
 
 	"github.com/bwmarrin/discordgo"
+
+	"cake4everybot/data/lang"
 )
 
 // The set subcommand. Used when executing the
@@ -46,13 +48,13 @@ func (cmd Chat) subcommandSet() subcommandSet {
 func (cmd subcommandSet) handler() {
 	for _, opt := range cmd.Options {
 		switch opt.Name {
-		case "day":
+		case lang.GetDefault(tp + "option.set.option.day"):
 			cmd.day = opt
-		case "month":
+		case lang.GetDefault(tp + "option.set.option.month"):
 			cmd.month = opt
-		case "year":
+		case lang.GetDefault(tp + "option.set.option.year"):
 			cmd.year = opt
-		case "visible":
+		case lang.GetDefault(tp + "option.set.option.visible"):
 			cmd.visible = opt
 		}
 	}
@@ -68,42 +70,52 @@ func (cmd subcommandSet) handler() {
 func (cmd subcommandSet) autocompleteHandler() {
 	var choices []*discordgo.ApplicationCommandOptionChoice
 
-	if cmd.day.Focused {
-		i, _ := strconv.Atoi(cmd.day.Value.(string))
-		choices = append(choices, dayChoice(i))
-	} else if cmd.month.Focused {
-		// jan, mar, may, jul, aug, oct, dec
-		choices = append(choices,
-			monthChoice(1),
-			monthChoice(3),
-			monthChoice(5),
-			monthChoice(7),
-			monthChoice(8),
-			monthChoice(10),
-			monthChoice(12),
-		)
-		if cmd.day.IntValue() < 31 {
-			// apr, jun, sep, nov
-			choices = append(choices,
-				monthChoice(4),
-				monthChoice(6),
-				monthChoice(9),
-				monthChoice(11),
-			)
+	if cmd.day != nil && cmd.day.Focused {
+		start := cmd.day.Value.(string)
+
+		var m int
+		if cmd.month != nil {
+			m = int(cmd.month.IntValue())
 		}
-		if cmd.day.IntValue() == 29 && (cmd.year.IntValue()%4) == 0 {
-			// feb (leap year)
-			choices = append(choices,
-				monthChoice(2),
-			)
+		if m == 0 {
+			m = 1
 		}
-		if cmd.day.IntValue() < 29 {
-			// feb
-			choices = append(choices,
-				monthChoice(2),
-			)
+		leapYear := cmd.year == nil || cmd.year.IntValue()%4 == 0
+
+		choices = dayChoices(start, m, leapYear)
+	} else if cmd.month != nil && cmd.month.Focused {
+		start := cmd.month.Value.(string)
+
+		var d int
+		if cmd.day != nil {
+			d = int(cmd.day.IntValue())
 		}
+		leapYear := cmd.year == nil || cmd.year.IntValue()%4 == 0
+
+		locale := lang.FallbackLang()
+		if user, err := cmd.Session.User(cmd.user.ID); err == nil {
+			locale = user.Locale
+			log.Printf("DEBUG: Users Locale '%s'\n", locale)
+		}
+
+		choices = monthChoices(start, d, leapYear)
+	} else if cmd.year != nil && cmd.year.Focused {
+		start := cmd.year.Value.(string)
+
+		var d, m int
+		if cmd.day != nil {
+			d = int(cmd.day.IntValue())
+		}
+		if cmd.month != nil {
+			m = int(cmd.month.IntValue())
+		}
+		if m == 0 {
+			m = 1
+		}
+
+		choices = yearChoices(start, d, m)
 	}
+
 	cmd.ReplyAutocomplete(choices)
 }
 

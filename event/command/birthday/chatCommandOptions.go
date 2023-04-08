@@ -76,6 +76,7 @@ func commandOptionSetYear() *discordgo.ApplicationCommandOption {
 		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.year"),
 		Description:              lang.GetDefault(tp + "option.set.option.year.description"),
 		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.year.description"),
+		Autocomplete:             true,
 	}
 }
 
@@ -130,7 +131,7 @@ func subCommandList() *discordgo.ApplicationCommandOption {
 
 func commandOptionListMonth() *discordgo.ApplicationCommandOption {
 	var choices []*discordgo.ApplicationCommandOptionChoice
-	for m := 0; m <= 12; m++ {
+	for m := 1; m <= 12; m++ {
 		choices = append(choices, monthChoice(m))
 	}
 
