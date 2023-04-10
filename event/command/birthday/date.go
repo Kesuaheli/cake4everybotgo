@@ -42,6 +42,8 @@ var (
 	}
 )
 
+// dayChoices returns a list of choices of days that matches the
+// given start string with the provided month and leap year values.
 func dayChoices(start string, month int, leapYear bool) (choices []*discordgo.ApplicationCommandOptionChoice) {
 	i, _ := strconv.Atoi(start)
 	if i < 0 || i > getDays(month, leapYear) {
@@ -62,6 +64,8 @@ func dayChoices(start string, month int, leapYear bool) (choices []*discordgo.Ap
 	return choices
 }
 
+// monthChoices returns a list of choices of months that matches the
+// given start string with the provided day and leap year values.
 func monthChoices(start string, day int, leapYear bool) (choices []*discordgo.ApplicationCommandOptionChoice) {
 	i, err := strconv.Atoi(start)
 	if err != nil {
@@ -119,15 +123,20 @@ func monthChoices(start string, day int, leapYear bool) (choices []*discordgo.Ap
 	return choices
 }
 
+// yearChoices returns a list of choices of years that matches the
+// given start string with the provided day and month value.
 func yearChoices(start string, day, month int) (choices []*discordgo.ApplicationCommandOptionChoice) {
 	maxDate := time.Now().AddDate(-16, 0, 0)
 
-	var decades []int
+	// represents the last century: list of the last 10 decades
+	var decades []int = make([]int, 0, 10)
 	cur_decade := maxDate.Year() / 10 * 10
-	for y := cur_decade; y >= cur_decade-100; y = y - 10 {
+	for y := cur_decade; y > cur_decade-100; y = y - 10 {
 		decades = append(decades, y)
 	}
 
+	// reply with list of decades when the start string isnt number
+	// or is zero
 	y, err := strconv.Atoi(start)
 	if err != nil || y == 0 {
 		for _, dec := range decades {
@@ -135,8 +144,8 @@ func yearChoices(start string, day, month int) (choices []*discordgo.Application
 		}
 		return choices
 	}
-	y = int(math.Abs(float64(y)))
 
+	y = int(math.Abs(float64(y)))
 	digits := len(fmt.Sprint(y))
 
 	rm := func(s []int, i int) []int {
@@ -163,15 +172,14 @@ func yearChoices(start string, day, month int) (choices []*discordgo.Application
 	}
 
 	mustLeapYear := day == 29 && month == 2
-	if !mustLeapYear && len(decades) > 2 ||
-		mustLeapYear && len(decades) > 10 ||
-		len(decades) == 0 {
+	if !mustLeapYear && len(decades) > 2 || len(decades) == 0 {
 		for _, dec := range decades {
 			choices = append(choices, intChoice(dec))
 		}
 		return choices
 	}
 
+	// reply with every year in the decades
 	for _, dec := range decades {
 		for y := 0; y < 10; y++ {
 			if time.Date(dec+y, time.Month(month), day, 0, 0, 0, 0, time.Local).After(maxDate) {
@@ -186,6 +194,7 @@ func yearChoices(start string, day, month int) (choices []*discordgo.Application
 	return choices
 }
 
+// intChoice returns a single choice from the given integer.
 func intChoice(i int) (choice *discordgo.ApplicationCommandOptionChoice) {
 	return &discordgo.ApplicationCommandOptionChoice{
 		Name:  fmt.Sprint(i),
@@ -193,6 +202,8 @@ func intChoice(i int) (choice *discordgo.ApplicationCommandOptionChoice) {
 	}
 }
 
+// monthChoice returns a single choice with the name of the month
+// defined by the given integer.
 func monthChoice(month int) (choice *discordgo.ApplicationCommandOptionChoice) {
 	key := fmt.Sprintf("%smonth.%d", tp, month-1)
 
