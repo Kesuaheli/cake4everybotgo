@@ -15,6 +15,7 @@
 package birthday
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 
@@ -58,5 +59,27 @@ func (cmd subcommandRemove) handler() {
 		return
 	}
 
-	cmd.removeBirthday(authorID)
+	b := cmd.removeBirthday(authorID)
+
+	embed := &discordgo.MessageEmbed{
+		Title: "Removed your Birthday from the bot!",
+		Footer: &discordgo.MessageEmbedFooter{
+			Text: "Birthday bot",
+		},
+		Fields: []*discordgo.MessageEmbedField{{
+			Name:   fmt.Sprintf("Your entered was on `%s`", b),
+			Inline: true,
+		}},
+	}
+
+	if b.Visible {
+		cmd.ReplyEmbed(embed)
+	} else {
+		embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
+			Name:   "You can close this",
+			Value:  "This is only visible to you, because your entered birthday wasn't visible for others.",
+			Inline: false,
+		})
+		cmd.ReplyHiddenEmbed(embed)
+	}
 }

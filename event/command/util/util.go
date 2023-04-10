@@ -45,6 +45,18 @@ func (i *InteractionUtil) Reply(message string) {
 	i.respond()
 }
 
+// Prints the given embeds as reply to the
+// user who executes the command.
+func (i *InteractionUtil) ReplyEmbed(embeds ...*discordgo.MessageEmbed) {
+	i.response = &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Embeds: embeds,
+		},
+	}
+	i.respond()
+}
+
 // Replyf formats according to a format specifier
 // and prints the result as emphemral reply to
 // the user who executes the command.
@@ -60,6 +72,19 @@ func (i *InteractionUtil) ReplyHidden(message string) {
 		Data: &discordgo.InteractionResponseData{
 			Content: message,
 			Flags:   discordgo.MessageFlagsEphemeral,
+		},
+	}
+	i.respond()
+}
+
+// Prints the given embeds as emphemral reply
+// to the user who executes the command.
+func (i *InteractionUtil) ReplyHiddenEmbed(embeds ...*discordgo.MessageEmbed) {
+	i.response = &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Embeds: embeds,
+			Flags:  discordgo.MessageFlagsEphemeral,
 		},
 	}
 	i.respond()

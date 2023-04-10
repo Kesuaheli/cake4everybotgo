@@ -15,10 +15,12 @@
 package birthday
 
 import (
+	"fmt"
 	"log"
 	"reflect"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -44,6 +46,19 @@ type birthdayEntry struct {
 	Month   int    `database:"month"`
 	Year    int    `database:"year"`
 	Visible bool   `database:"visible"`
+}
+
+func (b birthdayEntry) String() string {
+	if b.Year == 0 {
+		return fmt.Sprintf("%d.%d.", b.Day, b.Month)
+	} else {
+		bTime, err := time.Parse(time.DateOnly, fmt.Sprintf("%d-%02d-%02d", b.Year, b.Month, b.Day))
+		if err != nil {
+			log.Printf("couldn't parse date: %s", err)
+			return fmt.Sprintf("%d.%d.%d", b.Day, b.Month, b.Year)
+		}
+		return fmt.Sprintf(bTime.Format("Mon, _2 Jan 2006"))
+	}
 }
 
 // getBirthday copies all birthday fields into
@@ -134,30 +149,23 @@ func (cmd birthdayBase) updateBirthday(b birthdayEntry) {
 	}
 }
 
-// removeBirthday deletes the existing birthday
-// entry for the given id.
-func (cmd birthdayBase) removeBirthday(id uint64) {
+// removeBirthday deletes the existing birthday entry for the given
+// id and returns the previously entered birthday.
+func (cmd birthdayBase) removeBirthday(id uint64) birthdayEntry {
 	b := birthdayEntry{ID: id}
 	err := cmd.getBirthday(&b)
 	if err != nil {
 		log.Printf("Error on remove birthday: %v\n", err)
 		cmd.ReplyError()
-		return
+		return b
 	}
 
 	_, err = database.Exec("DELETE FROM birthdays WHERE id=?;", b.ID)
 	if err != nil {
 		log.Printf("Error on remove birthday: %v\n", err)
 		cmd.ReplyError()
-		return
 	}
-
-	// notify the user
-	if b.Visible {
-		cmd.Replyf("Removed your Birthday from the bot!\nWas on '%d.%d.%d'.", b.Day, b.Month, b.Year)
-	} else {
-		cmd.ReplyHiddenf("Removed your Birthday from the bot!\nWas on '%d.%d.%d'.\nYou can close this now.", b.Day, b.Month, b.Year)
-	}
+	return b
 }
 
 // getBirthdaysMonth return a sorted slice of
