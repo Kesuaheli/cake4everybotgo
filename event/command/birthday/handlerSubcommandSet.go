@@ -92,12 +92,6 @@ func (cmd subcommandSet) autocompleteHandler() {
 		}
 		leapYear := cmd.year == nil || cmd.year.IntValue()%4 == 0
 
-		locale := lang.FallbackLang()
-		if user, err := cmd.Session.User(cmd.user.ID); err == nil {
-			locale = user.Locale
-			log.Printf("DEBUG: Users Locale '%s'\n", locale)
-		}
-
 		choices = monthChoices(start, d, leapYear)
 	} else if cmd.year != nil && cmd.year.Focused {
 		start := cmd.year.Value.(string)

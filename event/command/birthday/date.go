@@ -16,7 +16,6 @@ package birthday
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"strconv"
 	"strings"
@@ -122,8 +121,6 @@ func monthChoices(start string, day int, leapYear bool) (choices []*discordgo.Ap
 
 func yearChoices(start string, day, month int) (choices []*discordgo.ApplicationCommandOptionChoice) {
 	maxDate := time.Now().AddDate(-16, 0, 0)
-	log.Println()
-	log.Println(maxDate)
 
 	var decades []int
 	cur_decade := maxDate.Year() / 10 * 10
