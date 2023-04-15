@@ -48,23 +48,29 @@ type birthdayEntry struct {
 	Visible bool   `database:"visible"`
 }
 
+// Returns a readable Form of the date
 func (b birthdayEntry) String() string {
-	if b.Year == 0 {
-		return fmt.Sprintf("%d.%d.", b.Day, b.Month)
-	} else {
-		bTime, err := time.Parse(time.DateOnly, fmt.Sprintf("%d-%02d-%02d", b.Year, b.Month, b.Day))
-		if err != nil {
-			log.Printf("couldn't parse date: %s", err)
-			return fmt.Sprintf("%d.%d.%d", b.Day, b.Month, b.Year)
+	bTime, err := time.Parse(time.DateOnly, fmt.Sprintf("%d-%02d-%02d", b.Year, b.Month, b.Day))
+	if err != nil {
+		log.Printf("couldn't parse date: %s", err)
+		if b.Year == 0 {
+			return fmt.Sprintf("%d.%d.", b.Day, b.Month)
 		}
-		return fmt.Sprintf(bTime.Format("Mon, _2 Jan 2006"))
+		return fmt.Sprintf("%d.%d.%d", b.Day, b.Month, b.Year)
 	}
+
+	layout := "Mon, _2 Jan 2006"
+	if b.Year == 0 {
+		layout = "_2 Jan"
+	}
+	return fmt.Sprintf(bTime.Format(layout))
+
 }
 
 // getBirthday copies all birthday fields into
 // the struct pointed at by b.
 //
-// If the user from b.id is not found it returns
+// If the user from b.ID is not found it returns
 // sql.ErrNoRows.
 func (cmd birthdayBase) getBirthday(b *birthdayEntry) (err error) {
 	row := database.QueryRow("SELECT day,month,year,visible FROM birthdays WHERE id=?", b.ID)
