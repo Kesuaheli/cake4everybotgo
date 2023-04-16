@@ -27,6 +27,8 @@ import (
 // command.
 type Chat struct {
 	birthdayBase
+
+	ID string
 }
 
 type subcommand interface {
@@ -75,4 +77,12 @@ func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.Interaction
 
 		sub.handler()
 	}
+}
+
+func (cmd *Chat) SetID(id string) {
+	cmd.ID = id
+}
+
+func (cmd Chat) GetID() string {
+	return cmd.ID
 }

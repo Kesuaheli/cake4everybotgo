@@ -27,6 +27,7 @@ type UserShow struct {
 	birthdayBase
 
 	data discordgo.ApplicationCommandInteractionData
+	ID   string
 }
 
 func (cmd UserShow) AppCmd() *discordgo.ApplicationCommand {
@@ -49,4 +50,12 @@ func (cmd UserShow) CmdHandler() func(s *discordgo.Session, i *discordgo.Interac
 		cmd.data = cmd.Interaction.ApplicationCommandData()
 		cmd.handler()
 	}
+}
+
+func (cmd *UserShow) SetID(id string) {
+	cmd.ID = id
+}
+
+func (cmd UserShow) GetID() string {
+	return cmd.ID
 }

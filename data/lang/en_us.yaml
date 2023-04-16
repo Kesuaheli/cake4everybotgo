@@ -8,6 +8,7 @@ discord.command:
   birthday:
     base: birthday
     base.description: Various settings for the birthday bot
+    display: Birthdays
 
     option.set: set
     option.set.description: Enter or change your birthday
@@ -41,3 +42,12 @@ discord.command:
       - October
       - November
       - December
+
+    msg.no_entry: |-
+      You don't have an entered birthday.
+      You can do it by running the %s command in the chat.
+    msg.no_entry.user: |-
+      It seems like %s doesn't entered their birthday.
+      This could also mean, that they set their birthday to not be visible by this search.
+    msg.self_hidden: Why is this invisible?
+    msg.self_hidden.desc: Since you've set your birthday to not be visible, this message is also only visible to you.

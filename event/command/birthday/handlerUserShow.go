@@ -15,8 +15,14 @@
 package birthday
 
 import (
+	"fmt"
 	"log"
 	"strconv"
+
+	"github.com/bwmarrin/discordgo"
+
+	"cake4everybot/data/lang"
+	"cake4everybot/event/command/util"
 )
 
 func (cmd UserShow) handler() {
@@ -38,6 +44,8 @@ func (cmd UserShow) handler() {
 		return
 	}
 
+	self := cmd.user.ID == cmd.data.TargetID
+
 	if hasBDay {
 		err = cmd.getBirthday(&b)
 		if err != nil {
@@ -46,18 +54,38 @@ func (cmd UserShow) handler() {
 			return
 		}
 		//pretend to have no birthday when its not visible
-		hasBDay = b.Visible
+		hasBDay = self || b.Visible
 	}
 
-	name := target.User.Username
-	if target.Nick != "" {
-		name = target.Nick
-	}
+	embed := util.AuthoredEmbed(cmd.Session, target, tp+"display")
 
 	if !hasBDay {
-		cmd.ReplyHiddenf("%s didn't enter their birthday nor set it visible.", name)
+		if self {
+			format := lang.GetDefault(tp + "msg.no_entry")
+			mentionCmd := util.MentionCommand(tp+"base", tp+"option.set")
+			embed.Description = fmt.Sprintf(format, mentionCmd)
+		} else {
+			format := lang.GetDefault(tp + "msg.no_entry.user")
+			embed.Description = fmt.Sprintf(format, target.Mention())
+		}
+		cmd.ReplyHiddenEmbed(embed)
 		return
 	}
 
-	cmd.Replyf("Birthday of %s is on %d.%d.%d", name, b.Day, b.Month, b.Year)
+	embed.Fields = []*discordgo.MessageEmbedField{{
+		Name: b.String(),
+	},
+	}
+
+	if hasBDay && self && !b.Visible {
+		embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
+			Name:   lang.GetDefault(tp + "msg.self_hidden"),
+			Value:  lang.GetDefault(tp + "msg.self_hidden.desc"),
+			Inline: false,
+		})
+		cmd.ReplyHiddenEmbed(embed)
+		return
+	}
+
+	cmd.ReplyEmbed(embed)
 }

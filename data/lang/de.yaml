@@ -8,6 +8,7 @@ discord.command:
   birthday:
     base: geburtstag
     base.description: Verschiedene Einstellungen für den Geburtstagsbot
+    display: Geburtstage
 
     option.set: setzen
     option.set.description: Trage deinen Geburtstag ein oder ändere ihn
@@ -41,3 +42,12 @@ discord.command:
       - Oktober
       - November
       - Dezember
+
+    msg.no_entry: |-
+      Du hast keinen eingetragenen Geburtstag.
+      Du kannst ihn aber jetzt über den %s Chat-Befehl hinzufügen.
+    msg.no_entry.user: |-
+      Es sieht so aus, als hätte %s keinen eingetragenen Geburtstag.
+      Es könnte auch bedeuten, dass er/sie den Geburtstag für diese Suche nicht nicht sichtbar gestellt hat.
+    msg.self_hidden: Warum ist das unsichtbar?
+    msg.self_hidden.desc: Da du deinen Geburtstag als nicht sichtbar eingetragen hast, kannst diese Nachricht nur du sehen.

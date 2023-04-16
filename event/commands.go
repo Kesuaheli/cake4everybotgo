@@ -16,6 +16,7 @@ package event
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -33,10 +34,10 @@ func registerCommands(s *discordgo.Session, guildID string) error {
 	var commandsList []command.Command
 
 	// chat (slash) commands
-	commandsList = append(commandsList, birthday.Chat{})
+	commandsList = append(commandsList, &birthday.Chat{})
 	// messsage commands
 	// user commands
-	commandsList = append(commandsList, birthday.UserShow{})
+	commandsList = append(commandsList, &birthday.UserShow{})
 
 	// early return when there're no commands to add, and remove all previously registered commands
 	if len(commandsList) == 0 {
@@ -54,10 +55,15 @@ func registerCommands(s *discordgo.Session, guildID string) error {
 	for k := range command.CommandMap {
 		commandNames = append(commandNames, k)
 	}
-	fmt.Printf("Adding used commands: %v...\n", commandNames)
+
+	log.Printf("Adding used commands: %v...\n", commandNames)
 	createdCommands, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, guildID, appCommandsList)
 	if err != nil {
 		return fmt.Errorf("failed on bulk overwrite commands: %v", err)
+	}
+
+	for _, cmd := range createdCommands {
+		command.CommandMap[cmd.Name].SetID(cmd.ID)
 	}
 
 	removeUnusedCommands(s, guildID, createdCommands)
@@ -67,7 +73,7 @@ func registerCommands(s *discordgo.Session, guildID string) error {
 func removeUnusedCommands(s *discordgo.Session, guildID string, createdCommands []*discordgo.ApplicationCommand) {
 	allRegisteredCommands, err := s.ApplicationCommands(s.State.User.ID, guildID)
 	if err != nil {
-		fmt.Printf("Error while removing unused commands: Could not get registered commands from guild '%s'. Err: %v\n", guildID, err)
+		log.Printf("Error while removing unused commands: Could not get registered commands from guild '%s'. Err: %v\n", guildID, err)
 		return
 	}
 	newCmdIds := make(map[string]bool)
@@ -80,10 +86,10 @@ func removeUnusedCommands(s *discordgo.Session, guildID string, createdCommands 
 		if !newCmdIds[cmd.ID] {
 			err = s.ApplicationCommandDelete(s.State.User.ID, guildID, cmd.ID)
 			if err != nil {
-				fmt.Printf("Error while removing unused commands: Could not delete comand '%s' ('/%s'). Err: %v\n", cmd.ID, cmd.Name, err)
+				log.Printf("Error while removing unused commands: Could not delete comand '%s' ('/%s'). Err: %v\n", cmd.ID, cmd.Name, err)
 				continue
 			}
-			fmt.Printf("Removed unused command: '/%s'\n", cmd.Name)
+			log.Printf("Removed unused command: '/%s'\n", cmd.Name)
 		}
 	}
 
