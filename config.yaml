@@ -5,3 +5,10 @@ additionalConfigs:
 discord:
   name: Cake4Everybot
   credits: Cake4Everybot, developed by @Kesuaheli#5868 and the ideas of the community ♥
+
+twitch:
+  name: c4e_bot
+  channels:
+    - kesuaheli
+    - taomi_
+    - c4e_bot

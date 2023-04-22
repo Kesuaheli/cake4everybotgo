@@ -23,8 +23,10 @@ import (
 	"cake4everybot/config"
 	"cake4everybot/database"
 	"cake4everybot/event"
+	"cake4everybot/twitch"
 
 	"github.com/bwmarrin/discordgo"
+	twitchgo "github.com/gempir/go-twitch-irc"
 	"github.com/spf13/viper"
 )
 
@@ -81,6 +83,16 @@ func main() {
 	if err != nil {
 		log.Printf("Error registering events: %v\n", err)
 	}
+
+	client := twitchgo.NewClient(viper.GetString("twitch.name"), viper.GetString("twitch.token"))
+	twitch.Handle(client)
+
+	go func() {
+		err := client.Connect()
+		if err != nil {
+			log.Fatalf("Error on connect to Twitch: %v", err)
+		}
+	}()
 
 	// Wait to end the bot
 	log.Println("Press Ctrl+C to exit")
