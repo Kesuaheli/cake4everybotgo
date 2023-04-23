@@ -17,11 +17,11 @@ package util
 import (
 	"fmt"
 
-	"github.com/bwmarrin/discordgo"
-	"github.com/spf13/viper"
-
 	"cake4everybot/data/lang"
 	"cake4everybot/event/command"
+
+	"github.com/bwmarrin/discordgo"
+	"github.com/spf13/viper"
 )
 
 // AuthoredEmbed returns a new Embed with an author and footer set.

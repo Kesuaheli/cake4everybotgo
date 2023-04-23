@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/bwmarrin/discordgo"
-
 	"cake4everybot/event/command"
 	"cake4everybot/event/command/birthday"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 func registerCommands(s *discordgo.Session, guildID string) error {

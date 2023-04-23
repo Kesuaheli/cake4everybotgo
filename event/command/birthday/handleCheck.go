@@ -20,9 +20,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bwmarrin/discordgo"
-
 	"cake4everybot/database"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 func Check(s *discordgo.Session) {

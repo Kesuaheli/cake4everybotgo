@@ -15,10 +15,10 @@
 package birthday
 
 import (
-	"github.com/bwmarrin/discordgo"
-
 	"cake4everybot/data/lang"
 	"cake4everybot/event/command/util"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // The chat (slash) command of the birthday

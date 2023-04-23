@@ -20,10 +20,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bwmarrin/discordgo"
-
 	"cake4everybot/data/lang"
 	"cake4everybot/event/command/util"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // The set subcommand. Used when executing the

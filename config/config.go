@@ -17,9 +17,9 @@ package config
 import (
 	"log"
 
-	"github.com/spf13/viper"
-
 	"cake4everybot/data/lang"
+
+	"github.com/spf13/viper"
 )
 
 // Load loads the given configuration file as the global config. It

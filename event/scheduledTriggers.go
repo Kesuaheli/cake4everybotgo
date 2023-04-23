@@ -17,10 +17,10 @@ package event
 import (
 	"time"
 
+	"cake4everybot/event/command/birthday"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/spf13/viper"
-
-	"cake4everybot/event/command/birthday"
 )
 
 func addScheduledTriggers(s *discordgo.Session) {

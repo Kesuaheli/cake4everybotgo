@@ -15,9 +15,9 @@
 package birthday
 
 import (
-	"github.com/bwmarrin/discordgo"
-
 	"cake4everybot/event/command/util"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // A user command of the birthday package. It
