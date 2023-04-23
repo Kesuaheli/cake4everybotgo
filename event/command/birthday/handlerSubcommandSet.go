@@ -138,7 +138,7 @@ func (cmd subcommandSet) interactionHandler() {
 		b.Visible = cmd.visible.IntValue() == 1
 	}
 
-	embed := util.AuthoredEmbed(cmd.Session, cmd.user, tp+"display")
+	embed := util.AuthoredEmbed(cmd.Session, cmd.member, tp+"display")
 
 	b.time, err = time.Parse(time.DateOnly, fmt.Sprintf("%04d-%02d-%02d", b.Year, b.Month, b.Day))
 	if err != nil {

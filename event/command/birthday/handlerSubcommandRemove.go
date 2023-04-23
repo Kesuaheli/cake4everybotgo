@@ -15,6 +15,8 @@
 package birthday
 
 import (
+	"cake4everybot/data/lang"
+	"cake4everybot/event/command/util"
 	"fmt"
 	"log"
 	"strconv"
@@ -54,8 +56,12 @@ func (cmd subcommandRemove) handler() {
 		return
 	}
 
+	e := util.AuthoredEmbed(cmd.Session, cmd.member, tp+"display")
+
 	if !hasBDay {
-		cmd.ReplyHidden("I cant find your birthday to remove it.\nMaybe already removed?")
+		e.Description = lang.Get(tp+"msg.remove.not_found", lang.FallbackLang())
+		e.Color = 0xFF0000
+		cmd.ReplyHiddenEmbed(e)
 		return
 	}
 
@@ -66,20 +72,18 @@ func (cmd subcommandRemove) handler() {
 		return
 	}
 
-	embed := &discordgo.MessageEmbed{
-		Title: "Removed your Birthday from the bot!",
-		Footer: &discordgo.MessageEmbedFooter{
-			Text: "Birthday bot",
-		},
-		Fields: []*discordgo.MessageEmbedField{{
-			Name:   fmt.Sprintf("Your entered was on `%s`", b),
-			Inline: true,
-		}},
-	}
+	e.Description = lang.Get(tp+"msg.remove", lang.FallbackLang())
+	e.Color = 0x00FF00
+	was_before := lang.Get(tp+"msg.remove.was", lang.FallbackLang())
+	was_before = fmt.Sprintf(was_before, b)
+	e.Fields = []*discordgo.MessageEmbedField{{
+		Name:   was_before,
+		Inline: true,
+	}}
 
 	if b.Visible {
-		cmd.ReplyEmbed(embed)
+		cmd.ReplyEmbed(e)
 	} else {
-		cmd.ReplyHiddenEmbed(embed)
+		cmd.ReplyHiddenEmbed(e)
 	}
 }

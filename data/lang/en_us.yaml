@@ -60,6 +60,9 @@ discord.command:
       It seems like %s doesn't entered their birthday.
       This could also mean, that they set their birthday to not be visible by this search.
     msg.invalid_date: The date you entered is not a valid date. Please have a look and try again.
+    msg.remove: Your birthday was removed from the bot!
+    msg.remove.was: Your entered birthday was on %s.
+    msg.remove.not_found: You dont have an entered birthday to remove it. Maybe you'd already remove it?
     msg.set: Your birthday was added to the bot! All server members will receive a notification on your birthday.
     msg.set.date: Birthday is set to
     msg.set.update: Your birthday was updated

@@ -59,6 +59,8 @@ func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.Interaction
 		cmd.user = i.User
 		if i.Member != nil {
 			cmd.user = i.Member.User
+		} else if i.User != nil {
+			cmd.member = &discordgo.Member{User: i.User}
 		}
 
 		subcommandName := i.ApplicationCommandData().Options[0].Name
