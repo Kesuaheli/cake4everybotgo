@@ -30,7 +30,7 @@ import (
 //		The name and icon in the author field
 //		of the embed.
 //	sectionName:
-//		The name used in the standard footer.
+//		The translation key used in the standard footer.
 func AuthoredEmbed[T *discordgo.User | *discordgo.Member](s *discordgo.Session, author T, sectionName string) *discordgo.MessageEmbed {
 	var username string
 	user, ok := any(author).(*discordgo.User)

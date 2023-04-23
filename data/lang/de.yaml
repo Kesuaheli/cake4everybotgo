@@ -29,6 +29,14 @@ discord.command:
     option.list.option.month: monat
     option.list.option.month.description: Der Monat, aus dem alle Geburtstage aufgelistet werden sollen
 
+    weekday:
+      - Montag
+      - Dienstag
+      - Mittwoch
+      - Donnerstag
+      - Freitag
+      - Samstag
+      - Sonntag
     month:
       - Januar
       - Februar
@@ -51,3 +59,25 @@ discord.command:
       Es könnte auch bedeuten, dass er/sie den Geburtstag für diese Suche nicht nicht sichtbar gestellt hat.
     msg.self_hidden: Warum ist das unsichtbar?
     msg.self_hidden.desc: Da du deinen Geburtstag als nicht sichtbar eingetragen hast, kannst diese Nachricht nur du sehen.
+    msg.invalid_date: Dein eingegebenes Datum ist ungültig. Bitte überprüfe es und versuche es dann nochmal.
+    msg.set: Dein Geburtstag wurde zum Bot hinzugefügt! Alle Servermitglieder werden an deinem Geburtstag eine Benachrichtigung vom Bot erhalten.
+    msg.set.date: Geburtstag gesetzt auf
+    msg.set.update: Dein Geburtstag wurde aktualisiert
+    msg.set.update.no_changes: Es wurde nichts geändert! Dein Geburtstag ist bereits auf dieses Datum gesetzt.
+    msg.set.update.day: Tag verändert
+    msg.set.update.month: Monat verändert
+    msg.set.update.year: Geburtsjahr verändert
+    msg.set.update.year.add: Geburtsjahr hinzugefügt
+    msg.set.update.year.remove: Geburtsjahr entfernt
+    msg.set.update.year.was: War %d
+    msg.set.update.date: Geburtsdatum verändert
+    msg.set.update.date.unchanged: Geburtsdatum unverändert
+    msg.set.update.visibility: Sichtbarkeit verändert
+    msg.set.update.visibility.true: |-
+      Dein Geburtstagseintrag ist jetzt **sichtbar** für andere!
+      Andere Mitglieder können nun deinen Geburtstag sehen und danach suchen.
+    msg.set.update.visibility.false: |-
+      Dein Geburtstagseintrag ist jetzt **unsichtbar** für andere!
+      Andere Mitglieder können deinen Geburtstag nun nicht mehr sehen oder danach suchen. Du kannst ihn dir aber immer noch jederzeit anzeigen lassen.
+      Hinweis: Der Bot wird trotzdem weiterhin eine Benachrichtigung an deinem Geburtstag senden. Wenn du das auch nicht mehr möchtest, kannst du deinen Geburtstag mit dem %s Befehl vom Bot entfernen.
+    msg.next: Next birthday

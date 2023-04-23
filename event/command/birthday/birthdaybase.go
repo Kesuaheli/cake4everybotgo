@@ -16,7 +16,6 @@ package birthday
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 	"sort"
 	"strings"
@@ -24,6 +23,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 
+	"cake4everybot/data/lang"
 	"cake4everybot/database"
 	"cake4everybot/event/command/util"
 )
@@ -46,25 +46,49 @@ type birthdayEntry struct {
 	Month   int    `database:"month"`
 	Year    int    `database:"year"`
 	Visible bool   `database:"visible"`
+	time    time.Time
 }
 
 // Returns a readable Form of the date
 func (b birthdayEntry) String() string {
-	bTime, err := time.Parse(time.DateOnly, fmt.Sprintf("%d-%02d-%02d", b.Year, b.Month, b.Day))
-	if err != nil {
-		log.Printf("couldn't parse date: %s", err)
-		if b.Year == 0 {
-			return fmt.Sprintf("%d.%d.", b.Day, b.Month)
-		}
-		return fmt.Sprintf("%d.%d.%d", b.Day, b.Month, b.Year)
-	}
-
-	layout := "Mon, _2 Jan 2006"
 	if b.Year == 0 {
-		layout = "_2 Jan"
+		month := lang.GetSlice(tp+"month", b.Month-1, lang.FallbackLang())
+		return fmt.Sprintf("%d. %s", b.Day, month)
 	}
-	return fmt.Sprintf(bTime.Format(layout))
+	return fmt.Sprintf("<t:%d:D>", b.time.Unix())
+}
 
+// DOW returns the day of the week with
+//
+//	MON = 0
+//	TUE = 1
+//	SUN = 6
+//
+// C code by sakamoto@sm.sony.co.jp (Tomohiko Sakamoto) posted on
+// comp.lang.c on March 10th, 1993:
+//
+//	dow(m,d,y){y-=m<3;return(y+y/4-y/100+y/400+"-bed=pen+mad."[m]+d)%7;}
+func (b birthdayEntry) DOW() int {
+	b.Year = b.Year - util.Btoi(b.Month < 3)
+	monthKey := "WLAN or Fence"
+	return int(b.Year+b.Year/4-b.Year/100+b.Year/400+int(monthKey[b.Month])+b.Day) % 7
+}
+
+// Next returns the timestamp of the next birthday
+func (b birthdayEntry) Next() int64 {
+	years := time.Now().Year() - b.Year
+	nextTime := b.time.AddDate(years, 0, 0)
+	if nextTime.Sub(time.Now()) <= 0 {
+		nextTime = b.time.AddDate(years+1, 0, 0)
+	}
+	return nextTime.Unix()
+}
+
+// ParseTime tries to parse the date (b.Day, b.Month, b.Year) to a
+// time.Time object.
+func (b *birthdayEntry) ParseTime() (err error) {
+	b.time, err = time.Parse(time.DateOnly, fmt.Sprintf("%04d-%02d-%02d", b.Year, b.Month, b.Day))
+	return err
 }
 
 // getBirthday copies all birthday fields into
@@ -74,7 +98,11 @@ func (b birthdayEntry) String() string {
 // sql.ErrNoRows.
 func (cmd birthdayBase) getBirthday(b *birthdayEntry) (err error) {
 	row := database.QueryRow("SELECT day,month,year,visible FROM birthdays WHERE id=?", b.ID)
-	return row.Scan(&b.Day, &b.Month, &b.Year, &b.Visible)
+	err = row.Scan(&b.Day, &b.Month, &b.Year, &b.Visible)
+	if err != nil {
+		return err
+	}
+	return b.ParseTime()
 }
 
 // hasBirthday returns true whether the given
@@ -86,73 +114,58 @@ func (cmd birthdayBase) hasBirthday(id uint64) (hasBirthday bool, err error) {
 
 // setBirthday inserts a new database entry with
 // the values from b.
-func (cmd birthdayBase) setBirthday(b birthdayEntry) {
+func (cmd birthdayBase) setBirthday(b birthdayEntry) error {
 	_, err := database.Exec("INSERT INTO birthdays(id,day,month,year,visible) VALUES(?,?,?,?,?);", b.ID, b.Day, b.Month, b.Year, b.Visible)
-	if err != nil {
-		log.Printf("Error on set birthday: %v", err)
-		cmd.ReplyError()
-		return
-	}
-
-	// notify the user
-	if b.Visible {
-		cmd.Replyf("Added your Birthday on %d.%d.%d!", b.Day, b.Month, b.Year)
-	} else {
-		cmd.ReplyHiddenf("Added your Birthday on %d.%d.%d!\nYou can close this now", b.Day, b.Month, b.Year)
-	}
+	return err
 }
 
 // updateBirthday updates an existing database
 // entry with the values from b.
-func (cmd birthdayBase) updateBirthday(b birthdayEntry) {
-	bdayOld := b
-	if err := cmd.getBirthday(&bdayOld); err != nil {
-		log.Printf("Error on update birthday: %v\n", err)
-		cmd.ReplyError()
-		return
+func (cmd birthdayBase) updateBirthday(b birthdayEntry) (before birthdayEntry, err error) {
+	err = b.ParseTime()
+	if err != nil {
+		return birthdayEntry{}, err
+	}
+	before.ID = b.ID
+	if err = cmd.getBirthday(&before); err != nil {
+		return birthdayEntry{}, fmt.Errorf("trying to get old birthday: %v", err)
 	}
 
 	var (
 		updateNames []string
 		updateVars  []any
-		oldV        reflect.Value = reflect.ValueOf(bdayOld)
+		oldV        reflect.Value = reflect.ValueOf(before)
 		v           reflect.Value = reflect.ValueOf(b)
 	)
 	for i := 0; i < v.NumField(); i++ {
 		var (
-			oldF = oldV.Field(i).Interface()
-			f    = v.Field(i).Interface()
+			oldF = oldV.Field(i)
+			f    = v.Field(i)
+			p    = f.Type().PkgPath()
 		)
-		if f != oldF {
+		//skip unexported fields
+		if len(p) != 0 {
+			continue
+		}
+
+		if f.Interface() != oldF.Interface() {
 			tag := v.Type().Field(i).Tag.Get("database")
 			if tag == "" {
 				continue
 			}
 			updateNames = append(updateNames, tag)
-			updateVars = append(updateVars, f)
+			updateVars = append(updateVars, f.Interface())
 		}
 
 	}
 
 	if len(updateNames) == 0 {
-		cmd.ReplyHidden("Nothing changed! You set your birthday already to this date.")
-		return
+		return before, nil
 	}
 
 	updateString := strings.Join(updateNames, "=?,") + "=?"
-	_, err := database.Exec("UPDATE birthdays SET "+updateString+";", updateVars...)
-	if err != nil {
-		log.Printf("Error on update birthday: %v\n", err)
-		cmd.ReplyError()
-		return
-	}
-
-	// notify the user
-	if b.Visible {
-		cmd.Replyf("Updated your Birthday to '%d.%d.%d'!", b.Day, b.Month, b.Year)
-	} else {
-		cmd.ReplyHiddenf("Updated your Birthday to '%d.%d.%d'!\nYou can close this now.", b.Day, b.Month, b.Year)
-	}
+	_, err = database.Exec("UPDATE birthdays SET "+updateString+";", updateVars...)
+	return before, err
 }
 
 // removeBirthday deletes the existing birthday entry for the given

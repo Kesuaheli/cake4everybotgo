@@ -29,6 +29,14 @@ discord.command:
     option.list.option.month: month
     option.list.option.month.description: The month to list all birthdays from
 
+    weekday:
+      - Monday
+      - Tuesday
+      - Wednesday
+      - Thursday
+      - Friday
+      - Saturday
+      - Sunday
     month:
       - January
       - February
@@ -51,3 +59,25 @@ discord.command:
       This could also mean, that they set their birthday to not be visible by this search.
     msg.self_hidden: Why is this invisible?
     msg.self_hidden.desc: Since you've set your birthday to not be visible, this message is also only visible to you.
+    msg.invalid_date: The date you entered is not a valid date. Please have a look and try again.
+    msg.set: Your birthday was added to the bot! All server members will receive a notification on your birthday.
+    msg.set.date: Birthday is set to
+    msg.set.update: Your birthday was updated
+    msg.set.update.no_changes: Nothing changed! Your birthday is already set to this date.
+    msg.set.update.day: Day changed
+    msg.set.update.month: Month changed
+    msg.set.update.year: Year changed
+    msg.set.update.year.add: Year added
+    msg.set.update.year.remove: Year removed
+    msg.set.update.year.was: Was %d
+    msg.set.update.date: Date changed
+    msg.set.update.date.unchanged: Date unchanged
+    msg.set.update.visibility: Visibility changed
+    msg.set.update.visibility.true: |-
+      Your birthday is now **visible** to others!
+      Other members can see and search for your birthday now.
+    msg.set.update.visibility.false: |-
+      Your birthday is now **hidden** to others!
+      Other members can no longer see and search for your birthday. But you're still able to see your own birthday at any time.
+      Note that the bot still sends a notification on your birthday. If you dont want that anymore, you can remove your birthday using the %s command.
+    msg.next: Next birthday

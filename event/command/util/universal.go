@@ -39,3 +39,14 @@ func ContainsString(s []string, str ...string) bool {
 	}
 	return false
 }
+
+// Btoi returns the integer for the given boolean b.
+//
+//	Btoi(false) => 0
+//	Btoi(true) => 1
+func Btoi(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
+}

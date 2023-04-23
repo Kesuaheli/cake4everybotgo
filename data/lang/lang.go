@@ -158,6 +158,60 @@ func GetDefault(key string) string {
 	return Get(key, FallbackLang())
 }
 
+// GetSlice returns the configured translation for index i in the
+// list at key in the given language lang.
+//   - If lang is not a loaded language, Get translates key with the
+//     fallback language.
+//   - If key either does not exits or is an empty string, Get
+//     translates key with the fallback language.
+//   - However, if lang already is the fallback language in one of the
+//     cases above, Get returns key instead.
+//   - If the list at key contains fewer items than needed, Get
+//     returns key instead
+//
+// In all four of these 'fail cases', Get will print a warning
+// message in the log
+func GetSlice(key string, i int, lang string) string {
+	if len(langsMap) == 0 {
+		log.Println()
+		log.Printf("ERROR: Tried to get translation, but no language loaded")
+		log.Println()
+		return key
+	}
+
+	lang = Unify(lang)
+
+	v, ok := langsMap[lang]
+	fLang := FallbackLang()
+	if !ok {
+		if lang == fLang {
+			log.Println()
+			log.Printf("ERROR: Tried to get key from fallback language ('%s'), but its not load", fLang)
+			log.Println()
+			return key
+		}
+		log.Printf("WARNING: language '%s' is not loaded, using '%s' as fallback instead", lang, fLang)
+		return Get(key, fLang)
+	}
+
+	s := v.GetStringSlice(key)
+	if len(s) <= i {
+		log.Printf("WARNING: tried to get index %d from key '%s' in lang '%s', but it has only %d items", i, key, lang, len(s))
+		return key
+	}
+	val := s[i]
+	if val != "" {
+		return val
+	}
+
+	if lang == fLang {
+		log.Printf("WARNING: key '%s' is not defined in fallback language '%s'", key, lang)
+		return key
+	}
+	log.Printf("WARNING: key '%s' is not defined in language '%s', using '%s' as fallback instead", key, lang, fLang)
+	return Get(key, fLang)
+}
+
 // GetLangs returns all loaded languages
 func GetLangs() []string {
 	langs := make([]string, 0, len(langsMap))
