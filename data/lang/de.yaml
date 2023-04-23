@@ -4,6 +4,8 @@ discord.command:
   generic:
     yes: Ja
     no: Nein
+    msg.self_hidden: Warum ist das unsichtbar?
+    msg.self_hidden.desc: Da du deinen Geburtstag als nicht sichtbar eingetragen hast, kannst diese Nachricht nur du sehen. Du kannst diese Nachricht nun schließen.
 
   birthday:
     base: geburtstag
@@ -57,8 +59,6 @@ discord.command:
     msg.no_entry.user: |-
       Es sieht so aus, als hätte %s keinen eingetragenen Geburtstag.
       Es könnte auch bedeuten, dass er/sie den Geburtstag für diese Suche nicht nicht sichtbar gestellt hat.
-    msg.self_hidden: Warum ist das unsichtbar?
-    msg.self_hidden.desc: Da du deinen Geburtstag als nicht sichtbar eingetragen hast, kannst diese Nachricht nur du sehen.
     msg.invalid_date: Dein eingegebenes Datum ist ungültig. Bitte überprüfe es und versuche es dann nochmal.
     msg.set: Dein Geburtstag wurde zum Bot hinzugefügt! Alle Servermitglieder werden an deinem Geburtstag eine Benachrichtigung vom Bot erhalten.
     msg.set.date: Geburtstag gesetzt auf

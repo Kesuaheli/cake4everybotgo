@@ -4,6 +4,8 @@ discord.command:
   generic:
     yes: Yes
     no: No
+    msg.self_hidden: Why is this invisible?
+    msg.self_hidden.desc: Since you've set your birthday to not be visible, this message is also only visible to you. You can close this message now.
 
   birthday:
     base: birthday
@@ -57,8 +59,6 @@ discord.command:
     msg.no_entry.user: |-
       It seems like %s doesn't entered their birthday.
       This could also mean, that they set their birthday to not be visible by this search.
-    msg.self_hidden: Why is this invisible?
-    msg.self_hidden.desc: Since you've set your birthday to not be visible, this message is also only visible to you.
     msg.invalid_date: The date you entered is not a valid date. Please have a look and try again.
     msg.set: Your birthday was added to the bot! All server members will receive a notification on your birthday.
     msg.set.date: Birthday is set to

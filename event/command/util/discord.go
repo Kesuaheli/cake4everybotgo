@@ -57,26 +57,33 @@ func AuthoredEmbed[T *discordgo.User | *discordgo.Member](s *discordgo.Session, 
 	return embed
 }
 
-// SetEmbedFooter takes one ore more pointer to embeds and sets the
-// standard footer with the given name to each one.
+// SetEmbedFooter takes a pointer to an embeds and sets the standard
+// footer with the given name.
 //
-//	name:
+//	sectionName:
 //		translation key for the name
-func SetEmbedFooter(s *discordgo.Session, sectionName string, e ...*discordgo.MessageEmbed) {
+func SetEmbedFooter(s *discordgo.Session, sectionName string, e *discordgo.MessageEmbed) {
 	botName := viper.GetString("discord.name")
 	name := lang.Get(sectionName, lang.FallbackLang())
 
-	f := &discordgo.MessageEmbedFooter{
+	if e == nil {
+		e = &discordgo.MessageEmbed{}
+	}
+	e.Footer = &discordgo.MessageEmbedFooter{
 		Text:    fmt.Sprintf("%s > %s", botName, name),
 		IconURL: s.State.User.AvatarURL(""),
 	}
+}
 
-	for _, e := range e {
-		if e == nil {
-			e = &discordgo.MessageEmbed{}
-		}
-		e.Footer = f
+// AddReplyHiddenField appends the standard field for ephemral
+// embeds to the existing fields of the given embed.
+func AddReplyHiddenField(e *discordgo.MessageEmbed) {
+	f := &discordgo.MessageEmbedField{
+		Name:   lang.Get("discord.command.generic.self_hidden", lang.FallbackLang()),
+		Value:  lang.Get("discord.command.generic.self_hidden.desc", lang.FallbackLang()),
+		Inline: false,
 	}
+	e.Fields = append(e.Fields, f)
 }
 
 // MentionCommand returns the mention string for a slashcommand

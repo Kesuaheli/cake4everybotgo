@@ -80,11 +80,6 @@ func (cmd subcommandRemove) handler() {
 	if b.Visible {
 		cmd.ReplyEmbed(embed)
 	} else {
-		embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
-			Name:   "You can close this",
-			Value:  "This is only visible to you, because your entered birthday wasn't visible for others.",
-			Inline: false,
-		})
 		cmd.ReplyHiddenEmbed(embed)
 	}
 }

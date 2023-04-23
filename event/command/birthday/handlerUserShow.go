@@ -78,11 +78,6 @@ func (cmd UserShow) handler() {
 	}
 
 	if hasBDay && self && !b.Visible {
-		embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
-			Name:   lang.GetDefault(tp + "msg.self_hidden"),
-			Value:  lang.GetDefault(tp + "msg.self_hidden.desc"),
-			Inline: false,
-		})
 		cmd.ReplyHiddenEmbed(embed)
 		return
 	}

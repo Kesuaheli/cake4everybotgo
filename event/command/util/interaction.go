@@ -58,13 +58,13 @@ func (i *InteractionUtil) ReplyEmbed(embeds ...*discordgo.MessageEmbed) {
 }
 
 // Replyf formats according to a format specifier
-// and prints the result as emphemral reply to
+// and prints the result as ephemral reply to
 // the user who executes the command.
 func (i *InteractionUtil) ReplyHiddenf(format string, a ...any) {
 	i.ReplyHidden(fmt.Sprintf(format, a...))
 }
 
-// Prints the given message as emphemral reply
+// Prints the given message as ephemral reply
 // to the user who executes the command.
 func (i *InteractionUtil) ReplyHidden(message string) {
 	i.response = &discordgo.InteractionResponse{
@@ -77,9 +77,16 @@ func (i *InteractionUtil) ReplyHidden(message string) {
 	i.respond()
 }
 
-// Prints the given embeds as emphemral reply
-// to the user who executes the command.
+// Prints the given embeds as ephemral reply to the user who
+// executes the command. Automatically append "hidden reply note" to
+// last embed. See AddReplyHiddenField() for more.
 func (i *InteractionUtil) ReplyHiddenEmbed(embeds ...*discordgo.MessageEmbed) {
+	l := len(embeds)
+	if l == 0 {
+		return
+	}
+	AddReplyHiddenField(embeds[l-1])
+
 	i.response = &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
