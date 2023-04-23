@@ -98,7 +98,9 @@ func monthChoices(start string, day int, leapYear bool) (choices []*discordgo.Ap
 	if i == 1 {
 		choices = append(choices, monthChoice(1))
 		choices = append(choices, monthChoice(10))
-		choices = append(choices, monthChoice(11))
+		if day <= getDays(11, leapYear) {
+			choices = append(choices, monthChoice(11))
+		}
 		choices = append(choices, monthChoice(12))
 		return choices
 	}
@@ -109,7 +111,7 @@ func monthChoices(start string, day int, leapYear bool) (choices []*discordgo.Ap
 		choices = append(choices, monthChoice(12))
 		return choices
 	}
-	if util.ContainsInt([]int{3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, i) {
+	if i > 2 {
 		choices = append(choices, monthChoice(i))
 		return choices
 	}
