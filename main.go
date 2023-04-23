@@ -20,12 +20,12 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/bwmarrin/discordgo"
+	"github.com/spf13/viper"
+
 	"cake4everybot/config"
 	"cake4everybot/database"
 	"cake4everybot/event"
-
-	"github.com/bwmarrin/discordgo"
-	"github.com/spf13/viper"
 )
 
 const banner string = "\n" +

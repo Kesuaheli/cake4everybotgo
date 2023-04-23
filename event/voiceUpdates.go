@@ -15,9 +15,10 @@
 package event
 
 import (
-	"cake4everybot/database"
 	"fmt"
 	"log"
+
+	"cake4everybot/database"
 
 	"github.com/bwmarrin/discordgo"
 )
