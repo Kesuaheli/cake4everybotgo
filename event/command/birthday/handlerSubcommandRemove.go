@@ -59,7 +59,12 @@ func (cmd subcommandRemove) handler() {
 		return
 	}
 
-	b := cmd.removeBirthday(authorID)
+	b, err := cmd.removeBirthday(authorID)
+	if err != nil {
+		log.Printf("Error on remove birthday: %v\n", err)
+		cmd.ReplyError()
+		return
+	}
 
 	embed := &discordgo.MessageEmbed{
 		Title: "Removed your Birthday from the bot!",

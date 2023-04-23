@@ -157,21 +157,15 @@ func (cmd birthdayBase) updateBirthday(b birthdayEntry) {
 
 // removeBirthday deletes the existing birthday entry for the given
 // id and returns the previously entered birthday.
-func (cmd birthdayBase) removeBirthday(id uint64) birthdayEntry {
+func (cmd birthdayBase) removeBirthday(id uint64) (birthdayEntry, error) {
 	b := birthdayEntry{ID: id}
 	err := cmd.getBirthday(&b)
 	if err != nil {
-		log.Printf("Error on remove birthday: %v\n", err)
-		cmd.ReplyError()
-		return b
+		return b, err
 	}
 
 	_, err = database.Exec("DELETE FROM birthdays WHERE id=?;", b.ID)
-	if err != nil {
-		log.Printf("Error on remove birthday: %v\n", err)
-		cmd.ReplyError()
-	}
-	return b
+	return b, err
 }
 
 // getBirthdaysMonth return a sorted slice of
