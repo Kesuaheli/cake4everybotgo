@@ -69,7 +69,7 @@ func Load() {
 
 		err := lang.ReadInConfig()
 		if err != nil {
-			log.Printf("WARNING: Could not load language '%s': %v", langName, err)
+			log.Printf("WARNING: Could not load language '%s': %v\n", langName, err)
 			continue
 		}
 
@@ -120,7 +120,7 @@ func FallbackLang() string {
 func Get(key, lang string) string {
 	if len(langsMap) == 0 {
 		log.Println()
-		log.Printf("ERROR: Tried to get translation, but no language loaded")
+		log.Printf("ERROR: Tried to get translation, but no language loaded\n")
 		log.Println()
 		return key
 	}
@@ -132,11 +132,11 @@ func Get(key, lang string) string {
 	if !ok {
 		if lang == fLang {
 			log.Println()
-			log.Printf("ERROR: Tried to get key from fallback language ('%s'), but its not load", fLang)
+			log.Printf("ERROR: Tried to get key from fallback language ('%s'), but its not load\n", fLang)
 			log.Println()
 			return key
 		}
-		log.Printf("WARNING: language '%s' is not loaded, using '%s' as fallback instead", lang, fLang)
+		log.Printf("WARNING: language '%s' is not loaded, using '%s' as fallback instead\n", lang, fLang)
 		return Get(key, fLang)
 	}
 
@@ -146,10 +146,10 @@ func Get(key, lang string) string {
 	}
 
 	if lang == fLang {
-		log.Printf("WARNING: key '%s' is not defined in fallback language '%s'", key, lang)
+		log.Printf("WARNING: key '%s' is not defined in fallback language '%s'\n", key, lang)
 		return key
 	}
-	log.Printf("WARNING: key '%s' is not defined in language '%s', using '%s' as fallback instead", key, lang, fLang)
+	log.Printf("WARNING: key '%s' is not defined in language '%s', using '%s' as fallback instead\n", key, lang, fLang)
 	return Get(key, fLang)
 }
 
@@ -174,7 +174,7 @@ func GetDefault(key string) string {
 func GetSlice(key string, i int, lang string) string {
 	if len(langsMap) == 0 {
 		log.Println()
-		log.Printf("ERROR: Tried to get translation, but no language loaded")
+		log.Printf("ERROR: Tried to get translation, but no language loaded\n")
 		log.Println()
 		return key
 	}
@@ -186,17 +186,17 @@ func GetSlice(key string, i int, lang string) string {
 	if !ok {
 		if lang == fLang {
 			log.Println()
-			log.Printf("ERROR: Tried to get key from fallback language ('%s'), but its not load", fLang)
+			log.Printf("ERROR: Tried to get key from fallback language ('%s'), but its not load\n", fLang)
 			log.Println()
 			return key
 		}
-		log.Printf("WARNING: language '%s' is not loaded, using '%s' as fallback instead", lang, fLang)
+		log.Printf("WARNING: language '%s' is not loaded, using '%s' as fallback instead\n", lang, fLang)
 		return Get(key, fLang)
 	}
 
 	s := v.GetStringSlice(key)
 	if len(s) <= i {
-		log.Printf("WARNING: tried to get index %d from key '%s' in lang '%s', but it has only %d items", i, key, lang, len(s))
+		log.Printf("WARNING: tried to get index %d from key '%s' in lang '%s', but it has only %d items\n", i, key, lang, len(s))
 		return key
 	}
 	val := s[i]
@@ -205,10 +205,10 @@ func GetSlice(key string, i int, lang string) string {
 	}
 
 	if lang == fLang {
-		log.Printf("WARNING: key '%s' is not defined in fallback language '%s'", key, lang)
+		log.Printf("WARNING: key '%s' is not defined in fallback language '%s'\n", key, lang)
 		return key
 	}
-	log.Printf("WARNING: key '%s' is not defined in language '%s', using '%s' as fallback instead", key, lang, fLang)
+	log.Printf("WARNING: key '%s' is not defined in language '%s', using '%s' as fallback instead\n", key, lang, fLang)
 	return Get(key, fLang)
 }
 

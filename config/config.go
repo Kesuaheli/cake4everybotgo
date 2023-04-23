@@ -43,7 +43,7 @@ func Load(config string) {
 		viper.SetConfigFile(n)
 		err = viper.MergeInConfig()
 		if err != nil {
-			log.Printf("Counld not load additional config '%s': %v", n, err)
+			log.Printf("Counld not load additional config '%s': %v\n", n, err)
 		}
 	}
 

@@ -49,7 +49,7 @@ func (cmd UserShow) handler() {
 	if hasBDay {
 		err = cmd.getBirthday(&b)
 		if err != nil {
-			log.Printf("Error on show birthday: %v", err)
+			log.Printf("Error on show birthday: %v\n", err)
 			cmd.ReplyError()
 			return
 		}

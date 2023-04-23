@@ -16,6 +16,7 @@ package util
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -122,6 +123,6 @@ func (i *InteractionUtil) ReplyError() {
 func (i *InteractionUtil) respond() {
 	err := i.Session.InteractionRespond(i.Interaction.Interaction, i.response)
 	if err != nil {
-		fmt.Printf("Error while sending command response: %v", err)
+		log.Printf("Error while sending command response: %v\n", err)
 	}
 }

@@ -142,7 +142,7 @@ func (cmd subcommandSet) interactionHandler() {
 
 	b.time, err = time.Parse(time.DateOnly, fmt.Sprintf("%04d-%02d-%02d", b.Year, b.Month, b.Day))
 	if err != nil {
-		log.Printf("WARNING: User (%d) entered an invalid date: %v", authorID, err)
+		log.Printf("WARNING: User (%d) entered an invalid date: %v\n", authorID, err)
 		embed.Description = lang.Get(tp+"msg.invalid_date", lang.FallbackLang())
 		embed.Color = 0xFF0000
 		cmd.ReplyHiddenEmbed(embed)
