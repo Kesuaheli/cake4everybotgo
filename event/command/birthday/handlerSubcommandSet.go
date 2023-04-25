@@ -231,8 +231,7 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 	//  2nd       => month changed
 	//  3rd       => year changed
 	//  4th (MSB) => visibility changed
-	var changedBits int
-	changedBits = util.Btoi(before.Day != b.Day) |
+	var changedBits int = util.Btoi(before.Day != b.Day) |
 		util.Btoi(before.Month != b.Month)<<1 |
 		util.Btoi(before.Year != b.Year)<<2
 
@@ -274,7 +273,7 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 	}
 	e.Fields = []*discordgo.MessageEmbedField{f}
 
-	if f.Inline == false {
+	if !f.Inline {
 		e.Fields = append(e.Fields, &discordgo.MessageEmbedField{
 			Name:   lang.Get(tp+"msg.set.date", lang.FallbackLang()),
 			Value:  b.String(),

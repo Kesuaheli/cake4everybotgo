@@ -78,7 +78,7 @@ func (b birthdayEntry) DOW() int {
 func (b birthdayEntry) Next() int64 {
 	years := time.Now().Year() - b.Year
 	nextTime := b.time.AddDate(years, 0, 0)
-	if nextTime.Sub(time.Now()) <= 0 {
+	if time.Until(nextTime) <= 0 {
 		nextTime = b.time.AddDate(years+1, 0, 0)
 	}
 	return nextTime.Unix()
