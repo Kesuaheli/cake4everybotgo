@@ -172,7 +172,7 @@ func (cmd birthdayBase) updateBirthday(b birthdayEntry) (before birthdayEntry, e
 	}
 
 	updateString := strings.Join(updateNames, "=?,") + "=?"
-	_, err = database.Exec("UPDATE birthdays SET "+updateString+";", updateVars...)
+	_, err = database.Exec("UPDATE birthdays SET "+updateString+" WHERE id="+fmt.Sprint(b.ID)+";", updateVars...)
 	return before, err
 }
 
