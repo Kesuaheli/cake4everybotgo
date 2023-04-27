@@ -74,7 +74,7 @@ func (cmd UserShow) handler() {
 	}
 
 	embed.Fields = []*discordgo.MessageEmbedField{{
-		Name: b.String(),
+		Name: fmt.Sprintf("%s <t:%d:R>", b.String(), b.NextUnix()),
 	}}
 	embed.Color = 0x00FF00
 
