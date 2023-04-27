@@ -60,7 +60,25 @@ func (cmd subcommandList) handler() {
 		return
 	}
 
-	var value string
+	monthName := lang.GetSlice(tp+"month", month-1, lang.FallbackLang())
+	var (
+		header, key, value string
+		a                  []any
+	)
+
+	switch len(birthdays) {
+	case 0, 1:
+		key = fmt.Sprintf("%smsg.list.total.%d", tp, len(birthdays))
+		a = append(a, monthName)
+	default:
+		key = tp + "msg.list.total"
+		a = append(a,
+			fmt.Sprint(len(birthdays)),
+			monthName,
+		)
+	}
+	header = fmt.Sprintf(lang.Get(key, lang.FallbackLang()), a...)
+
 	for _, b := range birthdays {
 		var timestamp string
 		if time.Until(b.Next()) <= time.Hour*24*25 {
@@ -69,15 +87,17 @@ func (cmd subcommandList) handler() {
 		value += fmt.Sprintf("`%s` <@%d>%s\n", b.String(), b.ID, timestamp)
 	}
 
-	monthName := lang.GetSlice(tp+"month", month-1, lang.FallbackLang())
 	e := &discordgo.MessageEmbed{
 		Title: fmt.Sprintf(lang.Get(tp+"msg.list", lang.FallbackLang()), monthName),
 		Fields: []*discordgo.MessageEmbedField{{
-			Name:   fmt.Sprintf(lang.Get(tp+"msg.list.total", lang.FallbackLang()), fmt.Sprint(len(birthdays))),
+			Name:   header,
 			Value:  value,
 			Inline: false,
 		}},
 		Color: 0x00FF00,
+	}
+	if len(birthdays) == 0 {
+		e.Color = 0xFF0000
 	}
 	util.SetEmbedFooter(cmd.Session, tp+"display", e)
 

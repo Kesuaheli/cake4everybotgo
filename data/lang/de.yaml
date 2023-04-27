@@ -84,5 +84,7 @@ discord.command:
       Andere Mitglieder können deinen Geburtstag nun nicht mehr sehen oder danach suchen. Du kannst ihn dir aber immer noch jederzeit anzeigen lassen.
       Hinweis: Der Bot wird trotzdem weiterhin eine Benachrichtigung an deinem Geburtstag senden. Wenn du das auch nicht mehr möchtest, kannst du deinen Geburtstag mit dem %s Befehl vom Bot entfernen.
     msg.list: Geburtstage im %s
-    msg.list.total: Insgesamt %s Geburtstage
+    msg.list.total.1: Es gibt nur einen Geburtstag im %s
+    msg.list.total.0: Es wurden keine Geburtstage für %s eingetragen
+    msg.list.total: Es gibt %s Geburtstage im %s
     msg.next: Next birthday

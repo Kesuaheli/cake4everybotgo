@@ -84,5 +84,7 @@ discord.command:
       Other members can no longer see and search for your birthday. But you're still able to see your own birthday at any time.
       Note that the bot still sends a notification on your birthday. If you dont want that anymore, you can remove your birthday using the %s command.
     msg.list: Birthdays in %s
-    msg.list.total: Total %s birthdays
+    msg.list.total.1: There's only one birthday in %s
+    msg.list.total.0: No birthdays entered for %s
+    msg.list.total: There're %s birthdays in %s
     msg.next: Next birthday
