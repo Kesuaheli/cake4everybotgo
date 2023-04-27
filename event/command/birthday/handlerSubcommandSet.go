@@ -177,7 +177,7 @@ func (cmd subcommandSet) interactionHandler() {
 			Inline: true,
 		}, {
 			Name:   lang.Get(tp+"msg.next", lang.FallbackLang()),
-			Value:  fmt.Sprintf("<t:%d:R>", b.Next()),
+			Value:  fmt.Sprintf("<t:%d:R>", b.NextUnix()),
 			Inline: true,
 		}}
 		embed.Color = 0x00FF00
@@ -205,7 +205,7 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 			Inline: true,
 		}, {
 			Name:   lang.Get(tp+"msg.next", lang.FallbackLang()),
-			Value:  fmt.Sprintf("<t:%d:R>", b.Next()),
+			Value:  fmt.Sprintf("<t:%d:R>", b.NextUnix()),
 			Inline: true,
 		}}
 		e.Color = 0x696969
@@ -283,7 +283,7 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 
 	e.Fields = append(e.Fields, &discordgo.MessageEmbedField{
 		Name:   lang.Get(tp+"msg.next", lang.FallbackLang()),
-		Value:  fmt.Sprintf("<t:%d:R>", b.Next()),
+		Value:  fmt.Sprintf("<t:%d:R>", b.NextUnix()),
 		Inline: true,
 	})
 

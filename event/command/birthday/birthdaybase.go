@@ -74,14 +74,22 @@ func (b birthdayEntry) DOW() int {
 	return int(b.Year+b.Year/4-b.Year/100+b.Year/400+int(monthKey[b.Month])+b.Day) % 7
 }
 
-// Next returns the timestamp of the next birthday
-func (b birthdayEntry) Next() int64 {
+// NextUnix returns the unix timestamp in seconds of the next
+// birthday. This is just a shorthand for Next().Unix().
+//
+// See Next() for more.
+func (b birthdayEntry) NextUnix() int64 {
+	return b.Next().Unix()
+}
+
+// Next returns the time.Time object of the next birthday.
+func (b birthdayEntry) Next() time.Time {
 	years := time.Now().Year() - b.Year
 	nextTime := b.time.AddDate(years, 0, 0)
 	if time.Until(nextTime) <= 0 {
 		nextTime = b.time.AddDate(years+1, 0, 0)
 	}
-	return nextTime.Unix()
+	return nextTime
 }
 
 // ParseTime tries to parse the date (b.Day, b.Month, b.Year) to a
@@ -206,6 +214,15 @@ func (cmd birthdayBase) getBirthdaysMonth(month int) (birthdays []birthdayEntry,
 		err = rows.Scan(&b.ID, &b.Day, &b.Year, &b.Visible)
 		if err != nil {
 			return birthdays, err
+		}
+
+		err = b.ParseTime()
+		if err != nil {
+			return birthdays, err
+		}
+
+		if !b.Visible {
+			continue
 		}
 		birthdays = append(birthdays, b)
 	}

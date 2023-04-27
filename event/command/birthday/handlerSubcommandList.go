@@ -17,6 +17,10 @@ package birthday
 import (
 	"fmt"
 	"log"
+	"time"
+
+	"cake4everybot/data/lang"
+	"cake4everybot/event/command/util"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -56,13 +60,26 @@ func (cmd subcommandList) handler() {
 		return
 	}
 
-	msg := "birthdays in '" + fmt.Sprint(month) + "'"
-	for i, b := range birthdays {
-		if !b.Visible {
-			continue
+	var value string
+	for _, b := range birthdays {
+		var timestamp string
+		if time.Until(b.Next()) <= time.Hour*24*25 {
+			timestamp = fmt.Sprintf(" <t:%d:R>", b.NextUnix())
 		}
-		msg = msg + fmt.Sprintf("\n`%3d`: `%d`: %d.%d.%d", i, b.ID, b.Day, b.Month, b.Year)
+		value += fmt.Sprintf("`%s` <@%d>%s\n", b.String(), b.ID, timestamp)
 	}
 
-	cmd.Reply(msg)
+	monthName := lang.GetSlice(tp+"month", month-1, lang.FallbackLang())
+	e := &discordgo.MessageEmbed{
+		Title: fmt.Sprintf(lang.Get(tp+"msg.list", lang.FallbackLang()), monthName),
+		Fields: []*discordgo.MessageEmbedField{{
+			Name:   fmt.Sprintf(lang.Get(tp+"msg.list.total", lang.FallbackLang()), fmt.Sprint(len(birthdays))),
+			Value:  value,
+			Inline: false,
+		}},
+		Color: 0x00FF00,
+	}
+	util.SetEmbedFooter(cmd.Session, tp+"display", e)
+
+	cmd.ReplyEmbed(e)
 }
