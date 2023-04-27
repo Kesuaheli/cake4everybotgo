@@ -79,8 +79,8 @@ func SetEmbedFooter(s *discordgo.Session, sectionName string, e *discordgo.Messa
 // embeds to the existing fields of the given embed.
 func AddReplyHiddenField(e *discordgo.MessageEmbed) {
 	f := &discordgo.MessageEmbedField{
-		Name:   lang.Get("discord.command.generic.self_hidden", lang.FallbackLang()),
-		Value:  lang.Get("discord.command.generic.self_hidden.desc", lang.FallbackLang()),
+		Name:   lang.Get("discord.command.generic.msg.self_hidden", lang.FallbackLang()),
+		Value:  lang.Get("discord.command.generic.msg.self_hidden.desc", lang.FallbackLang()),
 		Inline: false,
 	}
 	e.Fields = append(e.Fields, f)
