@@ -68,16 +68,17 @@ func (cmd UserShow) handler() {
 			format := lang.GetDefault(tp + "msg.no_entry.user")
 			embed.Description = fmt.Sprintf(format, target.Mention())
 		}
+		embed.Color = 0xFF0000
 		cmd.ReplyHiddenEmbed(embed)
 		return
 	}
 
 	embed.Fields = []*discordgo.MessageEmbedField{{
 		Name: b.String(),
-	},
-	}
+	}}
+	embed.Color = 0x00FF00
 
-	if hasBDay && self && !b.Visible {
+	if !b.Visible {
 		cmd.ReplyHiddenEmbed(embed)
 		return
 	}
