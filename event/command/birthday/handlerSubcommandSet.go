@@ -145,7 +145,7 @@ func (cmd subcommandSet) interactionHandler() {
 		log.Printf("WARNING: User (%d) entered an invalid date: %v\n", authorID, err)
 		embed.Description = lang.Get(tp+"msg.invalid_date", lang.FallbackLang())
 		embed.Color = 0xFF0000
-		cmd.ReplyHiddenEmbed(embed)
+		cmd.ReplyHiddenEmbed(false, embed)
 		return
 	}
 
@@ -186,7 +186,7 @@ func (cmd subcommandSet) interactionHandler() {
 	if b.Visible {
 		cmd.ReplyEmbed(embed)
 	} else {
-		cmd.ReplyHiddenEmbed(embed)
+		cmd.ReplyHiddenEmbed(true, embed)
 	}
 }
 

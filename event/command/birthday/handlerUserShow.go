@@ -69,7 +69,7 @@ func (cmd UserShow) handler() {
 			embed.Description = fmt.Sprintf(format, target.Mention())
 		}
 		embed.Color = 0xFF0000
-		cmd.ReplyHiddenEmbed(embed)
+		cmd.ReplyHiddenEmbed(false, embed)
 		return
 	}
 
@@ -78,10 +78,9 @@ func (cmd UserShow) handler() {
 	}}
 	embed.Color = 0x00FF00
 
-	if !b.Visible {
-		cmd.ReplyHiddenEmbed(embed)
-		return
+	if b.Visible {
+		cmd.ReplyEmbed(embed)
+	} else {
+		cmd.ReplyHiddenEmbed(true, embed)
 	}
-
-	cmd.ReplyEmbed(embed)
 }

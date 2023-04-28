@@ -80,13 +80,15 @@ func (i *InteractionUtil) ReplyHidden(message string) {
 
 // Prints the given embeds as ephemral reply to the user who
 // executes the command. Automatically append "hidden reply note" to
-// last embed. See AddReplyHiddenField() for more.
-func (i *InteractionUtil) ReplyHiddenEmbed(embeds ...*discordgo.MessageEmbed) {
+// last embed if hiddenSelf is set tot true. See AddReplyHiddenField() for more.
+func (i *InteractionUtil) ReplyHiddenEmbed(hiddenSelf bool, embeds ...*discordgo.MessageEmbed) {
 	l := len(embeds)
 	if l == 0 {
 		return
 	}
-	AddReplyHiddenField(embeds[l-1])
+	if hiddenSelf {
+		AddReplyHiddenField(embeds[l-1])
+	}
 
 	i.response = &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
