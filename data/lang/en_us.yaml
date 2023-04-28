@@ -87,4 +87,8 @@ discord.command:
     msg.list.total.1: There's only one birthday in %s
     msg.list.total.0: No birthdays entered for %s
     msg.list.total: There're %s birthdays in %s
+    msg.announce.1: There's a birthday today!
+    msg.announce: There're %s birthdays today!
+    msg.announce.congratulate: Happy Birthday to
+    msg.announce.with_age: "%s (turns %s)"
     msg.next: Next birthday

@@ -225,14 +225,15 @@ func (cmd birthdayBase) getBirthdaysMonth(month int) (birthdays []birthdayEntry,
 			return birthdays, err
 		}
 
+		if !b.Visible {
+			continue
+		}
+
 		err = b.ParseTime()
 		if err != nil {
 			return birthdays, err
 		}
 
-		if !b.Visible {
-			continue
-		}
 		birthdays = append(birthdays, b)
 	}
 
@@ -269,6 +270,16 @@ func getBirthdaysDate(day int, month int) (birthdays []birthdayEntry, err error)
 		if err != nil {
 			return birthdays, err
 		}
+
+		if !b.Visible {
+			continue
+		}
+
+		err = b.ParseTime()
+		if err != nil {
+			return birthdays, err
+		}
+
 		birthdays = append(birthdays, b)
 	}
 

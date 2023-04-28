@@ -17,10 +17,11 @@ package birthday
 import (
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
+	"cake4everybot/data/lang"
 	"cake4everybot/database"
+	"cake4everybot/event/command/util"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -64,39 +65,42 @@ func Check(s *discordgo.Session) {
 }
 
 func announceBirthdays(s *discordgo.Session, channel *discordgo.Channel, birthdays []birthdayEntry) {
-	var (
-		n   int
-		msg string
-	)
+	var title, fValue string
+
+	switch len(birthdays) {
+	case 0:
+		return
+	case 1:
+		title = lang.Get(tp+"msg.announce.1", lang.FallbackLang()) // Theres a birthday today!
+	default:
+		format := lang.Get(tp+"msg.announce", lang.FallbackLang()) // There are %s birthdays today!
+		title = fmt.Sprintf(format, fmt.Sprint(len(birthdays)))
+	}
 
 	for _, b := range birthdays {
-		m, err := s.GuildMember(channel.GuildID, fmt.Sprint(b.ID))
-		if err != nil {
-			if !strings.HasPrefix(err.Error(), "HTTP 404 Not Found") {
-				log.Printf("Error on get guild member '%d' in guild '%s': %v\n", b.ID, channel.GuildID, err)
-			}
-			continue
-		}
+		mention := fmt.Sprintf("<@%d>", b.ID)
 
-		n = n + 1
-		var age string
-		if b.Year > 0 {
-			age = fmt.Sprintf(" turns %d", time.Now().Year()-b.Year)
+		if b.Year == 0 {
+			fValue += fmt.Sprintf("%s\n", mention)
+		} else {
+			format := lang.Get(tp+"msg.announce.with_age", lang.FallbackLang())
+			format += "\n"
+			fValue += fmt.Sprintf(format, mention, b.Age()+1)
 		}
-		msg = fmt.Sprintf("%s\n%s%s!", msg, m.Mention(), age)
 	}
 
-	if n == 0 {
-		return
-	} else if n == 1 {
-		msg = fmt.Sprintf("Theres a birthday today!%s", msg)
-	} else {
-		msg = fmt.Sprintf("There are %d birthdays today!%s", n, msg)
+	e := &discordgo.MessageEmbed{
+		Title: title,
+		Color: 0xFFD700,
+		Fields: []*discordgo.MessageEmbedField{{
+			Name:  lang.Get(tp+"msg.announce.congratulate", lang.FallbackLang()),
+			Value: fValue,
+		}},
 	}
+	util.SetEmbedFooter(s, tp+"display", e)
 
-	_, err := s.ChannelMessageSend(channel.ID, msg)
+	_, err := s.ChannelMessageSendEmbed(channel.ID, e)
 	if err != nil {
-		log.Printf("Error on sending todays birthday message: %s\n", err)
+		log.Printf("Error on sending todays birthday announcement: %s\n", err)
 	}
-
 }
