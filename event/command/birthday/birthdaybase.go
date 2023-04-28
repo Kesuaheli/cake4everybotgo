@@ -99,6 +99,15 @@ func (b *birthdayEntry) ParseTime() (err error) {
 	return err
 }
 
+// Age returns the current age of the user. If no year is set, it
+// returns 0.
+func (b birthdayEntry) Age() int {
+	if b.Year == 0 {
+		return 0
+	}
+	return b.Next().Year() - b.Year - 1
+}
+
 // getBirthday copies all birthday fields into
 // the struct pointed at by b.
 //

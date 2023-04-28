@@ -80,11 +80,14 @@ func (cmd subcommandList) handler() {
 	header = fmt.Sprintf(lang.Get(key, lang.FallbackLang()), a...)
 
 	for _, b := range birthdays {
-		var timestamp string
+		var age, timestamp string
 		if time.Until(b.Next()) <= time.Hour*24*25 {
 			timestamp = fmt.Sprintf(" <t:%d:R>", b.NextUnix())
 		}
-		value += fmt.Sprintf("`%s` <@%d>%s\n", b.String(), b.ID, timestamp)
+		if b.Year > 0 {
+			age = fmt.Sprintf(" (%d)", b.Age()+1)
+		}
+		value += fmt.Sprintf("`%2d` <@%d>%s%s\n", b.Day, b.ID, age, timestamp)
 	}
 
 	e := &discordgo.MessageEmbed{

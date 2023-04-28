@@ -170,6 +170,12 @@ func (cmd subcommandSet) interactionHandler() {
 			cmd.ReplyError()
 			return
 		}
+
+		var age string
+		if b.Year > 0 {
+			age = fmt.Sprintf(" (%d)", b.Age()+1)
+		}
+
 		embed.Description = lang.Get(tp+"msg.set", lang.FallbackLang())
 		embed.Fields = []*discordgo.MessageEmbedField{{
 			Name:   lang.Get(tp+"msg.set.date", lang.FallbackLang()),
@@ -177,7 +183,7 @@ func (cmd subcommandSet) interactionHandler() {
 			Inline: true,
 		}, {
 			Name:   lang.Get(tp+"msg.next", lang.FallbackLang()),
-			Value:  fmt.Sprintf("<t:%d:R>", b.NextUnix()),
+			Value:  fmt.Sprintf("<t:%d:R>%s", b.NextUnix(), age),
 			Inline: true,
 		}}
 		embed.Color = 0x00FF00
@@ -198,6 +204,11 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 	}
 
 	if b == before {
+		var age string
+		if b.Year > 0 {
+			age = fmt.Sprintf(" (%d)", b.Age()+1)
+		}
+
 		e.Description = lang.Get(tp+"msg.set.update.no_changes", lang.FallbackLang())
 		e.Fields = []*discordgo.MessageEmbedField{{
 			Name:   lang.Get(tp+"msg.set.date", lang.FallbackLang()),
@@ -205,7 +216,7 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 			Inline: true,
 		}, {
 			Name:   lang.Get(tp+"msg.next", lang.FallbackLang()),
-			Value:  fmt.Sprintf("<t:%d:R>", b.NextUnix()),
+			Value:  fmt.Sprintf("<t:%d:R>%s", b.NextUnix(), age),
 			Inline: true,
 		}}
 		e.Color = 0x696969
@@ -281,9 +292,14 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 		})
 	}
 
+	var age string
+	if b.Year > 0 {
+		age = fmt.Sprintf(" (%d)", b.Age()+1)
+	}
+
 	e.Fields = append(e.Fields, &discordgo.MessageEmbedField{
 		Name:   lang.Get(tp+"msg.next", lang.FallbackLang()),
-		Value:  fmt.Sprintf("<t:%d:R>", b.NextUnix()),
+		Value:  fmt.Sprintf("<t:%d:R>%s", b.NextUnix(), age),
 		Inline: true,
 	})
 

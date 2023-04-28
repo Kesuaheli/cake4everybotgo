@@ -73,8 +73,12 @@ func (cmd UserShow) handler() {
 		return
 	}
 
+	var age string
+	if b.Year > 0 {
+		age = fmt.Sprintf(" (%d)", b.Age()+1)
+	}
 	embed.Fields = []*discordgo.MessageEmbedField{{
-		Name: fmt.Sprintf("%s <t:%d:R>", b.String(), b.NextUnix()),
+		Name: fmt.Sprintf("%s <t:%d:R>%s", b.String(), b.NextUnix(), age),
 	}}
 	embed.Color = 0x00FF00
 
