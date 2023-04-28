@@ -91,4 +91,4 @@ discord.command:
     msg.announce: Es gibt heute %s Geburtstagskinder!
     msg.announce.congratulate: Alles gute an
     msg.announce.with_age: "%s (wird %s)"
-    msg.next: Next birthday
+    msg.next: Nächster Geburtstag
