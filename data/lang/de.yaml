@@ -1,0 +1,94 @@
+# German translations
+
+discord.command:
+  generic:
+    yes: Ja
+    no: Nein
+    msg.self_hidden: Warum ist das unsichtbar?
+    msg.self_hidden.desc: Da du deinen Geburtstag als nicht sichtbar eingetragen hast, kannst diese Nachricht nur du sehen. Du kannst diese Nachricht nun schließen.
+
+  birthday:
+    base: geburtstag
+    base.description: Verschiedene Einstellungen für den Geburtstagsbot
+    display: Geburtstage
+
+    option.set: setzen
+    option.set.description: Trage deinen Geburtstag ein oder ändere ihn
+    option.set.option.day: tag
+    option.set.option.day.description: An welchen Tag im Monat ist dein Geburtstag?
+    option.set.option.month: monat
+    option.set.option.month.description: In welchem Monat im Jahr ist dein Geburtstag?
+    option.set.option.year: jahr
+    option.set.option.year.description: In welchem Jahr wurdest du geboren?
+    option.set.option.visible: sichtbar
+    option.set.option.visible.description: Darf dein Geburtstag für andere über die Suche auffindbar sein? (Standard "Ja")
+
+    option.remove: entfernen
+    option.remove.description: Entfernt deinen eingetragenen Geburtstag vom Bot
+
+    option.list: liste
+    option.list.description: Listet eingetragene Geburtstage im angegebenen Monat auf
+    option.list.option.month: monat
+    option.list.option.month.description: Der Monat, aus dem alle Geburtstage aufgelistet werden sollen
+
+    weekday:
+      - Montag
+      - Dienstag
+      - Mittwoch
+      - Donnerstag
+      - Freitag
+      - Samstag
+      - Sonntag
+    month:
+      - Januar
+      - Februar
+      - März
+      - April
+      - Mai
+      - Juni
+      - Juli
+      - August
+      - September
+      - Oktober
+      - November
+      - Dezember
+
+    msg.no_entry: |-
+      Du hast keinen eingetragenen Geburtstag.
+      Du kannst ihn aber jetzt über den %s Chat-Befehl hinzufügen.
+    msg.no_entry.user: |-
+      Es sieht so aus, als hätte %s keinen eingetragenen Geburtstag.
+      Es könnte auch bedeuten, dass er/sie den Geburtstag für diese Suche nicht nicht sichtbar gestellt hat.
+    msg.invalid_date: Dein eingegebenes Datum ist ungültig. Bitte überprüfe es und versuche es dann nochmal.
+    msg.remove: Dein Geburtstag wurde aus dem Bot entfernt!
+    msg.remove.was: Dein Geburtstag war am %s.
+    msg.remove.not_found: Du hast keinen Geburtstag eingetragen, der entfernt werden kann. Hast du ihn vielleicht schon entfernt?
+    msg.set: Dein Geburtstag wurde zum Bot hinzugefügt! Alle Servermitglieder werden an deinem Geburtstag eine Benachrichtigung vom Bot erhalten.
+    msg.set.date: Geburtstag gesetzt auf
+    msg.set.update: Dein Geburtstag wurde aktualisiert
+    msg.set.update.no_changes: Es wurde nichts geändert! Dein Geburtstag ist bereits auf dieses Datum gesetzt.
+    msg.set.update.day: Tag verändert
+    msg.set.update.month: Monat verändert
+    msg.set.update.year: Geburtsjahr verändert
+    msg.set.update.year.add: Geburtsjahr hinzugefügt
+    msg.set.update.year.remove: Geburtsjahr entfernt
+    msg.set.update.year.was: War %d
+    msg.set.update.date: Geburtsdatum verändert
+    msg.set.update.date.unchanged: Geburtsdatum unverändert
+    msg.set.update.visibility: Sichtbarkeit verändert
+    msg.set.update.visibility.true: |-
+      Dein Geburtstagseintrag ist jetzt **sichtbar** für andere!
+      Andere Mitglieder können nun deinen Geburtstag sehen und danach suchen.
+    msg.set.update.visibility.false: |-
+      Dein Geburtstagseintrag ist jetzt **unsichtbar** für andere!
+      Andere Mitglieder können deinen Geburtstag nun nicht mehr sehen oder danach suchen. Du kannst ihn dir aber immer noch jederzeit anzeigen lassen.
+      Hinweis: Der Bot wird trotzdem weiterhin eine Benachrichtigung an deinem Geburtstag senden. Wenn du das auch nicht mehr möchtest, kannst du deinen Geburtstag mit dem %s Befehl vom Bot entfernen.
+    msg.list: Geburtstage im %s
+    msg.list.total.1: Es gibt nur einen Geburtstag im %s
+    msg.list.total.0: Es wurden keine Geburtstage für %s eingetragen
+    msg.list.total: Es gibt %s Geburtstage im %s
+    msg.announce.1: Es gibt heute ein Geburtstagskind!
+    msg.announce: Es gibt heute %s Geburtstagskinder!
+    msg.announce.congratulate: Alles gute an
+    msg.announce.with_age: "%s (wird %s)"
+    msg.next: Nächster Geburtstag

@@ -15,9 +15,10 @@
 package event
 
 import (
-	"cake4everybot/database"
 	"fmt"
 	"log"
+
+	"cake4everybot/database"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -25,11 +26,7 @@ import (
 func addVoiceStateListeners(s *discordgo.Session) {
 	handler := func(s *discordgo.Session, e *discordgo.VoiceStateUpdate) {
 
-		isAfk, err := isAfkVoiceChannel(s, e)
-		if err != nil {
-			log.Println(err)
-			return
-		}
+		isAfk := isInAfkVoiceChannel(s, e)
 
 		if isVoiceChannelUpdate(e) && (e.ChannelID == "" || isAfk) {
 			setNoMicPermission(s, e, false)
@@ -45,13 +42,14 @@ func isVoiceChannelUpdate(e *discordgo.VoiceStateUpdate) bool {
 	return e.BeforeUpdate == nil || e.BeforeUpdate.ChannelID != e.ChannelID
 }
 
-func isAfkVoiceChannel(s *discordgo.Session, e *discordgo.VoiceStateUpdate) (bool, error) {
+func isInAfkVoiceChannel(s *discordgo.Session, e *discordgo.VoiceStateUpdate) (isAfk bool) {
 	guild, err := s.Guild(e.GuildID)
 	if err != nil {
-		return false, fmt.Errorf("ERROR: on join afk vc: %v\n", err)
+		log.Printf("ERROR: on join afk vc: %v\n", err)
+		return false
 	}
 
-	return e.ChannelID == guild.AfkChannelID, nil
+	return e.ChannelID == guild.AfkChannelID
 }
 
 func setNoMicPermission(s *discordgo.Session, e *discordgo.VoiceStateUpdate, state bool) {

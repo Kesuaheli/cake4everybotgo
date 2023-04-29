@@ -24,6 +24,11 @@ type Command interface {
 	// Function of a command.
 	// All things that should happen at execution.
 	CmdHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate)
+
+	// Sets the registered command ID for internal uses after uploading to discord
+	SetID(id string)
+	// Gets the registered command ID
+	GetID() string
 }
 
 var CommandMap map[string]Command
