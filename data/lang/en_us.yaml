@@ -1,0 +1,94 @@
+# American english translations
+
+discord.command:
+  generic:
+    yes: Yes
+    no: No
+    msg.self_hidden: Why is this invisible?
+    msg.self_hidden.desc: Since you've set your birthday to not be visible, this message is also only visible to you. You can close this message now.
+
+  birthday:
+    base: birthday
+    base.description: Various settings for the birthday bot
+    display: Birthdays
+
+    option.set: set
+    option.set.description: Enter or change your birthday
+    option.set.option.day: day
+    option.set.option.day.description: On wich day of month is your birthday?
+    option.set.option.month: month
+    option.set.option.month.description: On wich month of the year is your birthday?
+    option.set.option.year: year
+    option.set.option.year.description: In wich year were you born?
+    option.set.option.visible: visible
+    option.set.option.visible.description: Should your name and birthday be discoverable by others? (defaults to \"Yes\")
+
+    option.remove: remove
+    option.remove.description: Remove your entered Birthday from the bot
+
+    option.list: list
+    option.list.description: List entered Birthdays of a specified month
+    option.list.option.month: month
+    option.list.option.month.description: The month to list all birthdays from
+
+    weekday:
+      - Monday
+      - Tuesday
+      - Wednesday
+      - Thursday
+      - Friday
+      - Saturday
+      - Sunday
+    month:
+      - January
+      - February
+      - March
+      - April
+      - May
+      - June
+      - July
+      - August
+      - September
+      - October
+      - November
+      - December
+
+    msg.no_entry: |-
+      You don't have an entered birthday.
+      You can do it by running the %s command in the chat.
+    msg.no_entry.user: |-
+      It seems like %s doesn't entered their birthday.
+      This could also mean, that they set their birthday to not be visible by this search.
+    msg.invalid_date: The date you entered is not a valid date. Please have a look and try again.
+    msg.remove: Your birthday was removed from the bot!
+    msg.remove.was: Your entered birthday was on %s.
+    msg.remove.not_found: You dont have an entered birthday to remove it. Maybe you'd already remove it?
+    msg.set: Your birthday was added to the bot! All server members will receive a notification on your birthday.
+    msg.set.date: Birthday is set to
+    msg.set.update: Your birthday was updated
+    msg.set.update.no_changes: Nothing changed! Your birthday is already set to this date.
+    msg.set.update.day: Day changed
+    msg.set.update.month: Month changed
+    msg.set.update.year: Year changed
+    msg.set.update.year.add: Year added
+    msg.set.update.year.remove: Year removed
+    msg.set.update.year.was: Was %d
+    msg.set.update.date: Date changed
+    msg.set.update.date.unchanged: Date unchanged
+    msg.set.update.visibility: Visibility changed
+    msg.set.update.visibility.true: |-
+      Your birthday is now **visible** to others!
+      Other members can see and search for your birthday now.
+    msg.set.update.visibility.false: |-
+      Your birthday is now **hidden** to others!
+      Other members can no longer see and search for your birthday. But you're still able to see your own birthday at any time.
+      Note that the bot still sends a notification on your birthday. If you dont want that anymore, you can remove your birthday using the %s command.
+    msg.list: Birthdays in %s
+    msg.list.total.1: There's only one birthday in %s
+    msg.list.total.0: No birthdays entered for %s
+    msg.list.total: There're %s birthdays in %s
+    msg.announce.1: There's a birthday today!
+    msg.announce: There're %s birthdays today!
+    msg.announce.congratulate: Happy Birthday to
+    msg.announce.with_age: "%s (turns %s)"
+    msg.next: Next birthday
