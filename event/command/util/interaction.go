@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package command
+package util
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 type InteractionUtil struct {
-	session     *discordgo.Session
-	interaction *discordgo.InteractionCreate
+	Session     *discordgo.Session
+	Interaction *discordgo.InteractionCreate
 	response    *discordgo.InteractionResponse
 }
 
@@ -45,14 +46,26 @@ func (i *InteractionUtil) Reply(message string) {
 	i.respond()
 }
 
+// Prints the given embeds as reply to the
+// user who executes the command.
+func (i *InteractionUtil) ReplyEmbed(embeds ...*discordgo.MessageEmbed) {
+	i.response = &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Embeds: embeds,
+		},
+	}
+	i.respond()
+}
+
 // Replyf formats according to a format specifier
-// and prints the result as emphemral reply to
+// and prints the result as ephemral reply to
 // the user who executes the command.
 func (i *InteractionUtil) ReplyHiddenf(format string, a ...any) {
 	i.ReplyHidden(fmt.Sprintf(format, a...))
 }
 
-// Prints the given message as emphemral reply
+// Prints the given message as ephemral reply
 // to the user who executes the command.
 func (i *InteractionUtil) ReplyHidden(message string) {
 	i.response = &discordgo.InteractionResponse{
@@ -65,13 +78,53 @@ func (i *InteractionUtil) ReplyHidden(message string) {
 	i.respond()
 }
 
+// Prints the given embeds as ephemral reply to the user who
+// executes the command. Automatically append "hidden reply note" to
+// last embed if hiddenSelf is set tot true. See AddReplyHiddenField() for more.
+func (i *InteractionUtil) ReplyHiddenEmbed(hiddenSelf bool, embeds ...*discordgo.MessageEmbed) {
+	l := len(embeds)
+	if l == 0 {
+		return
+	}
+	if hiddenSelf {
+		AddReplyHiddenField(embeds[l-1])
+	}
+
+	i.response = &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Embeds: embeds,
+			Flags:  discordgo.MessageFlagsEphemeral,
+		},
+	}
+	i.respond()
+}
+
+// ReplyAutocomplete returns the given choices to
+// the user. When this is called on an interaction
+// type outside form an applicationCommandAutocomplete
+// nothing will happen.
+func (i *InteractionUtil) ReplyAutocomplete(choices []*discordgo.ApplicationCommandOptionChoice) {
+	if i.Interaction.Type != discordgo.InteractionApplicationCommandAutocomplete {
+		return
+	}
+
+	i.response = &discordgo.InteractionResponse{
+		Type: discordgo.InteractionApplicationCommandAutocompleteResult,
+		Data: &discordgo.InteractionResponseData{
+			Choices: choices,
+		},
+	}
+	i.respond()
+}
+
 func (i *InteractionUtil) ReplyError() {
 	i.ReplyHidden("Somthing went wrong :(")
 }
 
 func (i *InteractionUtil) respond() {
-	err := i.session.InteractionRespond(i.interaction.Interaction, i.response)
+	err := i.Session.InteractionRespond(i.Interaction.Interaction, i.response)
 	if err != nil {
-		fmt.Printf("Error while sending command response: %v", err)
+		log.Printf("Error while sending command response: %v\n", err)
 	}
 }

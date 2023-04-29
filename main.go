@@ -15,16 +15,17 @@
 package main
 
 import (
+	"context"
 	"log"
-	"os"
 	"os/signal"
+	"syscall"
+
+	"github.com/bwmarrin/discordgo"
+	"github.com/spf13/viper"
 
 	"cake4everybot/config"
 	"cake4everybot/database"
 	"cake4everybot/event"
-
-	"github.com/bwmarrin/discordgo"
-	"github.com/spf13/viper"
 )
 
 const banner string = "\n" +
@@ -48,6 +49,9 @@ func init() {
 }
 
 func main() {
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+	defer stop()
+
 	log.Printf(banner, viper.GetString("discord.credits"))
 
 	database.Connect()
@@ -79,10 +83,8 @@ func main() {
 	}
 
 	// Wait to end the bot
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt)
 	log.Println("Press Ctrl+C to exit")
-	<-stop
+	<-ctx.Done()
 
 	log.Println("\nGracefully shutting down. Byee")
 }

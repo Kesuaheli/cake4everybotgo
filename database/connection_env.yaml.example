@@ -1,0 +1,16 @@
+# - - - - - - - - - - 
+# NOTE: This file is an example only!
+# Changing values in here, do not affect funtionality. The purpose of
+# this file is to know the sctructure of the "real config". You may
+# want to copy the following content to a new file called
+# 'database/connection_env.yaml' (path/name can be changed in the
+# config.yaml under 'additionalConfigs') and then change it.
+# - - - - - - - - - -
+
+mysql:
+  user: user
+  password: password
+  # Host and port defaults to localhost:3306 when left out here
+  #host: localhost
+  #port: 3306
+  database: discord

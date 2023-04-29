@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Kesuaheli
+// Copyright 2023 Kesuaheli
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,25 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package event
+package util
 
 import (
+	"cake4everybot/data/lang"
+
 	"github.com/bwmarrin/discordgo"
 )
 
-func Register(s *discordgo.Session, guildID string) error {
-	err := registerCommands(s, guildID)
-	if err != nil {
-		return err
+// TranslateLocalization returns a pointer to a map of all
+// translations for the given key from discord languages that are
+// loaded in the lang package.
+func TranslateLocalization(key string) *map[discordgo.Locale]string {
+	translateMap := map[discordgo.Locale]string{}
+	for locale := range discordgo.Locales {
+		if !lang.IsLoaded(string(locale)) {
+			continue
+		}
+		translateMap[locale] = lang.Get(key, string(locale))
 	}
-
-	return nil
-}
-
-// AddListeners adds all event handlers to the given session s.
-func AddListeners(s *discordgo.Session) {
-	addCommandListeners(s)
-	addVoiceStateListeners(s)
-
-	addScheduledTriggers(s)
+	return &translateMap
 }

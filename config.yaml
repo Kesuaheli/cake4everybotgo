@@ -2,6 +2,16 @@ additionalConfigs:
   - config_env.yaml # For tokens and access keys
   - database/connection_env.yaml # Connection data for mySQL databse
 
+# The language translation files to search for in 'data/lang/'
+# The first one in this list will also be the fallback when trying to
+# read an unloaded language
+languages:
+  - en_us
+  - de
+
 discord:
   name: Cake4Everybot
   credits: Cake4Everybot, developed by @Kesuaheli#5868 and the ideas of the community ♥
+
+event:
+  birthday_hour: 8 # Time to trigger daily birthday check (24h format)
