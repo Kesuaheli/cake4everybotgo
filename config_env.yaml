@@ -1,4 +1,0 @@
-discord:
-  token: PUT.TOKEN.HERE
-  # ID of guild currently used for adding commands
-  guildID: 0

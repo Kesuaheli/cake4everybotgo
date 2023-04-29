@@ -1,0 +1,13 @@
+# - - - - - - - - - - 
+# NOTE: This file is an example only!
+# Changing values in here, do not affect funtionality. The purpose of
+# this file is to know the sctructure of the "real config". You may
+# want to copy the following content to a new file called
+# 'config_env.yaml' (path/name can be changed in the
+# config.yaml under 'additionalConfigs') and then change it.
+# - - - - - - - - - -
+
+discord:
+  token: PUT.TOKEN.HERE
+  # ID of guild currently used for adding commands
+  guildID: 0
