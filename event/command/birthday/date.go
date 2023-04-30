@@ -28,7 +28,7 @@ import (
 )
 
 var (
-	day_choices_prefix = [][]int{
+	dayChoicesPrefix = [][]int{
 		{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30},         // 0
 		{1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19},     // 1
 		{2, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 12}, // 2
@@ -50,12 +50,12 @@ func dayChoices(start string, month int, leapYear bool) (choices []*discordgo.Ap
 		return choices
 	}
 
-	if i >= len(day_choices_prefix) || len(day_choices_prefix[i]) == 0 {
+	if i >= len(dayChoicesPrefix) || len(dayChoicesPrefix[i]) == 0 {
 		choices = append(choices, intChoice(i))
 		return choices
 	}
 
-	for _, c := range day_choices_prefix[i] {
+	for _, c := range dayChoicesPrefix[i] {
 		if c > getDays(month, leapYear) {
 			continue
 		}
@@ -132,8 +132,8 @@ func yearChoices(start string, day, month int) (choices []*discordgo.Application
 
 	// represents the last century: list of the last 10 decades
 	var decades []int = make([]int, 0, 10)
-	cur_decade := maxDate.Year() / 10 * 10
-	for y := cur_decade; y > cur_decade-100; y = y - 10 {
+	curDecade := maxDate.Year() / 10 * 10
+	for y := curDecade; y > curDecade-100; y = y - 10 {
 		decades = append(decades, y)
 	}
 
@@ -159,10 +159,10 @@ func yearChoices(start string, day, month int) (choices []*discordgo.Application
 		}
 		return append(s[:i], s[i+1:]...)
 	}
-	decades_cp := make([]int, len(decades))
-	copy(decades_cp, decades)
-	for i := len(decades_cp) - 1; i >= 0; i-- {
-		dec := fmt.Sprint(decades_cp[i])
+	decadesCopy := make([]int, len(decades))
+	copy(decadesCopy, decades)
+	for i := len(decadesCopy) - 1; i >= 0; i-- {
+		dec := fmt.Sprint(decadesCopy[i])
 		if len(dec) < digits {
 			decades = rm(decades, i)
 			continue
@@ -223,9 +223,8 @@ func getDays(month int, leapYear bool) int {
 	if util.ContainsInt([]int{2}, month) {
 		if leapYear {
 			return 29
-		} else {
-			return 28
 		}
+		return 28
 	} else if util.ContainsInt([]int{4, 6, 9, 11}, month) {
 		return 30
 	} else if util.ContainsInt([]int{1, 3, 5, 7, 8, 10, 12}, month) {

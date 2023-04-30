@@ -18,6 +18,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// Register registers all events, like commands.
 func Register(s *discordgo.Session, guildID string) error {
 	err := registerCommands(s, guildID)
 	if err != nil {

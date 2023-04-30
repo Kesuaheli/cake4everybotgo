@@ -20,9 +20,9 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// A user command of the birthday package. It
-// adds the ability to directly show a users
-// birthday through a simple context click.
+// UserShow represents a user command of the birthday package. It
+// adds the ability to directly show a users birthday through a
+// simple context click.
 type UserShow struct {
 	birthdayBase
 
@@ -30,6 +30,8 @@ type UserShow struct {
 	ID   string
 }
 
+// AppCmd (ApplicationCommand) returns the definition of the chat
+// command
 func (cmd UserShow) AppCmd() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Type: discordgo.UserApplicationCommand,
@@ -37,6 +39,7 @@ func (cmd UserShow) AppCmd() *discordgo.ApplicationCommand {
 	}
 }
 
+// CmdHandler returns the functionality of a command
 func (cmd UserShow) CmdHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	return func(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -52,10 +55,12 @@ func (cmd UserShow) CmdHandler() func(s *discordgo.Session, i *discordgo.Interac
 	}
 }
 
+// SetID sets the registered command ID for internal uses after uploading to discord
 func (cmd *UserShow) SetID(id string) {
 	cmd.ID = id
 }
 
+// GetID gets the registered command ID
 func (cmd UserShow) GetID() string {
 	return cmd.ID
 }

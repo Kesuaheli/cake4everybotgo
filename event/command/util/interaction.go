@@ -21,6 +21,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// InteractionUtil is a helper for discords application interactions.
+// It add useful methods for simpler and faster coding.
 type InteractionUtil struct {
 	Session     *discordgo.Session
 	Interaction *discordgo.InteractionCreate
@@ -34,7 +36,7 @@ func (i *InteractionUtil) Replyf(format string, a ...any) {
 	i.Reply(fmt.Sprintf(format, a...))
 }
 
-// Prints the given message as reply to the
+// Reply prints the given message as reply to the
 // user who executes the command.
 func (i *InteractionUtil) Reply(message string) {
 	i.response = &discordgo.InteractionResponse{
@@ -46,7 +48,7 @@ func (i *InteractionUtil) Reply(message string) {
 	i.respond()
 }
 
-// Prints the given embeds as reply to the
+// ReplyEmbed prints the given embeds as reply to the
 // user who executes the command.
 func (i *InteractionUtil) ReplyEmbed(embeds ...*discordgo.MessageEmbed) {
 	i.response = &discordgo.InteractionResponse{
@@ -58,14 +60,14 @@ func (i *InteractionUtil) ReplyEmbed(embeds ...*discordgo.MessageEmbed) {
 	i.respond()
 }
 
-// Replyf formats according to a format specifier
+// ReplyHiddenf formats according to a format specifier
 // and prints the result as ephemral reply to
 // the user who executes the command.
 func (i *InteractionUtil) ReplyHiddenf(format string, a ...any) {
 	i.ReplyHidden(fmt.Sprintf(format, a...))
 }
 
-// Prints the given message as ephemral reply
+// ReplyHidden prints the given message as ephemral reply
 // to the user who executes the command.
 func (i *InteractionUtil) ReplyHidden(message string) {
 	i.response = &discordgo.InteractionResponse{
@@ -78,7 +80,7 @@ func (i *InteractionUtil) ReplyHidden(message string) {
 	i.respond()
 }
 
-// Prints the given embeds as ephemral reply to the user who
+// ReplyHiddenEmbed prints the given embeds as ephemral reply to the user who
 // executes the command. Automatically append "hidden reply note" to
 // last embed if hiddenSelf is set tot true. See AddReplyHiddenField() for more.
 func (i *InteractionUtil) ReplyHiddenEmbed(hiddenSelf bool, embeds ...*discordgo.MessageEmbed) {
@@ -118,6 +120,9 @@ func (i *InteractionUtil) ReplyAutocomplete(choices []*discordgo.ApplicationComm
 	i.respond()
 }
 
+// ReplyError sends a simple message to the user to indicate, that
+// something failed or unexpected happened during the execution of
+// the interaction.
 func (i *InteractionUtil) ReplyError() {
 	i.ReplyHidden("Somthing went wrong :(")
 }
