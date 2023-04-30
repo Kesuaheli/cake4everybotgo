@@ -53,19 +53,19 @@ func isInAfkVoiceChannel(s *discordgo.Session, e *discordgo.VoiceStateUpdate) (i
 }
 
 func setNoMicPermission(s *discordgo.Session, e *discordgo.VoiceStateUpdate, state bool) {
-	var NO_MIC_CHANNEL_ID uint64
-	err := database.QueryRow("SELECT no_mic_id FROM guilds WHERE id = ?", e.GuildID).Scan(&NO_MIC_CHANNEL_ID)
+	var NoMicChannelID uint64
+	err := database.QueryRow("SELECT no_mic_id FROM guilds WHERE id = ?", e.GuildID).Scan(&NoMicChannelID)
 	if err != nil {
 		log.Printf("Error on no mic permission database call: %v\n", err)
 	}
 	if state {
-		err = s.ChannelPermissionSet(fmt.Sprint(NO_MIC_CHANNEL_ID),
+		err = s.ChannelPermissionSet(fmt.Sprint(NoMicChannelID),
 			e.Member.User.ID,
 			discordgo.PermissionOverwriteTypeMember,
 			discordgo.PermissionViewChannel,
 			0)
 	} else {
-		err = s.ChannelPermissionDelete(fmt.Sprint(NO_MIC_CHANNEL_ID), e.Member.User.ID)
+		err = s.ChannelPermissionDelete(fmt.Sprint(NoMicChannelID), e.Member.User.ID)
 	}
 
 	if err != nil {

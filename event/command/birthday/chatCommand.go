@@ -21,7 +21,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// The chat (slash) command of the birthday
+// The Chat (slash) command of the birthday
 // package. Has a few sub commands and options
 // to use all features through a single chat
 // command.
@@ -35,6 +35,8 @@ type subcommand interface {
 	handler()
 }
 
+// AppCmd (ApplicationCommand) returns the definition of the chat
+// command
 func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
 	options := []*discordgo.ApplicationCommandOption{
 		subCommandSet(),
@@ -51,6 +53,7 @@ func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
 	}
 }
 
+// CmdHandler returns the functionality of a command
 func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	return func(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -81,10 +84,12 @@ func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.Interaction
 	}
 }
 
+// SetID sets the registered command ID for internal uses after uploading to discord
 func (cmd *Chat) SetID(id string) {
 	cmd.ID = id
 }
 
+// GetID gets the registered command ID
 func (cmd Chat) GetID() string {
 	return cmd.ID
 }

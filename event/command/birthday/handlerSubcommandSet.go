@@ -231,10 +231,10 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 		MONTH             // when month is changed
 		YEAR              // when year is changed
 
-		NO_DAY   = MONTH | YEAR       // when month and year is changed
-		NO_MONTH = DAY | YEAR         // when day and year is changed
-		NO_YEAR  = DAY | MONTH        // when day and month is changed
-		ALL      = DAY | MONTH | YEAR // when day month and year is changed
+		NODAY   = MONTH | YEAR       // when month and year is changed
+		NOMONTH = DAY | YEAR         // when day and year is changed
+		NOYEAR  = DAY | MONTH        // when day and month is changed
+		ALL     = DAY | MONTH | YEAR // when day month and year is changed
 	)
 
 	// bit field of 4 bits to determin which values have changed
@@ -265,14 +265,14 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 			f.Value = fmt.Sprintf("%d", b.Year)
 		} else if b.Year == 0 {
 			f.Name = lang.Get(tp+"msg.set.update.year.remove", lang.FallbackLang())
-			was_year := lang.Get(tp+"msg.set.update.year.was", lang.FallbackLang())
-			f.Value = fmt.Sprintf(was_year, before.Year)
+			wasYear := lang.Get(tp+"msg.set.update.year.was", lang.FallbackLang())
+			f.Value = fmt.Sprintf(wasYear, before.Year)
 		} else {
 			f.Name = lang.Get(tp+"msg.set.update.year", lang.FallbackLang())
 			f.Value = fmt.Sprintf("%d -> %d", before.Year, b.Year)
 		}
 	// set field when any two or all three are changed
-	case NO_YEAR, NO_MONTH, NO_DAY, ALL:
+	case NOYEAR, NOMONTH, NODAY, ALL:
 		f.Name = lang.Get(tp+"msg.set.update.date", lang.FallbackLang())
 		f.Value = fmt.Sprintf("%s -> %s", before, b)
 		f.Inline = true

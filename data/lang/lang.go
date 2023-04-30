@@ -153,7 +153,7 @@ func Get(key, lang string) string {
 	return Get(key, fLang)
 }
 
-// GetDefualt is like Get, but with FallbackLang as language
+// GetDefault is like Get, but with FallbackLang as language
 func GetDefault(key string) string {
 	return Get(key, FallbackLang())
 }

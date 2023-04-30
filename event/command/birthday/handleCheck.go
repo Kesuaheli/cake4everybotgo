@@ -26,8 +26,10 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// Check checks if there are any birthdays on the current date
+// (time.Now()), if so announce them in the desired channel.
 func Check(s *discordgo.Session) {
-	var guild_id, channel_id uint64
+	var guildID, channelID uint64
 	rows, err := database.Query("SELECT id,birthday_id FROM guilds")
 	if err != nil {
 		log.Printf("Error on getting birthday channel IDs from database: %v\n", err)
@@ -44,19 +46,19 @@ func Check(s *discordgo.Session) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&guild_id, &channel_id)
+		err = rows.Scan(&guildID, &channelID)
 		if err != nil {
 			log.Printf("Error on scanning birthday channel ID from database %v\n", err)
 			continue
 		}
 
-		channel, err := s.Channel(fmt.Sprint(channel_id))
+		channel, err := s.Channel(fmt.Sprint(channelID))
 		if err != nil {
 			log.Printf("Error on getting birthday channel for id: %v\n", err)
 			return
 		}
-		if channel.GuildID != fmt.Sprint(guild_id) {
-			log.Printf("Warning: tried to announce birthdays in channel/%d/%d, but this channel is from guild: '%s'\n", guild_id, channel_id, channel.GuildID)
+		if channel.GuildID != fmt.Sprint(guildID) {
+			log.Printf("Warning: tried to announce birthdays in channel/%d/%d, but this channel is from guild: '%s'\n", guildID, channelID, channel.GuildID)
 			return
 		}
 
