@@ -15,3 +15,6 @@ discord:
 
 event:
   birthday_hour: 8 # Time to trigger daily birthday check (24h format)
+
+webserver:
+  favicon: webserver/favicon.png
