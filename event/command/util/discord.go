@@ -37,7 +37,7 @@ func AuthoredEmbed[T *discordgo.User | *discordgo.Member](s *discordgo.Session, 
 	if !ok {
 		member, ok := any(author).(*discordgo.Member)
 		if !ok {
-			panic(fmt.Sprintf("Given generic type is not an discord user or member"))
+			panic("Given generic type is not an discord user or member")
 		}
 		user = member.User
 		username = member.Nick

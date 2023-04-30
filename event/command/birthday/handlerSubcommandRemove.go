@@ -74,10 +74,10 @@ func (cmd subcommandRemove) handler() {
 
 	e.Description = lang.Get(tp+"msg.remove", lang.FallbackLang())
 	e.Color = 0x00FF00
-	was_before := lang.Get(tp+"msg.remove.was", lang.FallbackLang())
-	was_before = fmt.Sprintf(was_before, b)
+	wasBefore := lang.Get(tp+"msg.remove.was", lang.FallbackLang())
+	wasBefore = fmt.Sprintf(wasBefore, b)
 	e.Fields = []*discordgo.MessageEmbedField{{
-		Name:   was_before,
+		Name:   wasBefore,
 		Inline: true,
 	}}
 
