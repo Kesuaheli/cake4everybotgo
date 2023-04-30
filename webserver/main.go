@@ -29,6 +29,8 @@ func initHttp() http.Handler {
 	r.NotFoundHandler = http.HandlerFunc(handle_404)
 
 	r.HandleFunc("/favicon.ico", favicon)
+	r.HandleFunc("/api/yt_pubsubhubbub/", handleYTGet).Methods("GET")
+	r.HandleFunc("/api/yt_pubsubhubbub/", handleYTPost).Methods("POST")
 
 	return r
 }
