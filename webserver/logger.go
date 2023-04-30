@@ -20,6 +20,7 @@ import (
 	"net/http"
 )
 
+// Logger is an http.Handler middleware to log requests and traffic
 func Logger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		source := r.RemoteAddr

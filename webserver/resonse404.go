@@ -19,7 +19,7 @@ import (
 	"net/http"
 )
 
-func handle_404(w http.ResponseWriter, r *http.Request) {
+func handle404(w http.ResponseWriter, r *http.Request) {
 	log.Println("reached 404")
 	log.Printf("%s %s", r.Method, r.URL)
 	w.Write([]byte("Error 404\nCake not found"))

@@ -22,11 +22,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-func initHttp() http.Handler {
+func initHTTP() http.Handler {
 	r := mux.NewRouter()
 	r.Use(Logger)
 
-	r.NotFoundHandler = http.HandlerFunc(handle_404)
+	r.NotFoundHandler = http.HandlerFunc(handle404)
 
 	r.HandleFunc("/favicon.ico", favicon)
 	r.HandleFunc("/api/yt_pubsubhubbub/", handleYTGet).Methods("GET")
@@ -35,8 +35,9 @@ func initHttp() http.Handler {
 	return r
 }
 
+// Run starts the webserver at the given address
 func Run(addr string) {
-	handler := initHttp()
+	handler := initHTTP()
 
 	go func() {
 		err := http.ListenAndServe(addr, handler)

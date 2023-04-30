@@ -23,6 +23,9 @@ import (
 	"regexp"
 )
 
+// Feed is the object that holds a incomming notification feed from
+// youtube. This could be a new video (upload/publish) or an update
+// of an existing one.
 type Feed struct {
 	XMLName xml.Name `xml:"feed" json:"-"`
 	ID      string   `xml:"entry>videoId"`
@@ -75,20 +78,18 @@ func handleYTGet(w http.ResponseWriter, r *http.Request) {
 
 	//Todo: check for path too: "https://www.youtube.com/xml/feeds/videos.xml?channel_id={channel_id}"
 
-	channel_id := topicURL.Query().Get("channel_id")
-	log.Println("ChannelID: ", channel_id)
+	channelID := topicURL.Query().Get("channel_id")
+	log.Println("ChannelID: ", channelID)
 
-	if channel_id != "UC6sb0bkXREewXp2AkSOsOqg" {
-		log.Printf("Requested unknown channel: %s\n", channel_id)
+	if channelID != "UC6sb0bkXREewXp2AkSOsOqg" {
+		log.Printf("Requested unknown channel: %s\n", channelID)
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 
 	w.WriteHeader(http.StatusAccepted)
 	w.Write([]byte(challenge))
-	log.Printf("Accepted '%s' from %s for channel %s\n", mode, topicURL.Host, channel_id)
-	return
-
+	log.Printf("Accepted '%s' from %s for channel %s\n", mode, topicURL.Host, channelID)
 }
 
 func handleYTPost(w http.ResponseWriter, r *http.Request) {
@@ -124,5 +125,4 @@ func handleYTPost(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("New Notification :)")
 	log.Println("Parsed Feed:", feed)
-	return
 }
