@@ -19,7 +19,8 @@ import (
 )
 
 var dcSession *discordgo.Session
-var subscribtionMap map[string]func(*discordgo.Session, Feed) = make(map[string]func(*discordgo.Session, Feed))
+var dcHandler func(*discordgo.Session, *Video)
+var subscribtions = make(map[string]bool)
 
 // SetDiscordSession sets the discord.Sesstion to use for calling
 // event handlers.
@@ -27,8 +28,14 @@ func SetDiscordSession(s *discordgo.Session) {
 	dcSession = s
 }
 
+// SetDiscordHandler sets the function to use when calling event
+// handlers.
+func SetDiscordHandler(f func(*discordgo.Session, *Video)) {
+	dcHandler = f
+}
+
 // SubscribeChannel subscribe to the event listener for new videos of
 // the given channel id.
-func SubscribeChannel(channelID string, f func(s *discordgo.Session, e Feed)) {
-	subscribtionMap[channelID] = f
+func SubscribeChannel(channelID string) {
+	subscribtions[channelID] = true
 }

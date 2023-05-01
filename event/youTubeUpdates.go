@@ -23,5 +23,7 @@ import (
 
 func addYouTubeListeners(s *discordgo.Session) {
 	webYT.SetDiscordSession(s)
-	webYT.SubscribeChannel("UC6sb0bkXREewXp2AkSOsOqg", youtube.Announce)
+	webYT.SetDiscordHandler(youtube.Announce)
+
+	webYT.SubscribeChannel("UC6sb0bkXREewXp2AkSOsOqg")
 }

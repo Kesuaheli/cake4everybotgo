@@ -23,14 +23,26 @@ import (
 	"regexp"
 )
 
-// Feed is the object that holds a incomming notification feed from
+// feed is the object that holds a incomming notification feed from
 // youtube. This could be a new video (upload/publish) or an update
 // of an existing one.
-type Feed struct {
-	XMLName xml.Name `xml:"feed" json:"-"`
-	ID      string   `xml:"entry>videoId"`
-	Channel string   `xml:"entry>channelId"`
-	Title   string   `xml:"entry>title"`
+type feed struct {
+	Video   feedVideo   `xml:"entry>videoId"`
+	Channel feedChannel `xml:"entry>channelId"`
+}
+
+// feedVideo is part of the feed xml struct and contains the videoId
+// field.
+type feedVideo struct {
+	XMLName xml.Name `xml:"videoId"`
+	ID      string   `xml:",chardata"`
+}
+
+// feedChannel is part of the xml feed struct and contains the
+// channelId field.
+type feedChannel struct {
+	XMLName xml.Name `xml:"channelId"`
+	ID      string   `xml:",chardata"`
 }
 
 // HandleGet is the HTTP/GET handler for the YouTube PubSubHubBub
@@ -43,9 +55,6 @@ func HandleGet(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-
-	log.Println(r.RequestURI)
-	r.Header.Write(log.Writer())
 
 	topic := r.FormValue("hub.topic")
 	challenge := r.FormValue("hub.challenge")
@@ -108,8 +117,6 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.Header.Write(log.Writer())
-
 	// only accept atom feed
 	content := r.Header.Get("Content-Type")
 	if content != "application/atom+xml" {
@@ -125,7 +132,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feed := Feed{}
+	feed := feed{}
 	err = xml.Unmarshal(buf, &feed)
 	if err != nil {
 		log.Printf("Error on parse XML body: %v\n", err)
@@ -133,15 +140,21 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("New Notification :)")
-	log.Println("Parsed Feed:", feed)
+	// need "yt" namespace i.e. <yt:videoId>1a2b3c4d</yt:videoId>
+	if feed.Video.XMLName.Space != "yt" || feed.Channel.XMLName.Space != "yt" {
+		log.Println("Missing \"yt\" xml namespace in IDs")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+	w.Write([]byte("Content will be checked and could be ignored on mismatch"))
 
 	go func() {
-		handlerFunc, ok := subscribtionMap[feed.Channel]
+		video, ok := checkVideo(feed.Video.ID, feed.Channel.ID)
 		if !ok {
-			log.Println("Channel not subscribed to")
 			return
 		}
-		handlerFunc(dcSession, feed)
+		dcHandler(dcSession, video)
 	}()
 }

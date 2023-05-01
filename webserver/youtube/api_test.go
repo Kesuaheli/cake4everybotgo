@@ -176,7 +176,7 @@ func Test_handleYTPost_with_valid_content(t *testing.T) {
 		t.Error(err)
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("Expected 200 but got %d", resp.StatusCode)
+	if resp.StatusCode != http.StatusAccepted {
+		t.Errorf("Expected 202 but got %d", resp.StatusCode)
 	}
 }

@@ -25,9 +25,8 @@ import (
 )
 
 const (
-	videoBaseURL     string = "https://youtu.be/%s"
-	channelBaseURL   string = "https://youtube.com/channel/%s"
-	thumbnailBaseURL string = "https://i.ytimg.com/vi/%s/hqdefault.jpg"
+	videoBaseURL   string = "https://youtu.be/%s"
+	channelBaseURL string = "https://youtube.com/channel/%s"
 )
 
 type guild struct {
@@ -36,8 +35,8 @@ type guild struct {
 	ping    string
 }
 
-// Announce takes a youtube feed and announces it in discord channels
-func Announce(s *discordgo.Session, event webYT.Feed) {
+// Announce takes a youtube video and announces it in discord channels
+func Announce(s *discordgo.Session, event *webYT.Video) {
 	guilds, err := getGuilds(s)
 	if err != nil {
 		log.Printf("Error on getting channels: %v\n", err)
@@ -49,18 +48,17 @@ func Announce(s *discordgo.Session, event webYT.Feed) {
 	}
 
 	var (
-		videoURL      = fmt.Sprintf(videoBaseURL, event.ID)
-		channelURL    = fmt.Sprintf(channelBaseURL, event.Channel)
-		thubmbnailURL = fmt.Sprintf(thumbnailBaseURL, event.ID)
+		videoURL   = fmt.Sprintf(videoBaseURL, event.ID)
+		channelURL = fmt.Sprintf(channelBaseURL, event.ChannelID)
+		thumb      = event.Thumbnails["high"]
 	)
 
 	embed := &discordgo.MessageEmbed{
-		Type:  discordgo.EmbedTypeVideo,
-		Title: event.Title,
-		URL:   videoURL,
-		// TODO: change name
-		Author: &discordgo.MessageEmbedAuthor{URL: channelURL, Name: "Taomi hat ein neues Video hochgeladen"},
-		Image:  &discordgo.MessageEmbedImage{URL: thubmbnailURL, Width: 1280, Height: 720},
+		Type:   discordgo.EmbedTypeVideo,
+		Title:  event.Title,
+		URL:    videoURL,
+		Author: &discordgo.MessageEmbedAuthor{URL: channelURL, Name: event.Channel + " hat ein neues Video hochgeladen"},
+		Image:  &discordgo.MessageEmbedImage{URL: thumb.URL, Width: thumb.Width, Height: thumb.Height},
 	}
 
 	// send the embed to the channels
