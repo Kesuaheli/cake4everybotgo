@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package webserver
+package youtube
 
 import (
 	"encoding/xml"
@@ -33,7 +33,12 @@ type Feed struct {
 	Title   string   `xml:"entry>title"`
 }
 
-func handleYTGet(w http.ResponseWriter, r *http.Request) {
+// HandleGet is the HTTP/GET handler for the YouTube PubSubHubBub
+// endpoint.
+//
+// It is used to accept new webhook subscriptions for YouTube video
+// news feed, like publish a new video or editing an existing one.
+func HandleGet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
@@ -92,7 +97,12 @@ func handleYTGet(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Accepted '%s' from %s for channel %s\n", mode, topicURL.Host, channelID)
 }
 
-func handleYTPost(w http.ResponseWriter, r *http.Request) {
+// HandlePost is the HTTP/POST handler for the YouTube PubSubHubBub
+// endpoint.
+//
+// It is used to handle a notification feed comming from a newly
+// published video of a subscribed channel.
+func HandlePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return

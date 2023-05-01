@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package webserver
+package youtube
 
 import (
 	"io"
@@ -27,7 +27,7 @@ func setServer(f http.HandlerFunc) *httptest.Server {
 }
 
 func Test_handleYTGet_as_post(t *testing.T) {
-	server := setServer(handleYTGet)
+	server := setServer(HandleGet)
 
 	resp, err := http.Post(server.URL, "*/*", nil)
 	if err != nil {
@@ -40,7 +40,7 @@ func Test_handleYTGet_as_post(t *testing.T) {
 }
 
 func Test_handleYTGet_without_query(t *testing.T) {
-	server := setServer(handleYTGet)
+	server := setServer(HandleGet)
 
 	resp, err := http.Get(server.URL)
 	if err != nil {
@@ -53,7 +53,7 @@ func Test_handleYTGet_without_query(t *testing.T) {
 }
 
 func Test_handleYTGet_with_wrong_topic_host(t *testing.T) {
-	server := setServer(handleYTGet)
+	server := setServer(HandleGet)
 	server.URL += "?hub.topic=https://www.example.com/"
 	server.URL += "&hub.challenge=123aBc456"
 	server.URL += "&hub.mode=subscribe"
@@ -69,7 +69,7 @@ func Test_handleYTGet_with_wrong_topic_host(t *testing.T) {
 }
 
 func Test_handleYTGet_without_channel(t *testing.T) {
-	server := setServer(handleYTGet)
+	server := setServer(HandleGet)
 	server.URL += "?hub.topic=https://www.youtube.com/xml/feeds/videos.xml"
 	server.URL += "&hub.challenge=123aBc456"
 	server.URL += "&hub.challenge=subscribe"
@@ -85,7 +85,7 @@ func Test_handleYTGet_without_channel(t *testing.T) {
 }
 
 func Test_handleYTGet_return_challenge(t *testing.T) {
-	server := setServer(handleYTGet)
+	server := setServer(HandleGet)
 	channel := "UC6sb0bkXREewXp2AkSOsOqg"
 	server.URL += "?hub.topic=https://www.youtube.com/xml/feeds/videos.xml?channel_id=" + channel
 	server.URL += "&hub.challenge=123aBc456"
@@ -111,7 +111,7 @@ func Test_handleYTGet_return_challenge(t *testing.T) {
 }
 
 func Test_handleYTPost_as_get(t *testing.T) {
-	server := setServer(handleYTPost)
+	server := setServer(HandlePost)
 
 	resp, err := http.Get(server.URL)
 	if err != nil {
@@ -124,7 +124,7 @@ func Test_handleYTPost_as_get(t *testing.T) {
 }
 
 func Test_handleYTPost_with_wrong_content_type(t *testing.T) {
-	server := setServer(handleYTPost)
+	server := setServer(HandlePost)
 
 	resp, err := http.Post(server.URL, "foo/bar", nil)
 	if err != nil {
@@ -137,7 +137,7 @@ func Test_handleYTPost_with_wrong_content_type(t *testing.T) {
 }
 
 func Test_handleYTPost_with_invalid_content(t *testing.T) {
-	server := setServer(handleYTPost)
+	server := setServer(HandlePost)
 
 	resp, err := http.Post(server.URL, "application/atom+xml", nil)
 	if err != nil {
@@ -160,7 +160,7 @@ func Test_handleYTPost_with_invalid_content(t *testing.T) {
 }
 
 func Test_handleYTPost_with_valid_content(t *testing.T) {
-	server := setServer(handleYTPost)
+	server := setServer(HandlePost)
 
 	body := strings.NewReader(`
 	<feed>

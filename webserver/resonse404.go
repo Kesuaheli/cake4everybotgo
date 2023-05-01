@@ -21,6 +21,6 @@ import (
 
 func handle404(w http.ResponseWriter, r *http.Request) {
 	log.Println("reached 404")
-	log.Printf("%s %s", r.Method, r.URL)
+	log.Printf("%s: %s %s", r.Host, r.Method, r.URL)
 	w.Write([]byte("Error 404\nCake not found"))
 }
