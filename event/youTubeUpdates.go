@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Kesuaheli
+// Copyright 2023 Kesuaheli
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,24 +15,13 @@
 package event
 
 import (
+	"cake4everybot/event/youtube"
+	webYT "cake4everybot/webserver/youtube"
+
 	"github.com/bwmarrin/discordgo"
 )
 
-// Register registers all events, like commands.
-func Register(s *discordgo.Session, guildID string) error {
-	err := registerCommands(s, guildID)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// AddListeners adds all event handlers to the given session s.
-func AddListeners(s *discordgo.Session) {
-	addCommandListeners(s)
-	addVoiceStateListeners(s)
-
-	addScheduledTriggers(s)
-	addYouTubeListeners(s)
+func addYouTubeListeners(s *discordgo.Session) {
+	webYT.SetDiscordSession(s)
+	webYT.SubscribeChannel("UC6sb0bkXREewXp2AkSOsOqg", youtube.Announce)
 }

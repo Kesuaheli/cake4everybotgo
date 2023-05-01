@@ -135,4 +135,13 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("New Notification :)")
 	log.Println("Parsed Feed:", feed)
+
+	go func() {
+		handlerFunc, ok := subscribtionMap[feed.Channel]
+		if !ok {
+			log.Println("Channel not subscribed to")
+			return
+		}
+		handlerFunc(dcSession, feed)
+	}()
 }

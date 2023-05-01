@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Kesuaheli
+// Copyright 2023 Kesuaheli
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,27 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package event
+package youtube
 
 import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// Register registers all events, like commands.
-func Register(s *discordgo.Session, guildID string) error {
-	err := registerCommands(s, guildID)
-	if err != nil {
-		return err
-	}
+var dcSession *discordgo.Session
+var subscribtionMap map[string]func(*discordgo.Session, Feed) = make(map[string]func(*discordgo.Session, Feed))
 
-	return nil
+// SetDiscordSession sets the discord.Sesstion to use for calling
+// event handlers.
+func SetDiscordSession(s *discordgo.Session) {
+	dcSession = s
 }
 
-// AddListeners adds all event handlers to the given session s.
-func AddListeners(s *discordgo.Session) {
-	addCommandListeners(s)
-	addVoiceStateListeners(s)
-
-	addScheduledTriggers(s)
-	addYouTubeListeners(s)
+// SubscribeChannel subscribe to the event listener for new videos of
+// the given channel id.
+func SubscribeChannel(channelID string, f func(s *discordgo.Session, e Feed)) {
+	subscribtionMap[channelID] = f
 }
