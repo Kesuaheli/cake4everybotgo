@@ -72,10 +72,6 @@ func HandleGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("Topic:", topic)
-	log.Println("Challenge: ", challenge)
-	log.Println("Mode: ", mode)
-
 	topicURL, err := url.Parse(topic)
 	if err != nil {
 		log.Printf("Error on parse topic url '%s': %v\n", topic, err)
@@ -89,14 +85,22 @@ func HandleGet(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
-
-	//Todo: check for path too: "https://www.youtube.com/xml/feeds/videos.xml?channel_id={channel_id}"
+	if topicURL.Path != "/xml/feeds/videos.xml" {
+		log.Printf("Topic path is not for videos: %s\n", topicURL.Path)
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 
 	channelID := topicURL.Query().Get("channel_id")
-	log.Println("ChannelID: ", channelID)
 
-	if channelID != "UC6sb0bkXREewXp2AkSOsOqg" {
-		log.Printf("Requested unknown channel: %s\n", channelID)
+	// check for valid actions
+	if !subscribtions[channelID] && mode == "subscribe" {
+		log.Printf("Requested subscription for unknown channel: %s\n", channelID)
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+	if subscribtions[channelID] && mode == "unsubscribe" {
+		log.Printf("Requested unsubscribe for used channel: %s\n", channelID)
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}

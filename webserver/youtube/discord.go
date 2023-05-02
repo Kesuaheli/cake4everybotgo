@@ -39,3 +39,9 @@ func SetDiscordHandler(f func(*discordgo.Session, *Video)) {
 func SubscribeChannel(channelID string) {
 	subscribtions[channelID] = true
 }
+
+// UnsubscribeChannel removes the given channel id from the
+// subscription list and no longer sends events.
+func UnsubscribeChannel(channelID string) {
+	subscribtions[channelID] = false
+}
