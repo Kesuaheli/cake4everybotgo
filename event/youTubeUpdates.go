@@ -19,11 +19,15 @@ import (
 	webYT "cake4everybot/webserver/youtube"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/spf13/viper"
 )
 
 func addYouTubeListeners(s *discordgo.Session) {
 	webYT.SetDiscordSession(s)
 	webYT.SetDiscordHandler(youtube.Announce)
 
-	webYT.SubscribeChannel("UC6sb0bkXREewXp2AkSOsOqg")
+	channels := viper.GetStringSlice("youtube.announce")
+	for _, channelID := range channels {
+		webYT.SubscribeChannel(channelID)
+	}
 }

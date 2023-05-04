@@ -15,6 +15,8 @@
 package youtube
 
 import (
+	"log"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -37,11 +39,17 @@ func SetDiscordHandler(f func(*discordgo.Session, *Video)) {
 // SubscribeChannel subscribe to the event listener for new videos of
 // the given channel id.
 func SubscribeChannel(channelID string) {
-	subscribtions[channelID] = true
+	if !subscribtions[channelID] {
+		subscribtions[channelID] = true
+		log.Printf("YouTube: subscribed '%s' for announcements", channelID)
+	}
 }
 
 // UnsubscribeChannel removes the given channel id from the
 // subscription list and no longer sends events.
 func UnsubscribeChannel(channelID string) {
-	subscribtions[channelID] = false
+	if subscribtions[channelID] {
+		delete(subscribtions, channelID)
+		log.Printf("YouTube: unsubscribed '%s' from announcements", channelID)
+	}
 }
