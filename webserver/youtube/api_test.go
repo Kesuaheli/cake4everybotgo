@@ -388,16 +388,36 @@ func Test_handleYTPost_with_incomplete_content(t *testing.T) {
 func Test_handleYTPost_with_invalid_entry_feed(t *testing.T) {
 	server := setServer(HandlePost)
 
+	// no yt namespace set
 	body := strings.NewReader(`
 	<feed>
 		<entry>
 			<title>This is an automated test</title>
-			<c4e:videoId>go-test</c4e:videoId>
-			<c4e:channelId>go-test</c4e:channelId>
+			<yt:videoId>go-test</yt:videoId>
+			<yt:channelId>go-test</yt:channelId>
 		</entry>
 	</feed>
 	`)
 	resp, err := http.Post(server.URL, "application/atom+xml", body)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if resp.StatusCode != http.StatusBadRequest {
+		t.Errorf("Expected 400 but got %d", resp.StatusCode)
+	}
+
+	// wrong yt namespace set
+	body = strings.NewReader(`
+	<feed xmlns:yt="http://www.cake4everyone.de/">
+		<entry>
+			<title>This is an automated test</title>
+			<yt:videoId>go-test</yt:videoId>
+			<yt:channelId>go-test</yt:channelId>
+		</entry>
+	</feed>
+	`)
+	resp, err = http.Post(server.URL, "application/atom+xml", body)
 	if err != nil {
 		t.Error(err)
 	}
@@ -411,7 +431,7 @@ func Test_handleYTPost_with_valid_content(t *testing.T) {
 	server := setServer(HandlePost)
 
 	body := strings.NewReader(`
-	<feed>
+	<feed xmlns:yt="http://www.youtube.com/">
 		<entry>
 			<title>This is an automated test</title>
 			<yt:videoId>go-test</yt:videoId>

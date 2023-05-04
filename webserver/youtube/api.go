@@ -144,9 +144,23 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// need "yt" namespace i.e. <yt:videoId>1a2b3c4d</yt:videoId>
-	if feed.Video.XMLName.Space != "yt" || feed.Channel.XMLName.Space != "yt" {
-		log.Println("Missing \"yt\" xml namespace in IDs")
+	// need yt namespace i.e. <yt:videoId>1a2b3c4d</yt:videoId> as
+	// well as the xmlns:yt attribute to be set in a parent xmls tag.
+	// The namespace needs to be a valid url with "www.youtube.com"
+	// as host.
+	xmlnsVideo, err := url.Parse(feed.Video.XMLName.Space)
+	if err != nil {
+		log.Printf("Error on video namespace url '%s': %v\n", feed.Video.XMLName.Space, err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if xmlnsVideo.Host != "www.youtube.com" {
+		log.Printf("xml video namespace is not from youtube '%s': %v\n", xmlnsVideo, err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if feed.Video.XMLName.Space != feed.Channel.XMLName.Space {
+		log.Printf("xml channel namespace ('%s') is not the same as video namespace ('%s')\n", feed.Channel.XMLName.Space, feed.Video.XMLName.Space)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
