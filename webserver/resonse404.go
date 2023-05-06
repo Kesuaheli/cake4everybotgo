@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Kesuaheli
+// Copyright 2023 Kesuaheli
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,27 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package event
+package webserver
 
 import (
-	"github.com/bwmarrin/discordgo"
+	"log"
+	"net/http"
 )
 
-// Register registers all events, like commands.
-func Register(s *discordgo.Session, guildID string) error {
-	err := registerCommands(s, guildID)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// AddListeners adds all event handlers to the given session s.
-func AddListeners(s *discordgo.Session) {
-	addCommandListeners(s)
-	addVoiceStateListeners(s)
-
-	addScheduledTriggers(s)
-	addYouTubeListeners(s)
+func handle404(w http.ResponseWriter, r *http.Request) {
+	log.Println("reached 404")
+	log.Printf("%s: %s %s", r.Host, r.Method, r.URL)
+	w.Write([]byte("Error 404\nCake not found"))
 }

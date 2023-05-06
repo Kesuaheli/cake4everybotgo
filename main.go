@@ -26,6 +26,7 @@ import (
 	"cake4everybot/config"
 	"cake4everybot/database"
 	"cake4everybot/event"
+	"cake4everybot/webserver"
 )
 
 const banner string = "\n" +
@@ -81,6 +82,11 @@ func main() {
 	if err != nil {
 		log.Printf("Error registering events: %v\n", err)
 	}
+
+	log.Println("Starting webserver...")
+	addr := ":8080"
+	webserver.Run(addr)
+	log.Printf("Started webserver under %s\n", addr)
 
 	// Wait to end the bot
 	log.Println("Press Ctrl+C to exit")
