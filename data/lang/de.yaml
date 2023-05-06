@@ -92,3 +92,7 @@ discord.command:
     msg.announce.congratulate: Alles gute an
     msg.announce.with_age: "%s (wird %s)"
     msg.next: Nächster Geburtstag
+
+youtube:
+  embed_footer: YouTube Glocke
+  msg.new_vid: "%s hat ein neues Video hochgeladen"

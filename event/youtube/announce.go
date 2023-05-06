@@ -18,7 +18,9 @@ import (
 	"fmt"
 	"log"
 
+	"cake4everybot/data/lang"
 	"cake4everybot/database"
+	"cake4everybot/event/command/util"
 	webYT "cake4everybot/webserver/youtube"
 
 	"github.com/bwmarrin/discordgo"
@@ -50,6 +52,7 @@ func Announce(s *discordgo.Session, event *webYT.Video) {
 	var (
 		videoURL   = fmt.Sprintf(videoBaseURL, event.ID)
 		channelURL = fmt.Sprintf(channelBaseURL, event.ChannelID)
+		title      = fmt.Sprintf(lang.GetDefault("youtube.msg.new_vid"), event.Channel)
 		thumb      = event.Thumbnails["high"]
 	)
 
@@ -57,9 +60,10 @@ func Announce(s *discordgo.Session, event *webYT.Video) {
 		Type:   discordgo.EmbedTypeVideo,
 		Title:  event.Title,
 		URL:    videoURL,
-		Author: &discordgo.MessageEmbedAuthor{URL: channelURL, Name: event.Channel + " hat ein neues Video hochgeladen"},
+		Author: &discordgo.MessageEmbedAuthor{URL: channelURL, Name: title},
 		Image:  &discordgo.MessageEmbedImage{URL: thumb.URL, Width: thumb.Width, Height: thumb.Height},
 	}
+	util.SetEmbedFooter(s, "youtube.embed_footer", embed)
 
 	// send the embed to the channels
 	for _, g := range guilds {
