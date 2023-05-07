@@ -26,15 +26,23 @@ var langsMap = map[string]*viper.Viper{}
 // Unify takes and returns a string wich defines a language, i.e.
 // 'en_us', and changes it to a uniform format.
 //
-// Currently only lowercases everything and replaces '-' (dashes)
-// with '_' (underscores).
+// It splits the given language at any '-' (dash), '_' (underscore),
+// or ' ' (space) character, if any, and returns the first set of
+// characters as lowercase.
+//
+//	Unify("en_us") = "en"
+//	Unify("EN gb") = "en"
+//	Unify("de")    = "de"
 //
 // This function is called on every lang input internally, so calling
 // it on a lang name before passing it to a function is pointless.
 func Unify(lang string) string {
 	lang = strings.ToLower(lang)
-	lang = strings.ReplaceAll(lang, "-", "_")
-	return lang
+	split := strings.IndexAny(lang, "-_ ")
+	if split == -1 {
+		return lang
+	}
+	return lang[:split]
 }
 
 // Load loads (and reloads) the language files defined in the global
