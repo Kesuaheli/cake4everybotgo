@@ -69,9 +69,11 @@ func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.Interaction
 			fmt.Sprintf("%dms", s.LastHeartbeatAck.Sub(s.LastHeartbeatSent).Milliseconds()),
 			true,
 		)
+		version := fmt.Sprintf("v%s", viper.GetString("version"))
+		versionURL := fmt.Sprintf("https://github.com/Kesuaheli/cake4everybotgo/releases/tag/%s", version)
 		util.AddEmbedField(e,
 			lang.Get(tp+"version", lang.FallbackLang()),
-			fmt.Sprintf("v%s", viper.GetString("version")),
+			fmt.Sprintf("[%s](%s)", version, versionURL),
 			false,
 		)
 		util.SetEmbedFooter(s, tp+"display", e)
