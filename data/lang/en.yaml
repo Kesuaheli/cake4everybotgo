@@ -31,7 +31,7 @@ discord.command:
     option.list.option.month: month
     option.list.option.month.description: The month to list all birthdays from
 
-    user_show:
+    user.show:
       base: Show birthday
 
     weekday:
@@ -95,6 +95,16 @@ discord.command:
     msg.announce.congratulate: Happy Birthday to
     msg.announce.with_age: "%s (turns %s)"
     msg.next: Next birthday
+
+  info:
+    base: info
+    base.description: Displays some infos about the bot
+    display: Bot information
+
+    title: Informations and status
+    start_time: Latest restart
+    latency: Latency
+    version: Version
 
 youtube:
   embed_footer: YouTube notification bell

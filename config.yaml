@@ -1,3 +1,9 @@
+# Version of the bot. DO NOT CHANGE
+version: 1.0.1
+
+# Loading aditional files. This is primarily used to load tokens,
+# keys, and other cridentials from files that are filtered by the
+# .gitignore rules
 additionalConfigs:
   - config_env.yaml # For tokens and access keys
   - database/connection_env.yaml # Connection data for mySQL databse
@@ -6,7 +12,7 @@ additionalConfigs:
 # The first one in this list will also be the fallback when trying to
 # read an unloaded language
 languages:
-  - en_us
+  - en
   - de
 
 discord:

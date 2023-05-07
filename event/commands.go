@@ -20,6 +20,7 @@ import (
 
 	"cake4everybot/event/command"
 	"cake4everybot/event/command/birthday"
+	"cake4everybot/event/command/info"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -35,6 +36,7 @@ func registerCommands(s *discordgo.Session, guildID string) error {
 
 	// chat (slash) commands
 	commandsList = append(commandsList, &birthday.Chat{})
+	commandsList = append(commandsList, &info.Chat{})
 	// messsage commands
 	// user commands
 	commandsList = append(commandsList, &birthday.UserShow{})

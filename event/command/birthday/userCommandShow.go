@@ -36,8 +36,8 @@ type UserShow struct {
 func (cmd UserShow) AppCmd() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Type:              discordgo.UserApplicationCommand,
-		Name:              lang.GetDefault(tp + "user_show.base"),
-		NameLocalizations: util.TranslateLocalization(tp + "user_show.base"),
+		Name:              lang.GetDefault(tp + "user.show.base"),
+		NameLocalizations: util.TranslateLocalization(tp + "user.show.base"),
 	}
 }
 

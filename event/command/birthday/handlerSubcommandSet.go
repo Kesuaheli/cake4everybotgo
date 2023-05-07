@@ -285,11 +285,11 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 	e.Fields = []*discordgo.MessageEmbedField{f}
 
 	if !f.Inline {
-		e.Fields = append(e.Fields, &discordgo.MessageEmbedField{
-			Name:   lang.Get(tp+"msg.set.date", lang.FallbackLang()),
-			Value:  b.String(),
-			Inline: true,
-		})
+		util.AddEmbedField(e,
+			lang.Get(tp+"msg.set.date", lang.FallbackLang()),
+			b.String(),
+			true,
+		)
 	}
 
 	var age string
@@ -297,11 +297,11 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 		age = fmt.Sprintf(" (%d)", b.Age()+1)
 	}
 
-	e.Fields = append(e.Fields, &discordgo.MessageEmbedField{
-		Name:   lang.Get(tp+"msg.next", lang.FallbackLang()),
-		Value:  fmt.Sprintf("<t:%d:R>%s", b.NextUnix(), age),
-		Inline: true,
-	})
+	util.AddEmbedField(e,
+		lang.Get(tp+"msg.next", lang.FallbackLang()),
+		fmt.Sprintf("<t:%d:R>%s", b.NextUnix(), age),
+		true,
+	)
 
 	if before.Visible != b.Visible {
 		var visibility string
@@ -315,11 +315,11 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 			mentionCmd := util.MentionCommand(tp+"base", tp+"option.remove")
 			visibility = fmt.Sprintf(visibility, mentionCmd)
 		}
-		e.Fields = append(e.Fields, &discordgo.MessageEmbedField{
-			Name:   lang.Get(tp+"msg.set.update.visibility", lang.FallbackLang()),
-			Value:  visibility,
-			Inline: false,
-		})
+		util.AddEmbedField(e,
+			lang.Get(tp+"msg.set.update.visibility", lang.FallbackLang()),
+			visibility,
+			false,
+		)
 	}
 
 	return nil
