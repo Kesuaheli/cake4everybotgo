@@ -17,6 +17,7 @@ package youtube
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"cake4everybot/data/lang"
 	"cake4everybot/database"
@@ -57,11 +58,12 @@ func Announce(s *discordgo.Session, event *webYT.Video) {
 	)
 
 	embed := &discordgo.MessageEmbed{
-		Type:   discordgo.EmbedTypeVideo,
-		Title:  event.Title,
-		URL:    videoURL,
-		Author: &discordgo.MessageEmbedAuthor{URL: channelURL, Name: title},
-		Image:  &discordgo.MessageEmbedImage{URL: thumb.URL, Width: thumb.Width, Height: thumb.Height},
+		Type:        discordgo.EmbedTypeVideo,
+		Title:       event.Title,
+		Description: saveTrimText(event.Description, 100),
+		URL:         videoURL,
+		Author:      &discordgo.MessageEmbedAuthor{URL: channelURL, Name: title},
+		Image:       &discordgo.MessageEmbedImage{URL: thumb.URL, Width: thumb.Width, Height: thumb.Height},
 	}
 	util.SetEmbedFooter(s, "youtube.embed_footer", embed)
 
@@ -130,4 +132,26 @@ func getGuilds(s *discordgo.Session) (guilds []guild, err error) {
 		})
 	}
 	return guilds, nil
+}
+
+// saveTrimText returns a trimmed version of the given string. It
+// will be trimmed to n characters but then continues to the next
+// space character. If s is shorter or equal to n, then s is
+// returned. When words get cut of a "..." gets appended at the end.
+func saveTrimText(s string, n int) string {
+	s = strings.ReplaceAll(s, "\n\t", " ")
+	if n <= 0 || s == " " {
+		return ""
+	}
+	if len(s) <= n {
+		return s
+	}
+
+	// offset
+	o := strings.Index(s[n-3:], " ")
+	if o == -1 || len(s) <= n+o+1 {
+		return s
+	}
+
+	return s[:n+o-2] + "..."
 }
