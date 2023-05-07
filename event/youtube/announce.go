@@ -58,10 +58,10 @@ func Announce(s *discordgo.Session, event *webYT.Video) {
 	)
 
 	embed := &discordgo.MessageEmbed{
-		Type:        discordgo.EmbedTypeVideo,
 		Title:       event.Title,
 		Description: saveTrimText(event.Description, 100),
 		URL:         videoURL,
+		Color:       0xFF0000,
 		Author:      &discordgo.MessageEmbedAuthor{URL: channelURL, Name: title},
 		Image:       &discordgo.MessageEmbedImage{URL: thumb.URL, Width: thumb.Width, Height: thumb.Height},
 	}

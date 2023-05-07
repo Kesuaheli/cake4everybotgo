@@ -31,6 +31,9 @@ discord.command:
     option.list.option.month: month
     option.list.option.month.description: The month to list all birthdays from
 
+    user_show:
+      base: Show birthday
+
     weekday:
       - Monday
       - Tuesday

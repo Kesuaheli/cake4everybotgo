@@ -15,6 +15,7 @@
 package birthday
 
 import (
+	"cake4everybot/data/lang"
 	"cake4everybot/event/command/util"
 
 	"github.com/bwmarrin/discordgo"
@@ -34,8 +35,9 @@ type UserShow struct {
 // command
 func (cmd UserShow) AppCmd() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
-		Type: discordgo.UserApplicationCommand,
-		Name: "show birthday",
+		Type:              discordgo.UserApplicationCommand,
+		Name:              lang.GetDefault(tp + "user_show.base"),
+		NameLocalizations: util.TranslateLocalization(tp + "user_show.base"),
 	}
 }
 
