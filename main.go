@@ -42,6 +42,7 @@ const banner string = "\n" +
 	"   / /_/ / (__  ) /__/ /_/ / /  / /_/ /  /_____/  / /_/ / /_/ / /_         \n" +
 	"  /_____/_/____/\\___/\\____/_/   \\__,_/           /_____/\\____/\\__/         \n" +
 	"\n" +
+	"Version: v%s\n" +
 	"%s\n" +
 	"Copyright 2022-2023 Kesuaheli\n\n"
 
@@ -53,7 +54,7 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer stop()
 
-	log.Printf(banner, viper.GetString("discord.credits"))
+	log.Printf(banner, viper.GetString("version"), viper.GetString("discord.credits"))
 
 	database.Connect()
 	defer database.Close()
