@@ -18,6 +18,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	// mysql driver used for database
 	_ "github.com/go-sql-driver/mysql"
@@ -58,6 +59,8 @@ func Connect() {
 	if err != nil {
 		log.Fatalf("Could not open database connection: %v", err)
 	}
+
+	db.SetConnMaxLifetime(3 * time.Minute)
 
 	err = db.Ping()
 	if err != nil {
