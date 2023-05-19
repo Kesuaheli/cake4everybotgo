@@ -15,7 +15,9 @@
 package youtube
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -51,5 +53,36 @@ func UnsubscribeChannel(channelID string) {
 	if subscribtions[channelID] {
 		delete(subscribtions, channelID)
 		log.Printf("YouTube: unsubscribed '%s' from announcements", channelID)
+	}
+}
+
+// RefreshSubscriptions sends a subscription request to the youtube hub
+func RefreshSubscriptions() {
+	for id := range subscribtions {
+		log.Printf("[YouTube] Requesting refresh subscription for id '%s'...", id)
+
+		url := "https://pubsubhubbub.appspot.com/subscribe"
+		req, err := http.NewRequest(http.MethodGet, url, nil)
+		if err != nil {
+			log.Printf("Error on creating refresh subscription: %v", err)
+			continue
+		}
+
+		req.Form.Set("hub.callback", "https://webhook.cake4everyone.de/api/yt_pubsubhubbub")
+		req.Form.Set("hub.topic", fmt.Sprintf("https://www.youtube.com/xml/feeds/videos.xml?channel_id=%s", id))
+		req.Form.Set("hub.verify", "sync")
+		req.Form.Set("hub.mode", "subscribeconst")
+
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			log.Printf("[YouTube] Refresh request failed: %v", err)
+		}
+
+		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+			log.Printf("[YouTube] Refreshing for channel '%s' failed with status %d", id, resp.StatusCode)
+			continue
+		}
+
+		log.Printf("[YouTube] Successfully refreshed subscription for channel '%s'", id)
 	}
 }

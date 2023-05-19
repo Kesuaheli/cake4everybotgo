@@ -33,6 +33,6 @@ func AddListeners(s *discordgo.Session) {
 	addCommandListeners(s)
 	addVoiceStateListeners(s)
 
-	addScheduledTriggers(s)
 	addYouTubeListeners(s)
+	addScheduledTriggers(s)
 }

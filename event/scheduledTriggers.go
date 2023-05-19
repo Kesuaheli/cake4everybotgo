@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"cake4everybot/event/command/birthday"
+	webYT "cake4everybot/webserver/youtube"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/spf13/viper"
@@ -25,6 +26,7 @@ import (
 
 func addScheduledTriggers(s *discordgo.Session) {
 	go scheduleBirthdayCheck(s)
+	go refreshYoutube()
 }
 
 func scheduleBirthdayCheck(s *discordgo.Session) {
@@ -41,5 +43,14 @@ func scheduleBirthdayCheck(s *discordgo.Session) {
 		time.Sleep(nextRun.Sub(now))
 
 		birthday.Check(s)
+	}
+}
+
+func refreshYoutube() {
+	for {
+		webYT.RefreshSubscriptions()
+
+		// loop every 4 days
+		time.Sleep(4 * 24 * time.Hour)
 	}
 }
