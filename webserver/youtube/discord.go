@@ -68,6 +68,7 @@ func RefreshSubscriptions() {
 			continue
 		}
 
+		req.Form = make(map[string][]string)
 		req.Form.Set("hub.callback", "https://webhook.cake4everyone.de/api/yt_pubsubhubbub")
 		req.Form.Set("hub.topic", fmt.Sprintf("https://www.youtube.com/xml/feeds/videos.xml?channel_id=%s", id))
 		req.Form.Set("hub.verify", "sync")
