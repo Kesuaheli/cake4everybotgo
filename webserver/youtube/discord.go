@@ -62,7 +62,7 @@ func RefreshSubscriptions() {
 		log.Printf("[YouTube] Requesting refresh subscription for id '%s'...", id)
 
 		url := "https://pubsubhubbub.appspot.com/subscribe"
-		req, err := http.NewRequest(http.MethodGet, url, nil)
+		req, err := http.NewRequest(http.MethodPost, url, nil)
 		if err != nil {
 			log.Printf("Error on creating refresh subscription: %v", err)
 			continue
