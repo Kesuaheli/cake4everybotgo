@@ -15,9 +15,11 @@
 package youtube
 
 import (
-	"fmt"
+	"io"
 	"log"
 	"net/http"
+	neturl "net/url"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -59,20 +61,22 @@ func UnsubscribeChannel(channelID string) {
 // RefreshSubscriptions sends a subscription request to the youtube hub
 func RefreshSubscriptions() {
 	for id := range subscribtions {
-		log.Printf("[YouTube] Requesting refresh subscription for id '%s'...", id)
+		log.Printf("[YouTube] Requesting subscription refresh for id '%s'...", id)
 
 		url := "https://pubsubhubbub.appspot.com/subscribe"
-		req, err := http.NewRequest(http.MethodPost, url, nil)
+
+		form := neturl.Values{}
+		form.Set("hub.callback", "https://webhook.cake4everyone.de/api/yt_pubsubhubbub/")
+		form.Set("hub.topic", "https://www.youtube.com/xml/feeds/videos.xml?channel_id="+id)
+		form.Set("hub.verify", "sync")
+		form.Set("hub.mode", "subscribe")
+		body := strings.NewReader(form.Encode())
+
+		req, err := http.NewRequest(http.MethodPost, url, body)
 		if err != nil {
 			log.Printf("Error on creating refresh subscription: %v", err)
 			continue
 		}
-
-		req.Form = make(map[string][]string)
-		req.Form.Set("hub.callback", "https://webhook.cake4everyone.de/api/yt_pubsubhubbub")
-		req.Form.Set("hub.topic", fmt.Sprintf("https://www.youtube.com/xml/feeds/videos.xml?channel_id=%s", id))
-		req.Form.Set("hub.verify", "sync")
-		req.Form.Set("hub.mode", "subscribeconst")
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
@@ -80,7 +84,8 @@ func RefreshSubscriptions() {
 		}
 
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-			log.Printf("[YouTube] Refreshing for channel '%s' failed with status %d", id, resp.StatusCode)
+			b, _ := io.ReadAll(resp.Body)
+			log.Printf("[YouTube] Refreshing for channel '%s' failed with status %d. Body: %s", id, resp.StatusCode, string(b))
 			continue
 		}
 
