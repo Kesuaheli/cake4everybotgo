@@ -29,10 +29,10 @@ func Register(s *discordgo.Session, guildID string) error {
 }
 
 // AddListeners adds all event handlers to the given session s.
-func AddListeners(s *discordgo.Session) {
+func AddListeners(s *discordgo.Session, webChan chan struct{}) {
 	addCommandListeners(s)
 	addVoiceStateListeners(s)
 
 	addYouTubeListeners(s)
-	addScheduledTriggers(s)
+	addScheduledTriggers(s, webChan)
 }

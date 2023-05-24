@@ -24,9 +24,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-func addScheduledTriggers(s *discordgo.Session) {
+func addScheduledTriggers(s *discordgo.Session, webChan chan struct{}) {
 	go scheduleBirthdayCheck(s)
-	go refreshYoutube()
+	go refreshYoutube(webChan)
 }
 
 func scheduleBirthdayCheck(s *discordgo.Session) {
@@ -46,7 +46,8 @@ func scheduleBirthdayCheck(s *discordgo.Session) {
 	}
 }
 
-func refreshYoutube() {
+func refreshYoutube(webChan chan struct{}) {
+	<-webChan
 	for {
 		webYT.RefreshSubscriptions()
 

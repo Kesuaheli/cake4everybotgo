@@ -18,6 +18,7 @@ import (
 	"cake4everybot/webserver/youtube"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
@@ -37,16 +38,28 @@ func initHTTP() http.Handler {
 }
 
 // Run starts the webserver at the given address
-func Run(addr string) {
+func Run(addr string, webChan chan struct{}) {
 	handler := initHTTP()
 
+	var err error
+
 	go func() {
-		err := http.ListenAndServe(addr, handler)
+		err = http.ListenAndServe(addr, handler)
 		if err != nil {
 			log.Printf("Webserver ended with error: %v\n", err)
 		} else {
 			log.Println("Webserver ended!")
 		}
+	}()
+
+	go func() {
+		time.Sleep(3 * time.Second)
+		if err != nil {
+			return
+		}
+
+		log.Printf("Started webserver under %s\n", addr)
+		close(webChan)
 	}()
 }
 

@@ -53,6 +53,8 @@ func init() {
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer stop()
+	webChan := make(chan struct{})
+	defer close(webChan)
 
 	log.Printf(banner, viper.GetString("version"), viper.GetString("discord.credits"))
 
@@ -69,7 +71,7 @@ func main() {
 		log.Printf("Logged in to Discord as %s#%s\n", s.State.User.Username, s.State.User.Discriminator)
 	})
 
-	event.AddListeners(s)
+	event.AddListeners(s, webChan)
 
 	// open connection to Discord and login
 	err = s.Open()
@@ -86,8 +88,7 @@ func main() {
 
 	log.Println("Starting webserver...")
 	addr := ":8080"
-	webserver.Run(addr)
-	log.Printf("Started webserver under %s\n", addr)
+	webserver.Run(addr, webChan)
 
 	// Wait to end the bot
 	log.Println("Press Ctrl+C to exit")
