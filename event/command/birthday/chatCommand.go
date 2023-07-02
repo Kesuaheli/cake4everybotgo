@@ -42,6 +42,7 @@ func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
 		subCommandSet(),
 		subCommandRemove(),
 		subCommandList(),
+		subCommandAnnounce(),
 	}
 
 	return &discordgo.ApplicationCommand{

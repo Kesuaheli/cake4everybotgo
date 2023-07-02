@@ -41,7 +41,8 @@ func Check(s *discordgo.Session) {
 	if err != nil {
 		log.Printf("Error on getting todays birthdays from database: %v\n", err)
 	}
-	if len(birthdays) == 0 {
+	e, n := birthdayAnnounceEmbed(s, birthdays)
+	if n <= 0 {
 		return
 	}
 
@@ -62,24 +63,31 @@ func Check(s *discordgo.Session) {
 			return
 		}
 
-		announceBirthdays(s, channel, birthdays)
+		// announce
+		_, err = s.ChannelMessageSendEmbed(channel.ID, e)
+		if err != nil {
+			log.Printf("Error on sending todays birthday announcement: %s\n", err)
+		}
 	}
 }
 
-func announceBirthdays(s *discordgo.Session, channel *discordgo.Channel, birthdays []birthdayEntry) {
+// birthdayAnnounceEmbed returns the embed, that contains all
+// birthdays and 'n' as the number of birthdays, which is always
+// len(b)
+func birthdayAnnounceEmbed(s *discordgo.Session, b []birthdayEntry) (e *discordgo.MessageEmbed, n int) {
 	var title, fValue string
 
-	switch len(birthdays) {
+	switch len(b) {
 	case 0:
-		return
+		title = lang.Get(tp+"msg.announce.0", lang.FallbackLang())
 	case 1:
-		title = lang.Get(tp+"msg.announce.1", lang.FallbackLang()) // Theres a birthday today!
+		title = lang.Get(tp+"msg.announce.1", lang.FallbackLang())
 	default:
-		format := lang.Get(tp+"msg.announce", lang.FallbackLang()) // There are %s birthdays today!
-		title = fmt.Sprintf(format, fmt.Sprint(len(birthdays)))
+		format := lang.Get(tp+"msg.announce", lang.FallbackLang())
+		title = fmt.Sprintf(format, fmt.Sprint(len(b)))
 	}
 
-	for _, b := range birthdays {
+	for _, b := range b {
 		mention := fmt.Sprintf("<@%d>", b.ID)
 
 		if b.Year == 0 {
@@ -91,18 +99,23 @@ func announceBirthdays(s *discordgo.Session, channel *discordgo.Channel, birthda
 		}
 	}
 
-	e := &discordgo.MessageEmbed{
+	e = &discordgo.MessageEmbed{
 		Title: title,
 		Color: 0xFFD700,
-		Fields: []*discordgo.MessageEmbedField{{
+	}
+
+	if len(b) == 0 {
+		e.Color = 0xFF0000
+		e.Description = lang.Get(tp+"msg.announce.0.description", lang.FallbackLang())
+	} else {
+		e.Color = 0xFFD700
+		e.Fields = []*discordgo.MessageEmbedField{{
 			Name:  lang.Get(tp+"msg.announce.congratulate", lang.FallbackLang()),
 			Value: fValue,
-		}},
+		}}
 	}
+
 	util.SetEmbedFooter(s, tp+"display", e)
 
-	_, err := s.ChannelMessageSendEmbed(channel.ID, e)
-	if err != nil {
-		log.Printf("Error on sending todays birthday announcement: %s\n", err)
-	}
+	return e, len(b)
 }

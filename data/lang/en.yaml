@@ -31,6 +31,9 @@ discord.command:
     option.list.option.month: month
     option.list.option.month.description: The month to list all birthdays from
 
+    option.announce: announce
+    option.announce.description: Manually announce todays birthdays, if any
+
     user.show:
       base: Show birthday
 
@@ -90,6 +93,9 @@ discord.command:
     msg.list.total.1: There's only one birthday in %s
     msg.list.total.0: No birthdays entered for %s
     msg.list.total: There're %s birthdays in %s
+    msg.announce.0: There are no birthdays today
+    #TODO: Link slash command
+    msg.announce.0.description: Use the list command to see upcomming birthdays. This message is only visible to you, because there aren't birthdays to announce.
     msg.announce.1: There's a birthday today!
     msg.announce: There're %s birthdays today!
     msg.announce.congratulate: Happy Birthday to
