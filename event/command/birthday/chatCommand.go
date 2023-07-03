@@ -77,6 +77,8 @@ func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.Interaction
 			sub = cmd.subcommandRemove()
 		case lang.GetDefault(tp + "option.list"):
 			sub = cmd.subcommandList()
+		case lang.GetDefault(tp + "option.announce"):
+			sub = cmd.subcommandAnnounce()
 		default:
 			return
 		}
