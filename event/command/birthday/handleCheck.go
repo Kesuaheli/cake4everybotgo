@@ -95,7 +95,7 @@ func birthdayAnnounceEmbed(s *discordgo.Session, b []birthdayEntry) (e *discordg
 		} else {
 			format := lang.Get(tp+"msg.announce.with_age", lang.FallbackLang())
 			format += "\n"
-			fValue += fmt.Sprintf(format, mention, fmt.Sprint(b.Age()+1))
+			fValue += fmt.Sprintf(format, mention, fmt.Sprint(b.Age()))
 		}
 	}
 
