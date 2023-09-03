@@ -112,6 +112,11 @@ discord.command:
     latency: Latenz
     version: Version
 
+  minecraftmap:
+    base: minecraftmap
+    base.description: Verschiedene Einstellungen für die Minecraft Karte
+    display: Minecraft Live Karte
+
 youtube:
   embed_footer: YouTube Glocke
   msg.new_vid: "%s hat ein neues Video hochgeladen"

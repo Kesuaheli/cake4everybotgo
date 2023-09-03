@@ -11,3 +11,7 @@ discord:
   token: PUT.TOKEN.HERE
   # ID of guild currently used for adding commands
   guildID: 0
+
+minecraft.map:
+  # Base URL for the minecraft DynmapWebAPI plugin
+  url: "http://localhost"

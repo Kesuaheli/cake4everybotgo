@@ -112,6 +112,11 @@ discord.command:
     latency: Latency
     version: Version
 
+  minecraftmap:
+    base: minecraftmap
+    base.description: Various settings for the Minecraft map
+    display: Minecraft Live Map
+
 youtube:
   embed_footer: YouTube notification bell
   msg.new_vid: "%s just uploaded a new video"
