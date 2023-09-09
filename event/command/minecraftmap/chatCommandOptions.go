@@ -91,10 +91,10 @@ func commandOptionSetWorld() *discordgo.ApplicationCommandOption {
 func commandOptionSetPosX() *discordgo.ApplicationCommandOption {
 	return &discordgo.ApplicationCommandOption{
 		Type:                     discordgo.ApplicationCommandOptionInteger,
-		Name:                     lang.GetDefault(tp + "option.set.option.PosX"),
-		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.PosX"),
-		Description:              lang.GetDefault(tp + "option.set.option.PosX.description"),
-		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.PosX.description"),
+		Name:                     lang.GetDefault(tp + "option.set.option.posx"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.posx"),
+		Description:              lang.GetDefault(tp + "option.set.option.posx.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.posx.description"),
 		Autocomplete:             false,
 	}
 }
@@ -102,10 +102,10 @@ func commandOptionSetPosX() *discordgo.ApplicationCommandOption {
 func commandOptionSetPosY() *discordgo.ApplicationCommandOption {
 	return &discordgo.ApplicationCommandOption{
 		Type:                     discordgo.ApplicationCommandOptionInteger,
-		Name:                     lang.GetDefault(tp + "option.set.option.PosY"),
-		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.PosY"),
-		Description:              lang.GetDefault(tp + "option.set.option.PosY.description"),
-		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.PosY.description"),
+		Name:                     lang.GetDefault(tp + "option.set.option.posy"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.posy"),
+		Description:              lang.GetDefault(tp + "option.set.option.posy.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.posy.description"),
 		Autocomplete:             false,
 	}
 }
@@ -113,10 +113,10 @@ func commandOptionSetPosY() *discordgo.ApplicationCommandOption {
 func commandOptionSetPosZ() *discordgo.ApplicationCommandOption {
 	return &discordgo.ApplicationCommandOption{
 		Type:                     discordgo.ApplicationCommandOptionInteger,
-		Name:                     lang.GetDefault(tp + "option.set.option.PosZ"),
-		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.PosZ"),
-		Description:              lang.GetDefault(tp + "option.set.option.PosZ.description"),
-		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.PosZ.description"),
+		Name:                     lang.GetDefault(tp + "option.set.option.posz"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.posz"),
+		Description:              lang.GetDefault(tp + "option.set.option.posz.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.posz.description"),
 		Autocomplete:             false,
 	}
 }

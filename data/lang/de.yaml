@@ -117,6 +117,25 @@ discord.command:
     base.description: Verschiedene Einstellungen für die Minecraft Karte
     display: Minecraft Live Karte
 
+    option.set: setzen
+    option.set.description: Trage einen neuen Marker auf der Minecraft Karte ein
+    option.set.option.set: marker_gruppe
+    option.set.option.set.description: In welche Gruppe soll der Marker eingetragen werden?
+    option.set.option.id: id
+    option.set.option.id.description: Welche ID soll der Marker bekommen?
+    option.set.option.label: name
+    option.set.option.label.description: Welchen Anzeigenamen soll der Marker bekommen?
+    option.set.option.world: welt
+    option.set.option.world.description: Was ist der Name der Welt, in der dieser Marker platziert werden soll?
+    option.set.option.posx: pos_x
+    option.set.option.posx.description: Die X Koordinate der Position
+    option.set.option.posy: pos_y
+    option.set.option.posy.description: Die Y Koordinate der Position
+    option.set.option.posz: pos_z
+    option.set.option.posz.description: Die Z Koordinate der Position
+    option.set.option.icon: bild
+    option.set.option.icon.description: Welches Icon soll der Marker benutzen?
+
 youtube:
   embed_footer: YouTube Glocke
   msg.new_vid: "%s hat ein neues Video hochgeladen"

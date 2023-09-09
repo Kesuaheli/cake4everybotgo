@@ -117,6 +117,25 @@ discord.command:
     base.description: Various settings for the Minecraft map
     display: Minecraft Live Map
 
+    option.set: set
+    option.set.description: Enter a new marker in the Minecraft map
+    option.set.option.set: marker_set
+    option.set.option.set.description: In which set should this marker go?
+    option.set.option.id: id
+    option.set.option.id.description: Whats the ID of this marker?
+    option.set.option.label: label
+    option.set.option.label.description: What label should this marker get? (i.e. the display name)
+    option.set.option.world: world
+    option.set.option.world.description: Whats the world name this marker is placed in?
+    option.set.option.posx: pos_x
+    option.set.option.posx.description: The X coordinate of the position
+    option.set.option.posy: pos_y
+    option.set.option.posy.description: The Y coordinate of the position
+    option.set.option.posz: pos_z
+    option.set.option.posz.description: The Z coordinate of the position
+    option.set.option.icon: icon
+    option.set.option.icon.description: Which icon should this marker use?
+
 youtube:
   embed_footer: YouTube notification bell
   msg.new_vid: "%s just uploaded a new video"
