@@ -19,6 +19,7 @@ import (
 	"cake4everybot/event/command/util"
 	"cake4everybot/status"
 	"fmt"
+	"log"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/spf13/viper"
@@ -80,6 +81,16 @@ func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.Interaction
 
 		cmd.ReplyEmbed(e)
 	}
+}
+
+func (cmd Chat) ModalHandler() func(*discordgo.Session, *discordgo.InteractionCreate) {
+	log.Println("WARN: no modal handler in info command")
+	return func(s *discordgo.Session, i *discordgo.InteractionCreate) {}
+}
+
+func (cmd Chat) ComponentHandler() func(*discordgo.Session, *discordgo.InteractionCreate) {
+	log.Println("WARN: no component handler in info command")
+	return func(s *discordgo.Session, i *discordgo.InteractionCreate) {}
 }
 
 // SetID sets the registered command ID for internal uses after uploading to discord

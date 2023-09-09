@@ -15,6 +15,7 @@
 package util
 
 import (
+	"cake4everybot/data/lang"
 	"fmt"
 	"log"
 
@@ -55,6 +56,20 @@ func (i *InteractionUtil) ReplyEmbed(embeds ...*discordgo.MessageEmbed) {
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Embeds: embeds,
+		},
+	}
+	i.respond()
+}
+
+// ReplyComponents sends a message or embed along with the
+// provided message components.
+func (i *InteractionUtil) ReplyComponents(message string, components []discordgo.MessageComponent, embeds ...*discordgo.MessageEmbed) {
+	i.response = &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content:    message,
+			Embeds:     embeds,
+			Components: components,
 		},
 	}
 	i.respond()
@@ -102,6 +117,21 @@ func (i *InteractionUtil) ReplyHiddenEmbed(hiddenSelf bool, embeds ...*discordgo
 	i.respond()
 }
 
+// ReplyHiddenComponents sends an ephemeral message or
+// embed along with the provided message components.
+func (i *InteractionUtil) ReplyHiddenComponents(message string, components []discordgo.MessageComponent, embeds ...*discordgo.MessageEmbed) {
+	i.response = &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content:    message,
+			Embeds:     embeds,
+			Flags:      discordgo.MessageFlagsEphemeral,
+			Components: components,
+		},
+	}
+	i.respond()
+}
+
 // ReplyAutocomplete returns the given choices to
 // the user. When this is called on an interaction
 // type outside form an applicationCommandAutocomplete
@@ -125,6 +155,25 @@ func (i *InteractionUtil) ReplyAutocomplete(choices []*discordgo.ApplicationComm
 // the interaction.
 func (i *InteractionUtil) ReplyError() {
 	i.ReplyHidden("Somthing went wrong :(")
+}
+
+// ReplyModal displays a modal (popup) with the specified components to the user.
+//
+// Params:
+//
+//	tp // The translation prefix of the command
+//	id // To identify the modal when parsing the interaction event
+//	components // One or more message components to display in this modal
+func (i *InteractionUtil) ReplyModal(tp, id string, components ...discordgo.MessageComponent) {
+	i.response = &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseModal,
+		Data: &discordgo.InteractionResponseData{
+			CustomID:   lang.GetDefault(tp+"base") + "." + id,
+			Title:      lang.Get(tp+"modal."+id+".title", lang.FallbackLang()),
+			Components: components,
+		},
+	}
+	i.respond()
 }
 
 func (i *InteractionUtil) respond() {

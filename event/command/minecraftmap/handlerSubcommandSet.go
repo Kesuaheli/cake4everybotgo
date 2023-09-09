@@ -16,7 +16,6 @@ package minecraftmap
 
 import (
 	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -77,23 +76,5 @@ func (cmd subcommandSet) handler() {
 
 // executes when running the subcommand
 func (cmd subcommandSet) interactionHandler() {
-	m := marker{
-		Set:    cmd.set.StringValue(),
-		ID:     cmd.id.StringValue(),
-		Label:  cmd.label.StringValue(),
-		World:  cmd.world.StringValue(),
-		PosX:   int(cmd.posX.IntValue()),
-		PosY:   int(cmd.posY.IntValue()),
-		PosZ:   int(cmd.posZ.IntValue()),
-		IconID: cmd.icon.StringValue(),
-	}
-
-	embed := util.AuthoredEmbed(cmd.Session, cmd.member, tp+"display")
-
-	err := m.post()
-	if err != nil {
-		cmd.ReplyHiddenEmbed(false, embed)
-	}
-
-	cmd.ReplyEmbed(embed)
+	cmd.ReplyHidden("W.I.P.")
 }

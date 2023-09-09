@@ -72,7 +72,6 @@ func commandOptionSetLabel() *discordgo.ApplicationCommandOption {
 		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.label"),
 		Description:              lang.GetDefault(tp + "option.set.option.label.description"),
 		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.label.description"),
-		Required:                 true,
 		Autocomplete:             false,
 	}
 }

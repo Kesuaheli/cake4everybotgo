@@ -17,6 +17,7 @@ package event
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"cake4everybot/event/command"
 	"cake4everybot/event/command/birthday"
@@ -100,10 +101,39 @@ func removeUnusedCommands(s *discordgo.Session, guildID string, createdCommands 
 }
 
 func addCommandListeners(s *discordgo.Session) {
-	s.AddHandler(func(s *discordgo.Session, event *discordgo.InteractionCreate) {
-		if cmd, ok := command.CommandMap[event.ApplicationCommandData().Name]; ok {
-			cmd.CmdHandler()(s, event)
+	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		var cmd, ok = getCommandFromInteraction(i)
+		if !ok {
+			log.Println("WARN: Skipping handling of unregistered command")
+			return
+		}
+
+		switch i.Type {
+		case discordgo.InteractionApplicationCommand:
+			cmd.CmdHandler()(s, i)
+		case discordgo.InteractionModalSubmit:
+			cmd.ModalHandler()(s, i)
+		case discordgo.InteractionMessageComponent:
+			cmd.ComponentHandler()(s, i)
+		default:
+			log.Printf("WARN: Skipping handling of unknown interaction type: %d", i.Type)
 		}
 	})
 
+}
+
+func getCommandFromInteraction(i *discordgo.InteractionCreate) (command.Command, bool) {
+	var cmd_name string
+	switch i.Type {
+	case discordgo.InteractionApplicationCommand:
+		cmd_name = i.ApplicationCommandData().Name
+	case discordgo.InteractionModalSubmit:
+		cmd_name = strings.Split(i.ModalSubmitData().CustomID, ".")[0]
+	case discordgo.InteractionMessageComponent:
+		cmd_name = strings.Split(i.MessageComponentData().CustomID, ".")[0]
+	default:
+		return nil, false
+	}
+	cmd, ok := command.CommandMap[cmd_name]
+	return cmd, ok
 }

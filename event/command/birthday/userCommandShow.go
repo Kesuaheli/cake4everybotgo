@@ -17,6 +17,7 @@ package birthday
 import (
 	"cake4everybot/data/lang"
 	"cake4everybot/event/command/util"
+	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -55,6 +56,16 @@ func (cmd UserShow) CmdHandler() func(s *discordgo.Session, i *discordgo.Interac
 		cmd.data = cmd.Interaction.ApplicationCommandData()
 		cmd.handler()
 	}
+}
+
+func (cmd UserShow) ModalHandler() func(*discordgo.Session, *discordgo.InteractionCreate) {
+	log.Println("WARN: no modal handler in userShow command")
+	return func(s *discordgo.Session, i *discordgo.InteractionCreate) {}
+}
+
+func (cmd UserShow) ComponentHandler() func(*discordgo.Session, *discordgo.InteractionCreate) {
+	log.Println("WARN: no component handler in userShow command")
+	return func(s *discordgo.Session, i *discordgo.InteractionCreate) {}
 }
 
 // SetID sets the registered command ID for internal uses after uploading to discord

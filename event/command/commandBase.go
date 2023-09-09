@@ -27,6 +27,14 @@ type Command interface {
 	// All things that should happen at execution.
 	CmdHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate)
 
+	// Function of a modal
+	// All things that should happen after submitting
+	ModalHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate)
+
+	// Function of a component interaction.
+	// All things that should happen after selecting a button or menu.
+	ComponentHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate)
+
 	// Sets the registered command ID for internal uses after uploading to discord
 	SetID(id string)
 	// Gets the registered command ID
