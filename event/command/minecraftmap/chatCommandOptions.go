@@ -21,112 +21,12 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func subCommandSet() *discordgo.ApplicationCommandOption {
-	options := []*discordgo.ApplicationCommandOption{
-		commandOptionSetSet(),
-		commandOptionSetID(),
-		commandOptionSetLabel(),
-		commandOptionSetWorld(),
-		commandOptionSetPosX(),
-		commandOptionSetPosY(),
-		commandOptionSetPosZ(),
-		commandOptionSetIcon(),
-	}
-
+func subCommandMarker() *discordgo.ApplicationCommandOption {
 	return &discordgo.ApplicationCommandOption{
 		Type:                     discordgo.ApplicationCommandOptionSubCommand,
-		Name:                     lang.GetDefault(tp + "option.set"),
-		NameLocalizations:        *util.TranslateLocalization(tp + "option.set"),
-		Description:              lang.GetDefault(tp + "option.set.description"),
-		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.description"),
-		Options:                  options,
-	}
-}
-
-func commandOptionSetSet() *discordgo.ApplicationCommandOption {
-	return &discordgo.ApplicationCommandOption{
-		Type:                     discordgo.ApplicationCommandOptionString,
-		Name:                     lang.GetDefault(tp + "option.set.option.set"),
-		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.set"),
-		Description:              lang.GetDefault(tp + "option.set.option.set.description"),
-		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.set.description"),
-		Autocomplete:             false,
-	}
-}
-
-func commandOptionSetID() *discordgo.ApplicationCommandOption {
-	return &discordgo.ApplicationCommandOption{
-		Type:                     discordgo.ApplicationCommandOptionString,
-		Name:                     lang.GetDefault(tp + "option.set.option.ID"),
-		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.ID"),
-		Description:              lang.GetDefault(tp + "option.set.option.ID.description"),
-		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.ID.description"),
-		Autocomplete:             false,
-	}
-}
-
-func commandOptionSetLabel() *discordgo.ApplicationCommandOption {
-	return &discordgo.ApplicationCommandOption{
-		Type:                     discordgo.ApplicationCommandOptionString,
-		Name:                     lang.GetDefault(tp + "option.set.option.label"),
-		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.label"),
-		Description:              lang.GetDefault(tp + "option.set.option.label.description"),
-		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.label.description"),
-		Autocomplete:             false,
-	}
-}
-
-func commandOptionSetWorld() *discordgo.ApplicationCommandOption {
-	return &discordgo.ApplicationCommandOption{
-		Type:                     discordgo.ApplicationCommandOptionString,
-		Name:                     lang.GetDefault(tp + "option.set.option.world"),
-		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.world"),
-		Description:              lang.GetDefault(tp + "option.set.option.world.description"),
-		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.world.description"),
-		Autocomplete:             false,
-	}
-}
-
-func commandOptionSetPosX() *discordgo.ApplicationCommandOption {
-	return &discordgo.ApplicationCommandOption{
-		Type:                     discordgo.ApplicationCommandOptionInteger,
-		Name:                     lang.GetDefault(tp + "option.set.option.posx"),
-		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.posx"),
-		Description:              lang.GetDefault(tp + "option.set.option.posx.description"),
-		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.posx.description"),
-		Autocomplete:             false,
-	}
-}
-
-func commandOptionSetPosY() *discordgo.ApplicationCommandOption {
-	return &discordgo.ApplicationCommandOption{
-		Type:                     discordgo.ApplicationCommandOptionInteger,
-		Name:                     lang.GetDefault(tp + "option.set.option.posy"),
-		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.posy"),
-		Description:              lang.GetDefault(tp + "option.set.option.posy.description"),
-		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.posy.description"),
-		Autocomplete:             false,
-	}
-}
-
-func commandOptionSetPosZ() *discordgo.ApplicationCommandOption {
-	return &discordgo.ApplicationCommandOption{
-		Type:                     discordgo.ApplicationCommandOptionInteger,
-		Name:                     lang.GetDefault(tp + "option.set.option.posz"),
-		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.posz"),
-		Description:              lang.GetDefault(tp + "option.set.option.posz.description"),
-		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.posz.description"),
-		Autocomplete:             false,
-	}
-}
-
-func commandOptionSetIcon() *discordgo.ApplicationCommandOption {
-	return &discordgo.ApplicationCommandOption{
-		Type:                     discordgo.ApplicationCommandOptionString,
-		Name:                     lang.GetDefault(tp + "option.set.option.icon"),
-		NameLocalizations:        *util.TranslateLocalization(tp + "option.set.option.icon"),
-		Description:              lang.GetDefault(tp + "option.set.option.icon.description"),
-		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.set.option.icon.description"),
-		Autocomplete:             false,
+		Name:                     lang.GetDefault(tp + "subcommand.marker"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "subcommand.marker"),
+		Description:              lang.GetDefault(tp + "subcommand.marker.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "subcommand.marker.description"),
 	}
 }

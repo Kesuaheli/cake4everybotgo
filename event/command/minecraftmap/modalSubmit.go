@@ -16,8 +16,18 @@ package minecraftmap
 
 import (
 	"cake4everybot/event/command/util"
+	"log"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
+)
+
+var (
+	label            *discordgo.TextInput
+	id               *discordgo.TextInput
+	world            *discordgo.Button
+	world_the_nether *discordgo.Button
+	world_the_end    *discordgo.Button
 )
 
 func (cmd Chat) ModalHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -29,6 +39,48 @@ func (cmd Chat) ModalHandler() func(s *discordgo.Session, i *discordgo.Interacti
 			cmd.user = i.Member.User
 		} else if i.User != nil {
 			cmd.member = &discordgo.Member{User: i.User}
+		}
+
+		id := strings.Split(i.ModalSubmitData().CustomID, ".")[1]
+		switch id {
+		case "create_marker":
+			cmd.handleModalCreateMarker()
+		}
+	}
+}
+
+func (cmd Chat) handleModalCreateMarker() {
+	data := cmd.Interaction.ModalSubmitData()
+	cmd.parseComponentData(data.Components)
+	log.Printf("label: %s, id: %s", label.Value, id.Value)
+
+	cmd.ReplyHiddenComponents("W.I.P.", cmd.create_marker_world())
+
+}
+
+func (cmd Chat) parseComponentData(components []discordgo.MessageComponent) {
+	for _, c := range components {
+		switch c.Type() {
+		case discordgo.ActionsRowComponent:
+			cmd.parseComponentData(c.(*discordgo.ActionsRow).Components)
+		case discordgo.TextInputComponent:
+			input := c.(*discordgo.TextInput)
+			switch input.CustomID {
+			case "label":
+				label = input
+			case "id":
+				id = input
+			}
+		case discordgo.ButtonComponent:
+			button := c.(*discordgo.Button)
+			switch button.CustomID {
+			case "world":
+				world = button
+			case "world_the_nether":
+				world_the_nether = button
+			case "world_the_end":
+				world_the_end = button
+			}
 		}
 	}
 }

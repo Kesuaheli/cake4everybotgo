@@ -105,3 +105,63 @@ func MentionCommand(base string, subcommand ...string) string {
 
 	return fmt.Sprintf("</%s%s:%s>", cBase, cSub, cID)
 }
+
+// CreateButtonComponent returns a simple button component
+// with the specified configurations.
+// Params:
+//
+//	tp                 // The translation prefix used to generate ids and labels
+//	component_group_id // A group id to generate labels
+//	id                 // Custom id to identify the button when pressed (automatically prefixed)
+//	style              // Style of the button (see https://discord.com/developers/docs/interactions/message-components#button-object-button-styles)
+//	Optional: emoji    // An emoji to put in the label, can be empty
+func CreateButtonComponent(tp, component_group_id, id string, style discordgo.ButtonStyle, emoji discordgo.ComponentEmoji) discordgo.Button {
+	return discordgo.Button{
+		CustomID: lang.GetDefault(tp+"base") + "." + id,
+		Label:    lang.Get(tp+"component."+component_group_id+".button."+id+".label", lang.FallbackLang()),
+		Style:    style,
+		Emoji:    emoji,
+	}
+}
+
+// CreateURLButtonComponent returns a URL button component
+// with the specified configurations.
+// Params:
+//
+//	tp                 // The translation prefix used to generate ids and labels
+//	component_group_id // A group id to generate labels
+//	id                 // Custom id to generate labels
+//	url                // The link to open when clicked
+//	Optional: emoji    // An emoji to put in the label, can be empty
+func CreateURLButtonComponent(tp, component_group_id, id, url string, emoji discordgo.ComponentEmoji) discordgo.Button {
+	return discordgo.Button{
+		Label: lang.Get(tp+"component."+component_group_id+".button."+id+".label", lang.FallbackLang()),
+		Style: discordgo.LinkButton,
+		Emoji: emoji,
+		URL:   url,
+	}
+}
+
+// CreateTextInputComponent returns a text input form for
+// modals with the specified configurations.
+// Params:
+//
+//	tp                 // The translation prefix used to generate ids and labels
+//	component_group_id // A group id to generate labels
+//	id                 // Custom id to identify the input field after submitting
+//	style              // Single or multi line
+//	required           // If this has to be not empty
+//	minLength          // Minimum number of characters that has to be entered
+//	maxLength          // Maximum number of characters that are able to be entered
+func CreateTextInputComponent(tp, component_group_id, id string, style discordgo.TextInputStyle, requred bool, minLength, maxLength int) discordgo.TextInput {
+	return discordgo.TextInput{
+		CustomID:    id,
+		Label:       lang.Get(tp+"component."+component_group_id+".text_input."+id+".label", lang.FallbackLang()),
+		Style:       style,
+		Placeholder: lang.Get(tp+"component."+component_group_id+".text_input."+id+".placeholder", lang.FallbackLang()),
+		Value:       lang.Get(tp+"component."+component_group_id+".text_input."+id+".value", lang.FallbackLang()),
+		Required:    requred,
+		MinLength:   minLength,
+		MaxLength:   maxLength,
+	}
+}

@@ -117,24 +117,32 @@ discord.command:
     base.description: Various settings for the Minecraft map
     display: Minecraft Live Map
 
-    option.set: set
-    option.set.description: Enter a new marker in the Minecraft map
-    option.set.option.set: marker_set
-    option.set.option.set.description: In which set should this marker go?
-    option.set.option.id: id
-    option.set.option.id.description: Whats the ID of this marker?
-    option.set.option.label: label
-    option.set.option.label.description: What label should this marker get? (i.e. the display name)
-    option.set.option.world: world
-    option.set.option.world.description: Whats the world name this marker is placed in?
-    option.set.option.posx: pos_x
-    option.set.option.posx.description: The X coordinate of the position
-    option.set.option.posy: pos_y
-    option.set.option.posy.description: The Y coordinate of the position
-    option.set.option.posz: pos_z
-    option.set.option.posz.description: The Z coordinate of the position
-    option.set.option.icon: icon
-    option.set.option.icon.description: Which icon should this marker use?
+    subcommand.marker: marker
+    subcommand.marker.description: Enter a new marker in the Minecraft map
+
+    modal.create_marker.title: Create a new marker
+    component.create_marker:
+      text_input.label.label: What display name should this marker get?
+      text_input.label.placeholder: e.g. "Ocean Monument"
+      text_input.label.value: ""
+      text_input.id.label: Whats the ID this marker should get?
+      text_input.id.placeholder: e.g. "ocean_monument_1"
+      text_input.id.value: ""
+      button.world.label: Overworld
+      button.world_the_nether.label: Nether
+      button.world_the_end.label: End
+      text_input.posx.label: X
+      text_input.posx.placeholder: ""
+      text_input.posx.value: ""
+      text_input.posy.label: "Y"
+      text_input.posy.placeholder: ""
+      text_input.posy.value: ""
+      text_input.posz.label: Z
+      text_input.posz.placeholder: ""
+      text_input.posz.value: ""
+      text_input.icon.label: Which icon should this marker use?
+      text_input.icon.placeholder: e.g. bookshelf
+      text_input.icon.value: ""
 
 youtube:
   embed_footer: YouTube notification bell

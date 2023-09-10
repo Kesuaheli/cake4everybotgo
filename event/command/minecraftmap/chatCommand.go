@@ -39,7 +39,7 @@ type subcommand interface {
 // command
 func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
 	options := []*discordgo.ApplicationCommandOption{
-		subCommandSet(),
+		subCommandMarker(),
 	}
 
 	return &discordgo.ApplicationCommand{
@@ -68,8 +68,8 @@ func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.Interaction
 		var sub subcommand
 
 		switch subcommandName {
-		case lang.GetDefault(tp + "option.set"):
-			sub = cmd.subcommandSet()
+		case lang.GetDefault(tp + "subcommand.marker"):
+			sub = cmd.subcommandMarker()
 		default:
 			return
 		}

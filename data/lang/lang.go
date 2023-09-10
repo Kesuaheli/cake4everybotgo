@@ -148,9 +148,8 @@ func Get(key, lang string) string {
 		return Get(key, fLang)
 	}
 
-	val := v.GetString(key)
-	if val != "" {
-		return val
+	if v.IsSet(key) {
+		return v.GetString(key)
 	}
 
 	if lang == fLang {
