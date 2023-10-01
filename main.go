@@ -54,7 +54,6 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer stop()
 	webChan := make(chan struct{})
-	defer close(webChan)
 
 	log.Printf(banner, viper.GetString("version"), viper.GetString("discord.credits"))
 
