@@ -21,14 +21,17 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"time"
 )
 
 // feed is the object that holds a incomming notification feed from
 // youtube. This could be a new video (upload/publish) or an update
 // of an existing one.
 type feed struct {
-	Video   feedVideo   `xml:"entry>videoId"`
-	Channel feedChannel `xml:"entry>channelId"`
+	Video     feedVideo   `xml:"entry>videoId"`
+	Channel   feedChannel `xml:"entry>channelId"`
+	Published time.Time   `xml:"entry>published"`
+	Updated   time.Time   `xml:"entry>updated"`
 }
 
 // feedVideo is part of the feed xml struct and contains the videoId
@@ -145,7 +148,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// need yt namespace i.e. <yt:videoId>1a2b3c4d</yt:videoId> as
-	// well as the xmlns:yt attribute to be set in a parent xmls tag.
+	// well as the xmlns:yt attribute to be set in a parent xmlns tag.
 	// The namespace needs to be a valid url with "www.youtube.com"
 	// as host.
 	xmlnsVideo, err := url.Parse(feed.Video.XMLName.Space)
@@ -169,6 +172,8 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Content will be checked and could be ignored on mismatch"))
 
 	go func() {
+		age := feed.Updated.Sub(feed.Published)
+		log.Printf("DEBUG: Video ('%s') age: %s", feed.Video.ID, age)
 		video, ok := checkVideo(feed.Video.ID, feed.Channel.ID)
 		if !ok {
 			return
