@@ -16,7 +16,9 @@ package event
 
 import (
 	"fmt"
+	"strings"
 
+	"cake4everybot/event/adventcalendar"
 	"cake4everybot/event/command"
 	"cake4everybot/event/command/birthday"
 	"cake4everybot/event/command/info"
@@ -36,6 +38,7 @@ func registerCommands(s *discordgo.Session, guildID string) error {
 	// chat (slash) commands
 	commandsList = append(commandsList, &birthday.Chat{})
 	commandsList = append(commandsList, &info.Chat{})
+	commandsList = append(commandsList, &adventcalendar.Chat{})
 	// messsage commands
 	// user commands
 	commandsList = append(commandsList, &birthday.UserShow{})
@@ -57,7 +60,7 @@ func registerCommands(s *discordgo.Session, guildID string) error {
 		commandNames = append(commandNames, k)
 	}
 
-	log.Printf("Adding used commands: %v...\n", commandNames)
+	log.Printf("Adding used commands: [%s]...\n", strings.Join(commandNames, ", "))
 	createdCommands, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, guildID, appCommandsList)
 	if err != nil {
 		return fmt.Errorf("failed on bulk overwrite commands: %v", err)
@@ -96,10 +99,38 @@ func removeUnusedCommands(s *discordgo.Session, guildID string, createdCommands 
 
 }
 
+func registerComponents() {
+	// This is the list of components to use. Add a component via
+	// simply appending the struct (which must implement the
+	// interface command.Component) to the list, e.g.:
+	//
+	//  componentList = append(componentList, mymodule.MyComponent{})
+	var componentList []command.Component
+
+	componentList = append(componentList, adventcalendar.Component{})
+
+	if len(componentList) == 0 {
+		return
+	}
+	for _, c := range componentList {
+		command.ComponentMap[c.ID()] = c
+	}
+	log.Printf("Added %d component handler(s)!", len(command.ComponentMap))
+}
+
 func addCommandListeners(s *discordgo.Session) {
 	s.AddHandler(func(s *discordgo.Session, event *discordgo.InteractionCreate) {
-		if cmd, ok := command.CommandMap[event.ApplicationCommandData().Name]; ok {
-			cmd.CmdHandler()(s, event)
+		switch event.Type {
+		case discordgo.InteractionApplicationCommand, discordgo.InteractionApplicationCommandAutocomplete:
+			data := event.ApplicationCommandData()
+			if cmd, ok := command.CommandMap[data.Name]; ok {
+				cmd.CmdHandler()(s, event)
+			}
+		case discordgo.InteractionMessageComponent:
+			data := event.MessageComponentData()
+			if c, ok := command.ComponentMap[strings.Split(data.CustomID, ".")[0]]; ok {
+				c.Handle(s, event)
+			}
 		}
 	})
 

@@ -112,6 +112,10 @@ discord.command:
     latency: Latenz
     version: Version
 
+  adventcalendar:
+    base: adventskalender
+    base.description: Admin Commands für das Adventskalender Giveaway
+
 youtube:
   embed_footer: YouTube Glocke
   msg.new_vid: "%s hat ein neues Video hochgeladen"

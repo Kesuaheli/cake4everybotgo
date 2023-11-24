@@ -27,6 +27,7 @@ func Register(s *discordgo.Session, guildID string) error {
 	if err != nil {
 		return err
 	}
+	registerComponents()
 
 	return nil
 }

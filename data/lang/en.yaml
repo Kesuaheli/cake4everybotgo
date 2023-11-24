@@ -112,6 +112,10 @@ discord.command:
     latency: Latency
     version: Version
 
+  adventcalendar:
+    base: adventcalendar
+    base.description: Admin commands for the Advent Calendar Giveaway
+
 youtube:
   embed_footer: YouTube notification bell
   msg.new_vid: "%s just uploaded a new video"
