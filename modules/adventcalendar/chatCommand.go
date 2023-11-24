@@ -2,13 +2,14 @@ package adventcalendar
 
 import (
 	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
+	"cake4everybot/util"
 
 	"github.com/bwmarrin/discordgo"
 )
 
+// The Chat (slash) command of the advent calendar package.
 type Chat struct {
-	AdventCalendar
+	adventcalendarBase
 	ID string
 }
 
@@ -22,12 +23,7 @@ func (Chat) AppCmd() *discordgo.ApplicationCommand {
 	}
 }
 
-// CmdHandler returns the functionality of a command
-func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	return cmd.Handle
-}
-
-// Handler handles the functionality of a command
+// Handle handles the functionality of a command
 func (cmd Chat) Handle(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	cmd.InteractionUtil = util.InteractionUtil{Session: s, Interaction: i}
 	cmd.member = i.Member
@@ -37,6 +33,8 @@ func (cmd Chat) Handle(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	} else if i.User != nil {
 		cmd.member = &discordgo.Member{User: i.User}
 	}
+
+	log.Print("currently unused command")
 }
 
 // SetID sets the registered command ID for internal uses after uploading to discord

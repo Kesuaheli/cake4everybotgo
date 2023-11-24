@@ -15,19 +15,17 @@
 package birthday
 
 import (
+	"cake4everybot/data/lang"
+	"cake4everybot/util"
 	"fmt"
 	"log"
 	"strconv"
 	"time"
 
-	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
-
 	"github.com/bwmarrin/discordgo"
 )
 
-// The set subcommand. Used when executing the
-// slash-command "/birthday set".
+// The set subcommand. Used when executing the slash-command "/birthday set".
 type subcommandSet struct {
 	Chat
 	*discordgo.ApplicationCommandInteractionDataOption
@@ -38,8 +36,7 @@ type subcommandSet struct {
 	visible *discordgo.ApplicationCommandInteractionDataOption // optional
 }
 
-// Constructor for subcommandSet, the struct for
-// the slash-command "/birthday set".
+// Constructor for subcommandSet, the struct for the slash-command "/birthday set".
 func (cmd Chat) subcommandSet() subcommandSet {
 	subcommand := cmd.Interaction.ApplicationCommandData().Options[0]
 	return subcommandSet{

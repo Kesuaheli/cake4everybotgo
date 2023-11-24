@@ -16,7 +16,7 @@ package birthday
 
 import (
 	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
+	"cake4everybot/util"
 
 	"github.com/bwmarrin/discordgo"
 )

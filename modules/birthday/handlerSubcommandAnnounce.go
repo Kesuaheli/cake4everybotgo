@@ -21,15 +21,13 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// The announce subcommand. Used when executing the
-// slash-command "/birthday announce".
+// The announce subcommand. Used when executing the slash-command "/birthday announce".
 type subcommandAnnounce struct {
 	Chat
 	*discordgo.ApplicationCommandInteractionDataOption
 }
 
-// Constructor for subcommandannounce, the struct for
-// the slash-command "/birthday announce".
+// Constructor for subcommandannounce, the struct for the slash-command "/birthday announce".
 func (cmd Chat) subcommandAnnounce() subcommandAnnounce {
 	subcommand := cmd.Interaction.ApplicationCommandData().Options[0]
 	return subcommandAnnounce{

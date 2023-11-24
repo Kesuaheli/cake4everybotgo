@@ -16,8 +16,8 @@ package command
 
 import "github.com/bwmarrin/discordgo"
 
-// Command is an interface wrapper for all commands. Including chat-
-// comamnds (slash-commands), message-commands, and user-commands.
+// Command is an interface wrapper for all commands. Including chat-comamnds (slash-commands),
+// message-commands, and user-commands.
 type Command interface {
 	// Definition of a command.
 	// E.g., name, description, options, subcommands.
@@ -25,7 +25,7 @@ type Command interface {
 
 	// Function of a command.
 	// All things that should happen at execution.
-	CmdHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate)
+	Handle(s *discordgo.Session, i *discordgo.InteractionCreate)
 
 	// Sets the registered command ID for internal uses after uploading to discord
 	SetID(id string)
@@ -33,14 +33,13 @@ type Command interface {
 	GetID() string
 }
 
-// CommandMap holds all active commands. It maps them from a unique
-// name identifier to the corresponding Command.
+// CommandMap holds all active commands. It maps them from a unique name identifier to the
+// corresponding Command.
 //
-// Here the name is used, because Discord uses the name too to
-// identify seperate commands. When a command is beeing registered
-// with a name that already is beeing registerd as a command by this
-// application (bot), then the new one will simply overwrite it and
-// automatically ungerister the old one.
+// Here the name is used, because Discord uses the name too to identify seperate commands. When a
+// command is beeing registered with a name that already is beeing registerd as a command by this
+// application (bot), then the new one will simply overwrite it and automatically ungerister the old
+// one.
 var CommandMap map[string]Command
 
 func init() {

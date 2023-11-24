@@ -15,10 +15,10 @@
 package event
 
 import (
-	"time"
-
-	"cake4everybot/event/command/birthday"
+	"cake4everybot/modules/birthday"
 	webYT "cake4everybot/webserver/youtube"
+
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/spf13/viper"

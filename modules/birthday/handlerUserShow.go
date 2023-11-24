@@ -15,12 +15,11 @@
 package birthday
 
 import (
+	"cake4everybot/data/lang"
+	"cake4everybot/util"
 	"fmt"
 	"log"
 	"strconv"
-
-	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
 
 	"github.com/bwmarrin/discordgo"
 )

@@ -15,14 +15,13 @@
 package birthday
 
 import (
+	"cake4everybot/data/lang"
+	"cake4everybot/util"
 	"fmt"
 	"math"
 	"strconv"
 	"strings"
 	"time"
-
-	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -42,8 +41,8 @@ var (
 	}
 )
 
-// dayChoices returns a list of choices of days that matches the
-// given start string with the provided month and leap year values.
+// dayChoices returns a list of choices of days that matches the given start string with the
+// provided month and leap year values.
 func dayChoices(start string, month int, leapYear bool) (choices []*discordgo.ApplicationCommandOptionChoice) {
 	i, _ := strconv.Atoi(start)
 	if i < 0 || i > getDays(month, leapYear) {
@@ -64,8 +63,8 @@ func dayChoices(start string, month int, leapYear bool) (choices []*discordgo.Ap
 	return choices
 }
 
-// monthChoices returns a list of choices of months that matches the
-// given start string with the provided day and leap year values.
+// monthChoices returns a list of choices of months that matches the given start string with the
+// provided day and leap year values.
 func monthChoices(start string, day int, leapYear bool) (choices []*discordgo.ApplicationCommandOptionChoice) {
 	i, err := strconv.Atoi(start)
 	if err != nil {
@@ -125,8 +124,8 @@ func monthChoices(start string, day int, leapYear bool) (choices []*discordgo.Ap
 	return choices
 }
 
-// yearChoices returns a list of choices of years that matches the
-// given start string with the provided day and month value.
+// yearChoices returns a list of choices of years that matches the given start string with the
+// provided day and month value.
 func yearChoices(start string, day, month int) (choices []*discordgo.ApplicationCommandOptionChoice) {
 	maxDate := time.Now().AddDate(-16, 0, 0)
 
@@ -137,8 +136,7 @@ func yearChoices(start string, day, month int) (choices []*discordgo.Application
 		decades = append(decades, y)
 	}
 
-	// reply with list of decades when the start string isnt number
-	// or is zero
+	// reply with list of decades when the start string isnt a number or is zero
 	y, err := strconv.Atoi(start)
 	if err != nil || y == 0 {
 		for _, dec := range decades {
@@ -204,8 +202,7 @@ func intChoice(i int) (choice *discordgo.ApplicationCommandOptionChoice) {
 	}
 }
 
-// monthChoice returns a single choice with the name of the month
-// defined by the given integer.
+// monthChoice returns a single choice with the name of the month defined by the given integer.
 func monthChoice(month int) (choice *discordgo.ApplicationCommandOptionChoice) {
 	key := fmt.Sprintf("%smonth.%d", tp, month-1)
 
@@ -216,9 +213,8 @@ func monthChoice(month int) (choice *discordgo.ApplicationCommandOptionChoice) {
 	}
 }
 
-// getDays returns the maximum number of days in the given month.
-// When the given month is february (month: 2), getDays returns 29,
-// as it is the max. number of day the february can have.
+// getDays returns the maximum number of days in the given month. When the given month is february
+// (month: 2), getDays returns 29, as it is the max. number of day the february can have.
 func getDays(month int, leapYear bool) int {
 	if util.ContainsInt([]int{2}, month) {
 		if leapYear {

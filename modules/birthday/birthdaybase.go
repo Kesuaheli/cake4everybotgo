@@ -15,15 +15,14 @@
 package birthday
 
 import (
+	"cake4everybot/data/lang"
+	"cake4everybot/database"
+	"cake4everybot/util"
 	"fmt"
 	"reflect"
 	"sort"
 	"strings"
 	"time"
-
-	"cake4everybot/data/lang"
-	"cake4everybot/database"
-	"cake4everybot/event/command/util"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -74,8 +73,8 @@ func (b birthdayEntry) DOW() int {
 	return int(b.Year+b.Year/4-b.Year/100+b.Year/400+int(monthKey[b.Month])+b.Day) % 7
 }
 
-// NextUnix returns the unix timestamp in seconds of the next
-// birthday. This is just a shorthand for Next().Unix().
+// NextUnix returns the unix timestamp in seconds of the next birthday. This is just a shorthand for
+// Next().Unix().
 //
 // See Next() for more.
 func (b birthdayEntry) NextUnix() int64 {
@@ -92,15 +91,13 @@ func (b birthdayEntry) Next() time.Time {
 	return nextTime
 }
 
-// ParseTime tries to parse the date (b.Day, b.Month, b.Year) to a
-// time.Time object.
+// ParseTime tries to parse the date (b.Day, b.Month, b.Year) to a time.Time object.
 func (b *birthdayEntry) ParseTime() (err error) {
 	b.time, err = time.Parse(time.DateOnly, fmt.Sprintf("%04d-%02d-%02d", b.Year, b.Month, b.Day))
 	return err
 }
 
-// Age returns the current age of the user. If no year is set, it
-// returns 0.
+// Age returns the current age of the user. If no year is set, it returns 0.
 func (b birthdayEntry) Age() int {
 	if b.Year == 0 {
 		return 0
@@ -108,11 +105,9 @@ func (b birthdayEntry) Age() int {
 	return b.Next().Year() - b.Year - 1
 }
 
-// getBirthday copies all birthday fields into
-// the struct pointed at by b.
+// getBirthday copies all birthday fields into the struct pointed at by b.
 //
-// If the user from b.ID is not found it returns
-// sql.ErrNoRows.
+// If the user from b.ID is not found it returns sql.ErrNoRows.
 func (cmd birthdayBase) getBirthday(b *birthdayEntry) (err error) {
 	row := database.QueryRow("SELECT day,month,year,visible FROM birthdays WHERE id=?", b.ID)
 	err = row.Scan(&b.Day, &b.Month, &b.Year, &b.Visible)
@@ -122,22 +117,19 @@ func (cmd birthdayBase) getBirthday(b *birthdayEntry) (err error) {
 	return b.ParseTime()
 }
 
-// hasBirthday returns true whether the given
-// user id has entered their birthday.
+// hasBirthday returns true whether the given user id has entered their birthday.
 func (cmd birthdayBase) hasBirthday(id uint64) (hasBirthday bool, err error) {
 	err = database.QueryRow("SELECT EXISTS(SELECT id FROM birthdays WHERE id=?)", id).Scan(&hasBirthday)
 	return hasBirthday, err
 }
 
-// setBirthday inserts a new database entry with
-// the values from b.
+// setBirthday inserts a new database entry with the values from b.
 func (cmd birthdayBase) setBirthday(b birthdayEntry) error {
 	_, err := database.Exec("INSERT INTO birthdays(id,day,month,year,visible) VALUES(?,?,?,?,?);", b.ID, b.Day, b.Month, b.Year, b.Visible)
 	return err
 }
 
-// updateBirthday updates an existing database
-// entry with the values from b.
+// updateBirthday updates an existing database entry with the values from b.
 func (cmd birthdayBase) updateBirthday(b birthdayEntry) (before birthdayEntry, err error) {
 	err = b.ParseTime()
 	if err != nil {
@@ -185,8 +177,8 @@ func (cmd birthdayBase) updateBirthday(b birthdayEntry) (before birthdayEntry, e
 	return before, err
 }
 
-// removeBirthday deletes the existing birthday entry for the given
-// id and returns the previously entered birthday.
+// removeBirthday deletes the existing birthday entry for the given id and returns the previously
+// entered birthday.
 func (cmd birthdayBase) removeBirthday(id uint64) (birthdayEntry, error) {
 	b := birthdayEntry{ID: id}
 	err := cmd.getBirthday(&b)
@@ -198,8 +190,7 @@ func (cmd birthdayBase) removeBirthday(id uint64) (birthdayEntry, error) {
 	return b, err
 }
 
-// getBirthdaysMonth return a sorted slice of
-// birthday entries that matches the given month.
+// getBirthdaysMonth return a sorted slice of birthday entries that matches the given month.
 func (cmd birthdayBase) getBirthdaysMonth(month int) (birthdays []birthdayEntry, err error) {
 	var numOfEntries int64
 	err = database.QueryRow("SELECT COUNT(*) FROM birthdays WHERE month=?", month).Scan(&numOfEntries)
@@ -244,8 +235,7 @@ func (cmd birthdayBase) getBirthdaysMonth(month int) (birthdays []birthdayEntry,
 	return birthdays, nil
 }
 
-// getBirthdaysDate return a slice of birthday
-// entries that matches the given date.
+// getBirthdaysDate return a slice of birthday entries that matches the given date.
 func getBirthdaysDate(day int, month int) (birthdays []birthdayEntry, err error) {
 	var numOfEntries int64
 	err = database.QueryRow("SELECT COUNT(*) FROM birthdays WHERE day=? AND month=?", day, month).Scan(&numOfEntries)

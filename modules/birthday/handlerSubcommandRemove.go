@@ -16,7 +16,7 @@ package birthday
 
 import (
 	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
+	"cake4everybot/util"
 	"fmt"
 	"log"
 	"strconv"
@@ -24,15 +24,13 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// The remove subcommand. Used when executing the
-// slash-command "/birthday remove".
+// The remove subcommand. Used when executing the slash-command "/birthday remove".
 type subcommandRemove struct {
 	Chat
 	*discordgo.ApplicationCommandInteractionDataOption
 }
 
-// Constructor for subcommandremove, the struct for
-// the slash-command "/birthday remove".
+// Constructor for subcommandremove, the struct for the slash-command "/birthday remove".
 func (cmd Chat) subcommandRemove() subcommandRemove {
 	subcommand := cmd.Interaction.ApplicationCommandData().Options[0]
 	return subcommandRemove{

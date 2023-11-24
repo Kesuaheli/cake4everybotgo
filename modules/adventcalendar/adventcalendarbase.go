@@ -15,7 +15,7 @@
 package adventcalendar
 
 import (
-	"cake4everybot/event/command/util"
+	"cake4everybot/util"
 	logger "log"
 
 	"github.com/bwmarrin/discordgo"
@@ -29,7 +29,7 @@ const (
 
 var log = logger.New(logger.Writer(), "[Advent] ", logger.LstdFlags|logger.Lmsgprefix)
 
-type AdventCalendar struct {
+type adventcalendarBase struct {
 	util.InteractionUtil
 	member *discordgo.Member
 	user   *discordgo.User

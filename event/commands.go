@@ -15,13 +15,13 @@
 package event
 
 import (
+	"cake4everybot/event/command"
+	"cake4everybot/event/component"
+	"cake4everybot/modules/adventcalendar"
+	"cake4everybot/modules/birthday"
+	"cake4everybot/modules/info"
 	"fmt"
 	"strings"
-
-	"cake4everybot/event/adventcalendar"
-	"cake4everybot/event/command"
-	"cake4everybot/event/command/birthday"
-	"cake4everybot/event/command/info"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -105,7 +105,7 @@ func registerComponents() {
 	// interface command.Component) to the list, e.g.:
 	//
 	//  componentList = append(componentList, mymodule.MyComponent{})
-	var componentList []command.Component
+	var componentList []component.Component
 
 	componentList = append(componentList, adventcalendar.Component{})
 
@@ -113,9 +113,9 @@ func registerComponents() {
 		return
 	}
 	for _, c := range componentList {
-		command.ComponentMap[c.ID()] = c
+		component.ComponentMap[c.ID()] = c
 	}
-	log.Printf("Added %d component handler(s)!", len(command.ComponentMap))
+	log.Printf("Added %d component handler(s)!", len(component.ComponentMap))
 }
 
 func addCommandListeners(s *discordgo.Session) {
@@ -124,11 +124,11 @@ func addCommandListeners(s *discordgo.Session) {
 		case discordgo.InteractionApplicationCommand, discordgo.InteractionApplicationCommandAutocomplete:
 			data := event.ApplicationCommandData()
 			if cmd, ok := command.CommandMap[data.Name]; ok {
-				cmd.CmdHandler()(s, event)
+				cmd.Handle(s, event)
 			}
 		case discordgo.InteractionMessageComponent:
 			data := event.MessageComponentData()
-			if c, ok := command.ComponentMap[strings.Split(data.CustomID, ".")[0]]; ok {
+			if c, ok := component.ComponentMap[strings.Split(data.CustomID, ".")[0]]; ok {
 				c.Handle(s, event)
 			}
 		}

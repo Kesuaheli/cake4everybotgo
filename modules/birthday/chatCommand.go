@@ -16,15 +16,13 @@ package birthday
 
 import (
 	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
+	"cake4everybot/util"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-// The Chat (slash) command of the birthday
-// package. Has a few sub commands and options
-// to use all features through a single chat
-// command.
+// The Chat (slash) command of the birthday package. Has a few sub commands and options to use all
+// features through a single chat command.
 type Chat struct {
 	birthdayBase
 
@@ -35,8 +33,7 @@ type subcommand interface {
 	handler()
 }
 
-// AppCmd (ApplicationCommand) returns the definition of the chat
-// command
+// AppCmd (ApplicationCommand) returns the definition of the chat command
 func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
 	options := []*discordgo.ApplicationCommandOption{
 		subCommandSet(),
@@ -54,37 +51,34 @@ func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
 	}
 }
 
-// CmdHandler returns the functionality of a command
-func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-
-	return func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-		cmd.InteractionUtil = util.InteractionUtil{Session: s, Interaction: i}
-		cmd.member = i.Member
-		cmd.user = i.User
-		if i.Member != nil {
-			cmd.user = i.Member.User
-		} else if i.User != nil {
-			cmd.member = &discordgo.Member{User: i.User}
-		}
-
-		subcommandName := i.ApplicationCommandData().Options[0].Name
-		var sub subcommand
-
-		switch subcommandName {
-		case lang.GetDefault(tp + "option.set"):
-			sub = cmd.subcommandSet()
-		case lang.GetDefault(tp + "option.remove"):
-			sub = cmd.subcommandRemove()
-		case lang.GetDefault(tp + "option.list"):
-			sub = cmd.subcommandList()
-		case lang.GetDefault(tp + "option.announce"):
-			sub = cmd.subcommandAnnounce()
-		default:
-			return
-		}
-
-		sub.handler()
+// Handle handles the functionality of a command
+func (cmd Chat) Handle(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	cmd.InteractionUtil = util.InteractionUtil{Session: s, Interaction: i}
+	cmd.member = i.Member
+	cmd.user = i.User
+	if i.Member != nil {
+		cmd.user = i.Member.User
+	} else if i.User != nil {
+		cmd.member = &discordgo.Member{User: i.User}
 	}
+
+	subcommandName := i.ApplicationCommandData().Options[0].Name
+	var sub subcommand
+
+	switch subcommandName {
+	case lang.GetDefault(tp + "option.set"):
+		sub = cmd.subcommandSet()
+	case lang.GetDefault(tp + "option.remove"):
+		sub = cmd.subcommandRemove()
+	case lang.GetDefault(tp + "option.list"):
+		sub = cmd.subcommandList()
+	case lang.GetDefault(tp + "option.announce"):
+		sub = cmd.subcommandAnnounce()
+	default:
+		return
+	}
+
+	sub.handler()
 }
 
 // SetID sets the registered command ID for internal uses after uploading to discord

@@ -15,19 +15,18 @@
 package birthday
 
 import (
+	"cake4everybot/data/lang"
+	"cake4everybot/database"
+	"cake4everybot/util"
 	"fmt"
 	"log"
 	"time"
 
-	"cake4everybot/data/lang"
-	"cake4everybot/database"
-	"cake4everybot/event/command/util"
-
 	"github.com/bwmarrin/discordgo"
 )
 
-// Check checks if there are any birthdays on the current date
-// (time.Now()), if so announce them in the desired channel.
+// Check checks if there are any birthdays on the current date (time.Now()), if so announce them
+// in the desired channel.
 func Check(s *discordgo.Session) {
 	var guildID, channelID uint64
 	rows, err := database.Query("SELECT id,birthday_id FROM guilds")
@@ -71,9 +70,8 @@ func Check(s *discordgo.Session) {
 	}
 }
 
-// birthdayAnnounceEmbed returns the embed, that contains all
-// birthdays and 'n' as the number of birthdays, which is always
-// len(b)
+// birthdayAnnounceEmbed returns the embed, that contains all birthdays and 'n' as the number of
+// birthdays, which is always len(b)
 func birthdayAnnounceEmbed(s *discordgo.Session, b []birthdayEntry) (e *discordgo.MessageEmbed, n int) {
 	var title, fValue string
 
