@@ -1,4 +1,4 @@
-# American english translations
+# American and britain english translations
 
 discord.command:
   generic:
@@ -30,6 +30,12 @@ discord.command:
     option.list.description: List entered Birthdays of a specified month
     option.list.option.month: month
     option.list.option.month.description: The month to list all birthdays from
+
+    option.announce: announce
+    option.announce.description: Manually announce todays birthdays, if any
+
+    user.show:
+      base: Show birthday
 
     weekday:
       - Monday
@@ -87,8 +93,25 @@ discord.command:
     msg.list.total.1: There's only one birthday in %s
     msg.list.total.0: No birthdays entered for %s
     msg.list.total: There're %s birthdays in %s
+    msg.announce.0: There are no birthdays today
+    #TODO: Link slash command
+    msg.announce.0.description: Use the list command to see upcomming birthdays. This message is only visible to you, because there aren't birthdays to announce.
     msg.announce.1: There's a birthday today!
     msg.announce: There're %s birthdays today!
     msg.announce.congratulate: Happy Birthday to
     msg.announce.with_age: "%s (turns %s)"
     msg.next: Next birthday
+
+  info:
+    base: info
+    base.description: Displays some infos about the bot
+    display: Bot information
+
+    title: Informations and status
+    start_time: Latest restart
+    latency: Latency
+    version: Version
+
+youtube:
+  embed_footer: YouTube notification bell
+  msg.new_vid: "%s just uploaded a new video"

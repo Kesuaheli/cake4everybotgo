@@ -18,14 +18,16 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
+	// mysql driver used for database
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
 )
 
 var db *sql.DB
 
-type connection_config struct {
+type connectionConfig struct {
 	User     string `mapstructure:"user"`
 	Password string `mapstructure:"password"`
 	Host     string `mapstructure:"host"`
@@ -33,15 +35,16 @@ type connection_config struct {
 	Database string `mapstructure:"database"`
 }
 
-func (c connection_config) String() string {
+func (c connectionConfig) String() string {
 	return fmt.Sprintf("user='%s', host:port='%s:%d', database='%s'", c.User, c.Host, c.Port, c.Database)
 }
 
+// Connect sets the connection to the configured database
 func Connect() {
 	log.Println("Connecting to Database...")
 
 	// setting default values
-	config := connection_config{
+	config := connectionConfig{
 		Host: "localhost",
 		Port: 3306,
 	}
@@ -56,6 +59,8 @@ func Connect() {
 	if err != nil {
 		log.Fatalf("Could not open database connection: %v", err)
 	}
+
+	db.SetConnMaxLifetime(3 * time.Minute)
 
 	err = db.Ping()
 	if err != nil {

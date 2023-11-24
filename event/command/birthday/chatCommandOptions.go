@@ -145,3 +145,13 @@ func commandOptionListMonth() *discordgo.ApplicationCommandOption {
 		MaxValue:                 12,
 	}
 }
+
+func subCommandAnnounce() *discordgo.ApplicationCommandOption {
+	return &discordgo.ApplicationCommandOption{
+		Type:                     discordgo.ApplicationCommandOptionSubCommand,
+		Name:                     lang.GetDefault(tp + "option.announce"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.announce"),
+		Description:              lang.GetDefault(tp + "option.announce.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.announce.description"),
+	}
+}

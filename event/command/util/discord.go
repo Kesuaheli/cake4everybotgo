@@ -37,7 +37,7 @@ func AuthoredEmbed[T *discordgo.User | *discordgo.Member](s *discordgo.Session, 
 	if !ok {
 		member, ok := any(author).(*discordgo.Member)
 		if !ok {
-			panic(fmt.Sprintf("Given generic type is not an discord user or member"))
+			panic("Given generic type is not an discord user or member")
 		}
 		user = member.User
 		username = member.Nick
@@ -75,15 +75,19 @@ func SetEmbedFooter(s *discordgo.Session, sectionName string, e *discordgo.Messa
 	}
 }
 
+// AddEmbedField is a short hand for appending one field to the embed
+func AddEmbedField(e *discordgo.MessageEmbed, name, value string, inline bool) {
+	e.Fields = append(e.Fields, &discordgo.MessageEmbedField{Name: name, Value: value, Inline: inline})
+}
+
 // AddReplyHiddenField appends the standard field for ephemral
 // embeds to the existing fields of the given embed.
 func AddReplyHiddenField(e *discordgo.MessageEmbed) {
-	f := &discordgo.MessageEmbedField{
-		Name:   lang.Get("discord.command.generic.msg.self_hidden", lang.FallbackLang()),
-		Value:  lang.Get("discord.command.generic.msg.self_hidden.desc", lang.FallbackLang()),
-		Inline: false,
-	}
-	e.Fields = append(e.Fields, f)
+	AddEmbedField(e,
+		lang.Get("discord.command.generic.msg.self_hidden", lang.FallbackLang()),
+		lang.Get("discord.command.generic.msg.self_hidden.desc", lang.FallbackLang()),
+		false,
+	)
 }
 
 // MentionCommand returns the mention string for a slashcommand

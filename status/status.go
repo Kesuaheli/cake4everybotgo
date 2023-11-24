@@ -12,27 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package event
+package status
 
-import (
-	"github.com/bwmarrin/discordgo"
-)
+import "time"
 
-// Register registers all events, like commands.
-func Register(s *discordgo.Session, guildID string) error {
-	err := registerCommands(s, guildID)
-	if err != nil {
-		return err
-	}
+// The point in time where the bot starts
+var startTime time.Time
 
-	return nil
+func init() {
+	startTime = time.Now()
 }
 
-// AddListeners adds all event handlers to the given session s.
-func AddListeners(s *discordgo.Session, webChan chan struct{}) {
-	addCommandListeners(s)
-	addVoiceStateListeners(s)
+// GetStartTime returns the time were the bot stared
+func GetStartTime() time.Time {
+	return startTime
+}
 
-	addYouTubeListeners(s)
-	addScheduledTriggers(s, webChan)
+// GetUptime returns the duration since the bot stared
+func GetUptime() time.Duration {
+	return time.Since(startTime)
 }

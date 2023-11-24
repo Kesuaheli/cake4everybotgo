@@ -26,6 +26,7 @@ import (
 	"cake4everybot/config"
 	"cake4everybot/database"
 	"cake4everybot/event"
+	"cake4everybot/webserver"
 )
 
 const banner string = "\n" +
@@ -41,6 +42,7 @@ const banner string = "\n" +
 	"   / /_/ / (__  ) /__/ /_/ / /  / /_/ /  /_____/  / /_/ / /_/ / /_         \n" +
 	"  /_____/_/____/\\___/\\____/_/   \\__,_/           /_____/\\____/\\__/         \n" +
 	"\n" +
+	"Version: v%s\n" +
 	"%s\n" +
 	"Copyright 2022-2023 Kesuaheli\n\n"
 
@@ -51,8 +53,9 @@ func init() {
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer stop()
+	webChan := make(chan struct{})
 
-	log.Printf(banner, viper.GetString("discord.credits"))
+	log.Printf(banner, viper.GetString("version"), viper.GetString("discord.credits"))
 
 	database.Connect()
 	defer database.Close()
@@ -67,7 +70,7 @@ func main() {
 		log.Printf("Logged in to Discord as %s#%s\n", s.State.User.Username, s.State.User.Discriminator)
 	})
 
-	event.AddListeners(s)
+	event.AddListeners(s, webChan)
 
 	// open connection to Discord and login
 	err = s.Open()
@@ -81,6 +84,10 @@ func main() {
 	if err != nil {
 		log.Printf("Error registering events: %v\n", err)
 	}
+
+	log.Println("Starting webserver...")
+	addr := ":8080"
+	webserver.Run(addr, webChan)
 
 	// Wait to end the bot
 	log.Println("Press Ctrl+C to exit")

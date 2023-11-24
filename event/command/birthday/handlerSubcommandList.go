@@ -47,7 +47,7 @@ func (cmd Chat) subcommandList() subcommandList {
 func (cmd subcommandList) handler() {
 	for _, opt := range cmd.Options {
 		switch opt.Name {
-		case "month":
+		case lang.GetDefault(tp + "option.set.option.month"):
 			cmd.month = opt
 		}
 	}

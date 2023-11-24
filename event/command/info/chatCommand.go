@@ -12,45 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package birthday
+package info
 
 import (
 	"cake4everybot/data/lang"
 	"cake4everybot/event/command/util"
+	"cake4everybot/status"
+	"fmt"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/spf13/viper"
 )
 
-// The Chat (slash) command of the birthday
-// package. Has a few sub commands and options
-// to use all features through a single chat
-// command.
+const (
+	// Prefix for translation key, i.e.:
+	//   key := tp+"base" // => info
+	tp = "discord.command.info."
+)
+
+// The Chat (slash) command of the info package. Simply prints a
+// little infomation about the bot.
 type Chat struct {
-	birthdayBase
+	util.InteractionUtil
 
 	ID string
-}
-
-type subcommand interface {
-	handler()
 }
 
 // AppCmd (ApplicationCommand) returns the definition of the chat
 // command
 func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
-	options := []*discordgo.ApplicationCommandOption{
-		subCommandSet(),
-		subCommandRemove(),
-		subCommandList(),
-		subCommandAnnounce(),
-	}
-
 	return &discordgo.ApplicationCommand{
 		Name:                     lang.GetDefault(tp + "base"),
 		NameLocalizations:        util.TranslateLocalization(tp + "base"),
 		Description:              lang.GetDefault(tp + "base.description"),
 		DescriptionLocalizations: util.TranslateLocalization(tp + "base.description"),
-		Options:                  options,
 	}
 }
 
@@ -59,31 +54,31 @@ func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.Interaction
 
 	return func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		cmd.InteractionUtil = util.InteractionUtil{Session: s, Interaction: i}
-		cmd.member = i.Member
-		cmd.user = i.User
-		if i.Member != nil {
-			cmd.user = i.Member.User
-		} else if i.User != nil {
-			cmd.member = &discordgo.Member{User: i.User}
+
+		e := &discordgo.MessageEmbed{
+			Title: lang.GetDefault(tp + "title"),
+			Color: 0x00FF00,
 		}
+		util.AddEmbedField(e,
+			lang.Get(tp+"start_time", lang.FallbackLang()),
+			fmt.Sprintf("<t:%d:R>", status.GetStartTime().Unix()),
+			true,
+		)
+		util.AddEmbedField(e,
+			lang.Get(tp+"latency", lang.FallbackLang()),
+			fmt.Sprintf("%dms", s.LastHeartbeatAck.Sub(s.LastHeartbeatSent).Milliseconds()),
+			true,
+		)
+		version := fmt.Sprintf("v%s", viper.GetString("version"))
+		versionURL := fmt.Sprintf("https://github.com/Kesuaheli/cake4everybotgo/releases/tag/%s", version)
+		util.AddEmbedField(e,
+			lang.Get(tp+"version", lang.FallbackLang()),
+			fmt.Sprintf("[%s](%s)", version, versionURL),
+			false,
+		)
+		util.SetEmbedFooter(s, tp+"display", e)
 
-		subcommandName := i.ApplicationCommandData().Options[0].Name
-		var sub subcommand
-
-		switch subcommandName {
-		case lang.GetDefault(tp + "option.set"):
-			sub = cmd.subcommandSet()
-		case lang.GetDefault(tp + "option.remove"):
-			sub = cmd.subcommandRemove()
-		case lang.GetDefault(tp + "option.list"):
-			sub = cmd.subcommandList()
-		case lang.GetDefault(tp + "option.announce"):
-			sub = cmd.subcommandAnnounce()
-		default:
-			return
-		}
-
-		sub.handler()
+		cmd.ReplyEmbed(e)
 	}
 }
 

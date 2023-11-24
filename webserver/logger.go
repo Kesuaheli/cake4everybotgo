@@ -1,4 +1,4 @@
-// Copyright 2022-2023 Kesuaheli
+// Copyright 2023 Kesuaheli
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,27 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package event
+package webserver
 
 import (
-	"github.com/bwmarrin/discordgo"
+	"fmt"
+	"log"
+	"net/http"
 )
 
-// Register registers all events, like commands.
-func Register(s *discordgo.Session, guildID string) error {
-	err := registerCommands(s, guildID)
-	if err != nil {
-		return err
-	}
+// Logger is an http.Handler middleware to log requests and traffic
+func Logger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		source := r.RemoteAddr
+		if u, _, ok := r.BasicAuth(); ok {
+			source = fmt.Sprintf("%s (%s)", u, source)
+		}
 
-	return nil
-}
+		log.Printf("%s: %s %s", source, r.Method, r.URL)
 
-// AddListeners adds all event handlers to the given session s.
-func AddListeners(s *discordgo.Session, webChan chan struct{}) {
-	addCommandListeners(s)
-	addVoiceStateListeners(s)
-
-	addYouTubeListeners(s)
-	addScheduledTriggers(s, webChan)
+		next.ServeHTTP(w, r)
+	})
 }

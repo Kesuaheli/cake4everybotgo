@@ -15,43 +15,19 @@
 package event
 
 import (
-	"time"
-
-	"cake4everybot/event/command/birthday"
+	"cake4everybot/event/youtube"
 	webYT "cake4everybot/webserver/youtube"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/spf13/viper"
 )
 
-func addScheduledTriggers(s *discordgo.Session, webChan chan struct{}) {
-	go scheduleBirthdayCheck(s)
-	go refreshYoutube(webChan)
-}
+func addYouTubeListeners(s *discordgo.Session) {
+	webYT.SetDiscordSession(s)
+	webYT.SetDiscordHandler(youtube.Announce)
 
-func scheduleBirthdayCheck(s *discordgo.Session) {
-	HOUR := viper.GetInt("event.birthday_hour")
-
-	time.Sleep(time.Second * 5)
-	for {
-		now := time.Now()
-
-		nextRun := time.Date(now.Year(), now.Month(), now.Day(), HOUR, 0, 0, 0, now.Location())
-		if nextRun.Before(now) {
-			nextRun = nextRun.Add(time.Hour * 24)
-		}
-		time.Sleep(nextRun.Sub(now))
-
-		birthday.Check(s)
-	}
-}
-
-func refreshYoutube(webChan chan struct{}) {
-	<-webChan
-	for {
-		webYT.RefreshSubscriptions()
-
-		// loop every 4 days
-		time.Sleep(4 * 24 * time.Hour)
+	channels := viper.GetStringSlice("youtube.announce")
+	for _, channelID := range channels {
+		webYT.SubscribeChannel(channelID)
 	}
 }
