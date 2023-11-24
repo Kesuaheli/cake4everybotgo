@@ -16,7 +16,10 @@ package event
 
 import (
 	"github.com/bwmarrin/discordgo"
+	logger "log"
 )
+
+var log = *logger.New(logger.Writer(), "[Events] ", logger.LstdFlags|logger.Lmsgprefix)
 
 // Register registers all events, like commands.
 func Register(s *discordgo.Session, guildID string) error {

@@ -16,7 +16,7 @@ package main
 
 import (
 	"context"
-	"log"
+	logger "log"
 	"os/signal"
 	"syscall"
 
@@ -28,6 +28,8 @@ import (
 	"cake4everybot/event"
 	"cake4everybot/webserver"
 )
+
+var log = logger.New(logger.Writer(), "[MAIN] ", logger.LstdFlags|logger.Lmsgprefix)
 
 const banner string = "\n" +
 	"   ______      __        __ __  ______                                     \n" +

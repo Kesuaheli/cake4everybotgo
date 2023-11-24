@@ -16,7 +16,6 @@ package event
 
 import (
 	"fmt"
-	"log"
 
 	"cake4everybot/event/command"
 	"cake4everybot/event/command/birthday"
