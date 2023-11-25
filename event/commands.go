@@ -17,121 +17,28 @@ package event
 import (
 	"cake4everybot/event/command"
 	"cake4everybot/event/component"
-	"cake4everybot/modules/adventcalendar"
-	"cake4everybot/modules/birthday"
-	"cake4everybot/modules/info"
-	"fmt"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-func registerCommands(s *discordgo.Session, guildID string) error {
-
-	// This is the list of commands to use. Add a command via simply
-	// appending the struct (which must implement the interface
-	// command.Command) to the list, i.e.:
-	//
-	// commandsList = append(commandsList, command.MyCommand{})
-	var commandsList []command.Command
-
-	// chat (slash) commands
-	commandsList = append(commandsList, &birthday.Chat{})
-	commandsList = append(commandsList, &info.Chat{})
-	commandsList = append(commandsList, &adventcalendar.Chat{})
-	// messsage commands
-	// user commands
-	commandsList = append(commandsList, &birthday.UserShow{})
-
-	// early return when there're no commands to add, and remove all previously registered commands
-	if len(commandsList) == 0 {
-		removeUnusedCommands(s, guildID, nil)
-		return nil
-	}
-
-	// make an array of ApplicationCommands and perform a bulk change using it
-	appCommandsList := make([]*discordgo.ApplicationCommand, 0, len(commandsList))
-	for _, cmd := range commandsList {
-		appCommandsList = append(appCommandsList, cmd.AppCmd())
-		command.CommandMap[cmd.AppCmd().Name] = cmd
-	}
-	commandNames := make([]string, 0, len(command.CommandMap))
-	for k := range command.CommandMap {
-		commandNames = append(commandNames, k)
-	}
-
-	log.Printf("Adding used commands: [%s]...\n", strings.Join(commandNames, ", "))
-	createdCommands, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, guildID, appCommandsList)
-	if err != nil {
-		return fmt.Errorf("failed on bulk overwrite commands: %v", err)
-	}
-
-	for _, cmd := range createdCommands {
-		command.CommandMap[cmd.Name].SetID(cmd.ID)
-	}
-
-	removeUnusedCommands(s, guildID, createdCommands)
-	return err
-}
-
-func removeUnusedCommands(s *discordgo.Session, guildID string, createdCommands []*discordgo.ApplicationCommand) {
-	allRegisteredCommands, err := s.ApplicationCommands(s.State.User.ID, guildID)
-	if err != nil {
-		log.Printf("Error while removing unused commands: Could not get registered commands from guild '%s'. Err: %v\n", guildID, err)
-		return
-	}
-	newCmdIds := make(map[string]bool)
-	for _, cmd := range createdCommands {
-		newCmdIds[cmd.ID] = true
-	}
-
-	// Find unused commands by iterating over all commands and check if the ID is in the currently registered commands. If not, remove it.
-	for _, cmd := range allRegisteredCommands {
-		if !newCmdIds[cmd.ID] {
-			err = s.ApplicationCommandDelete(s.State.User.ID, guildID, cmd.ID)
-			if err != nil {
-				log.Printf("Error while removing unused commands: Could not delete comand '%s' ('/%s'). Err: %v\n", cmd.ID, cmd.Name, err)
-				continue
-			}
-			log.Printf("Removed unused command: '/%s'\n", cmd.Name)
+func handleInteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	switch i.Type {
+	case discordgo.InteractionApplicationCommand, discordgo.InteractionApplicationCommandAutocomplete:
+		data := i.ApplicationCommandData()
+		if cmd, ok := command.CommandMap[data.Name]; ok {
+			cmd.Handle(s, i)
+		}
+	// TODO: Add seperate handler for autocomplete
+	//case discordgo.InteractionApplicationCommandAutocomplete:
+	//	data := i.ApplicationCommandData()
+	//	if cmd, ok := command.CommandMap[data.Name]; ok {
+	//		cmd.HandleAutocomplete(s, i)
+	//	}
+	case discordgo.InteractionMessageComponent:
+		data := i.MessageComponentData()
+		if c, ok := component.ComponentMap[strings.Split(data.CustomID, ".")[0]]; ok {
+			c.Handle(s, i)
 		}
 	}
-
-}
-
-func registerComponents() {
-	// This is the list of components to use. Add a component via
-	// simply appending the struct (which must implement the
-	// interface command.Component) to the list, e.g.:
-	//
-	//  componentList = append(componentList, mymodule.MyComponent{})
-	var componentList []component.Component
-
-	componentList = append(componentList, adventcalendar.Component{})
-
-	if len(componentList) == 0 {
-		return
-	}
-	for _, c := range componentList {
-		component.ComponentMap[c.ID()] = c
-	}
-	log.Printf("Added %d component handler(s)!", len(component.ComponentMap))
-}
-
-func addCommandListeners(s *discordgo.Session) {
-	s.AddHandler(func(s *discordgo.Session, event *discordgo.InteractionCreate) {
-		switch event.Type {
-		case discordgo.InteractionApplicationCommand, discordgo.InteractionApplicationCommandAutocomplete:
-			data := event.ApplicationCommandData()
-			if cmd, ok := command.CommandMap[data.Name]; ok {
-				cmd.Handle(s, event)
-			}
-		case discordgo.InteractionMessageComponent:
-			data := event.MessageComponentData()
-			if c, ok := component.ComponentMap[strings.Split(data.CustomID, ".")[0]]; ok {
-				c.Handle(s, event)
-			}
-		}
-	})
-
 }

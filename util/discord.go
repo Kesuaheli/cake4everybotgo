@@ -18,11 +18,18 @@ import (
 	"fmt"
 
 	"cake4everybot/data/lang"
-	"cake4everybot/event/command"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/spf13/viper"
 )
+
+var commandIDMap map[string]string
+
+// SetCommandMap sets the map from command names to ther registered ID.
+// TODO: move the original command.CommandMap in a seperate Package to avoid this.
+func SetCommandMap(m map[string]string) {
+	commandIDMap = m
+}
 
 // AuthoredEmbed returns a new Embed with an author and footer set.
 //
@@ -92,10 +99,11 @@ func AddReplyHiddenField(e *discordgo.MessageEmbed) {
 // MentionCommand returns the mention string for a slashcommand
 func MentionCommand(base string, subcommand ...string) string {
 	cBase := lang.GetDefault(base)
-	if command.CommandMap[cBase] == nil {
+
+	cID := commandIDMap[cBase]
+	if cID == "" {
 		return ""
 	}
-	cID := command.CommandMap[cBase].GetID()
 
 	var cSub string
 	for _, sub := range subcommand {

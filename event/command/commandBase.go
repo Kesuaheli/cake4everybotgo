@@ -14,7 +14,17 @@
 
 package command
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"cake4everybot/modules/adventcalendar"
+	"cake4everybot/modules/birthday"
+	"cake4everybot/modules/info"
+	"cake4everybot/util"
+	"fmt"
+	"log"
+	"strings"
+
+	"github.com/bwmarrin/discordgo"
+)
 
 // Command is an interface wrapper for all commands. Including chat-comamnds (slash-commands),
 // message-commands, and user-commands.
@@ -44,4 +54,85 @@ var CommandMap map[string]Command
 
 func init() {
 	CommandMap = make(map[string]Command)
+}
+
+// Register registers all application commands
+func Register(s *discordgo.Session, guildID string) error {
+
+	// This is the list of commands to use. Add a command via simply appending the struct (which
+	// must implement the Command interface) to the list, i.e.:
+	//
+	// commandsList = append(commandsList, command.MyCommand{})
+	var commandsList []Command
+
+	// chat (slash) commands
+	commandsList = append(commandsList, &birthday.Chat{})
+	commandsList = append(commandsList, &info.Chat{})
+	commandsList = append(commandsList, &adventcalendar.Chat{})
+	// messsage commands
+	// user commands
+	commandsList = append(commandsList, &birthday.UserShow{})
+
+	// early return when there're no commands to add, and remove all previously registered commands
+	if len(commandsList) == 0 {
+		removeUnusedCommands(s, guildID, nil)
+		return nil
+	}
+
+	// make an array of ApplicationCommands and perform a bulk change using it
+	appCommandsList := make([]*discordgo.ApplicationCommand, 0, len(commandsList))
+	for _, cmd := range commandsList {
+		appCommandsList = append(appCommandsList, cmd.AppCmd())
+		CommandMap[cmd.AppCmd().Name] = cmd
+	}
+	commandNames := make([]string, 0, len(CommandMap))
+	for k := range CommandMap {
+		commandNames = append(commandNames, k)
+	}
+
+	log.Printf("Adding used commands: [%s]...\n", strings.Join(commandNames, ", "))
+	createdCommands, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, guildID, appCommandsList)
+	if err != nil {
+		return fmt.Errorf("failed on bulk overwrite commands: %v", err)
+	}
+
+	for _, cmd := range createdCommands {
+		CommandMap[cmd.Name].SetID(cmd.ID)
+	}
+
+	removeUnusedCommands(s, guildID, createdCommands)
+
+	// set the utility map
+	cmdIDMap := make(map[string]string)
+	for k, v := range CommandMap {
+		cmdIDMap[k] = v.GetID()
+	}
+	util.SetCommandMap(cmdIDMap)
+
+	return err
+}
+
+func removeUnusedCommands(s *discordgo.Session, guildID string, createdCommands []*discordgo.ApplicationCommand) {
+	allRegisteredCommands, err := s.ApplicationCommands(s.State.User.ID, guildID)
+	if err != nil {
+		log.Printf("Error while removing unused commands: Could not get registered commands from guild '%s'. Err: %v\n", guildID, err)
+		return
+	}
+	newCmdIds := make(map[string]bool)
+	for _, cmd := range createdCommands {
+		newCmdIds[cmd.ID] = true
+	}
+
+	// Find unused commands by iterating over all commands and check if the ID is in the currently registered commands. If not, remove it.
+	for _, cmd := range allRegisteredCommands {
+		if !newCmdIds[cmd.ID] {
+			err = s.ApplicationCommandDelete(s.State.User.ID, guildID, cmd.ID)
+			if err != nil {
+				log.Printf("Error while removing unused commands: Could not delete comand '%s' ('/%s'). Err: %v\n", cmd.ID, cmd.Name, err)
+				continue
+			}
+			log.Printf("Removed unused command: '/%s'\n", cmd.Name)
+		}
+	}
+
 }
