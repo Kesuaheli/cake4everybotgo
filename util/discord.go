@@ -57,8 +57,7 @@ func AuthoredEmbed[T *discordgo.User | *discordgo.Member](s *discordgo.Session, 
 	return embed
 }
 
-// SetEmbedFooter takes a pointer to an embeds and sets the standard
-// footer with the given name.
+// SetEmbedFooter takes a pointer to an embeds and sets the standard footer with the given name.
 //
 //	sectionName:
 //		translation key for the name
@@ -80,8 +79,8 @@ func AddEmbedField(e *discordgo.MessageEmbed, name, value string, inline bool) {
 	e.Fields = append(e.Fields, &discordgo.MessageEmbedField{Name: name, Value: value, Inline: inline})
 }
 
-// AddReplyHiddenField appends the standard field for ephemral
-// embeds to the existing fields of the given embed.
+// AddReplyHiddenField appends the standard field for ephemral embeds to the existing fields of the
+// given embed.
 func AddReplyHiddenField(e *discordgo.MessageEmbed) {
 	AddEmbedField(e,
 		lang.Get("discord.command.generic.msg.self_hidden", lang.FallbackLang()),

@@ -20,9 +20,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// TranslateLocalization returns a pointer to a map of all
-// translations for the given key from discord languages that are
-// loaded in the lang package.
+// TranslateLocalization returns a pointer to a map of all translations for the given key from
+// discord languages that are loaded in the lang package.
 func TranslateLocalization(key string) *map[discordgo.Locale]string {
 	translateMap := map[discordgo.Locale]string{}
 	for locale := range discordgo.Locales {

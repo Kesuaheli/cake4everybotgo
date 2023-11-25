@@ -48,7 +48,7 @@ func (cmd subcommandAnnounce) handler() {
 	e, n := birthdayAnnounceEmbed(cmd.Session, b)
 
 	if n <= 0 {
-		cmd.ReplyHiddenEmbed(false, e)
+		cmd.ReplyHiddenEmbed(e)
 	} else {
 		cmd.ReplyEmbed(e)
 	}

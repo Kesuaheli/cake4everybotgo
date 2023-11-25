@@ -14,8 +14,13 @@
 
 package util
 
-// ContainsInt reports whether at least one of num is at least once
-// anywhere in i.
+import (
+	logger "log"
+)
+
+var log = logger.New(logger.Writer(), "[Util] ", logger.LstdFlags|logger.Lmsgprefix)
+
+// ContainsInt reports whether at least one of num is at least once anywhere in i.
 func ContainsInt(i []int, num ...int) bool {
 	for _, x := range i {
 		for _, y := range num {
@@ -27,8 +32,7 @@ func ContainsInt(i []int, num ...int) bool {
 	return false
 }
 
-// ContainsString reports whether at least one of str is at least
-// once anywhere in s.
+// ContainsString reports whether at least one of str is at least once anywhere in s.
 func ContainsString(s []string, str ...string) bool {
 	for _, x := range s {
 		for _, y := range str {

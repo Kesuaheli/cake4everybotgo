@@ -59,7 +59,7 @@ func (cmd subcommandRemove) handler() {
 	if !hasBDay {
 		e.Description = lang.Get(tp+"msg.remove.not_found", lang.FallbackLang())
 		e.Color = 0xFF0000
-		cmd.ReplyHiddenEmbed(false, e)
+		cmd.ReplyHiddenEmbed(e)
 		return
 	}
 
@@ -82,6 +82,7 @@ func (cmd subcommandRemove) handler() {
 	if b.Visible {
 		cmd.ReplyEmbed(e)
 	} else {
-		cmd.ReplyHiddenEmbed(true, e)
+		util.AddReplyHiddenField(e)
+		cmd.ReplyHiddenEmbed(e)
 	}
 }
