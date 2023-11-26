@@ -31,5 +31,8 @@ event:
   morning_hour: 8
   morning_minute: 0
 
+  adventcalendar:
+    images: data/images/adventcalendar
+
 webserver:
   favicon: webserver/favicon.png

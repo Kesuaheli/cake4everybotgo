@@ -39,6 +39,8 @@ func handleInteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreat
 		data := i.MessageComponentData()
 		if c, ok := component.ComponentMap[strings.Split(data.CustomID, ".")[0]]; ok {
 			c.Handle(s, i)
+		} else {
+			log.Printf("got component interaction from unknown module '%s' (full id '%s')", strings.Split(data.CustomID, ".")[0], data.CustomID)
 		}
 	}
 }

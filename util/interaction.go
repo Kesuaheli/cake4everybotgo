@@ -193,6 +193,62 @@ func (i *InteractionUtil) ReplyComponents(components []discordgo.MessageComponen
 	i.respond()
 }
 
+// ReplySimpleEmbed is a shortcut for replying with a simple embed that only contains a single text
+// and has a color.
+func (i *InteractionUtil) ReplySimpleEmbed(color int, content string) {
+	e := &discordgo.MessageEmbed{
+		Description: content,
+		Color:       color,
+	}
+	i.ReplyEmbed(e)
+}
+
+// ReplySimpleEmbedf formats according to a format specifier and is a shortcut for replying with a
+// simple embed that only contains a single text and has a color.
+func (i *InteractionUtil) ReplySimpleEmbedf(color int, format string, a ...any) {
+	e := &discordgo.MessageEmbed{
+		Description: fmt.Sprintf(format, a...),
+		Color:       color,
+	}
+	i.ReplyEmbed(e)
+}
+
+// ReplyHiddenSimpleEmbed is like ReplySimpleEmbed but also ephemeral.
+func (i *InteractionUtil) ReplyHiddenSimpleEmbed(color int, content string) {
+	e := &discordgo.MessageEmbed{
+		Description: content,
+		Color:       color,
+	}
+	i.ReplyHiddenEmbed(e)
+}
+
+// ReplyHiddenSimpleEmbedf is like ReplySimpleEmbedf but also ephemeral.
+func (i *InteractionUtil) ReplyHiddenSimpleEmbedf(color int, format string, a ...any) {
+	e := &discordgo.MessageEmbed{
+		Description: fmt.Sprintf(format, a...),
+		Color:       color,
+	}
+	i.ReplyHiddenEmbed(e)
+}
+
+// ReplySimpleEmbedUpdate is like ReplySimpleEmbed but make for an update for components.
+func (i *InteractionUtil) ReplySimpleEmbedUpdate(color int, content string) {
+	e := &discordgo.MessageEmbed{
+		Description: content,
+		Color:       color,
+	}
+	i.ReplyEmbedUpdate(e)
+}
+
+// ReplySimpleEmbedUpdatef is like ReplySimpleEmbedf but make for an update for components.
+func (i *InteractionUtil) ReplySimpleEmbedUpdatef(color int, format string, a ...any) {
+	e := &discordgo.MessageEmbed{
+		Description: fmt.Sprintf(format, a...),
+		Color:       color,
+	}
+	i.ReplyEmbedUpdate(e)
+}
+
 // ReplyComponentsf formats according to a format specifier and sends the result along with the
 // provied message components.
 func (i *InteractionUtil) ReplyComponentsf(components []discordgo.MessageComponent, format string, a ...any) {

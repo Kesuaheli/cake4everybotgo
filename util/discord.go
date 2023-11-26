@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"cake4everybot/data/lang"
+	"cake4everybot/database"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/spf13/viper"
@@ -111,4 +112,42 @@ func MentionCommand(base string, subcommand ...string) string {
 	}
 
 	return fmt.Sprintf("</%s%s:%s>", cBase, cSub, cID)
+}
+
+// GetChannelsFromDatabase returns a map from guild IDs to channel IDs
+func GetChannelsFromDatabase(s *discordgo.Session, channelName string) (map[string]string, error) {
+	rows, err := database.Query("SELECT id," + channelName + " FROM guilds")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	IDMap := map[string]string{}
+	for rows.Next() {
+		var guildInt, channelInt uint64
+		err := rows.Scan(&guildInt, &channelInt)
+		if err != nil {
+			return nil, err
+		}
+		if channelInt == 0 {
+			continue
+		}
+		guildID := fmt.Sprint(guildInt)
+		channelID := fmt.Sprint(channelInt)
+
+		// validate channel
+		channel, err := s.Channel(channelID)
+		if err != nil {
+			log.Printf("Warning: could not get %s channel for id '%s: %+v\n", channelName, channelID, err)
+			continue
+		}
+		if channel.GuildID != guildID {
+			log.Printf("Warning: tried to get %s channel (from channel/%s/%s), but this channel is from guild: '%s'\n", channelName, guildID, channelID, channel.GuildID)
+			continue
+		}
+
+		IDMap[guildID] = channelID
+	}
+
+	return IDMap, nil
 }

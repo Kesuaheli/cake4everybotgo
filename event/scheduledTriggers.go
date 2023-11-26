@@ -15,6 +15,7 @@
 package event
 
 import (
+	"cake4everybot/modules/adventcalendar"
 	"cake4everybot/modules/birthday"
 	webYT "cake4everybot/webserver/youtube"
 
@@ -26,11 +27,12 @@ import (
 
 func addScheduledTriggers(s *discordgo.Session, webChan chan struct{}) {
 	go scheduleFunction(s, 0, 0,
-		birthday.Check,
+		adventcalendar.Midnight,
 	)
 
 	go scheduleFunction(s, viper.GetInt("event.morning_hour"), viper.GetInt("event.morning_minute"),
 		birthday.Check,
+		adventcalendar.Post,
 	)
 
 	go refreshYoutube(webChan)

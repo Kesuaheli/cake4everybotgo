@@ -54,3 +54,24 @@ func Btoi(b bool) int {
 	}
 	return 0
 }
+
+// ShiftL takes a slice and shifts all elements to the left. The first element pops out and is
+// returned. If s is an empty slice the zero value of the given type is returned. If t is given it
+// will be inserted at the last position instead of an element with its zero value.
+func ShiftL[T any](s []T, t ...T) (first T) {
+	for i, v := range s {
+		if i == 0 {
+			first = v
+			continue
+		}
+		s[i-1] = s[i]
+		if i == len(s)-1 {
+			var last T
+			if len(t) > 0 {
+				last = t[0]
+			}
+			s[i] = last
+		}
+	}
+	return first
+}
