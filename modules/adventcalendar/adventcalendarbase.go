@@ -43,7 +43,7 @@ type giveawayEntry struct {
 	lastEntry time.Time
 }
 
-func (e giveawayEntry) toEmbedField(s *discordgo.Session) (f *discordgo.MessageEmbedField) {
+func (e giveawayEntry) toEmbedField() (f *discordgo.MessageEmbedField) {
 	return &discordgo.MessageEmbedField{
 		Name:   e.userID,
 		Value:  fmt.Sprintf("<@%s>\n%d tickets\nlast entry: %s", e.userID, e.weight, e.lastEntry.Format(time.DateOnly)),
