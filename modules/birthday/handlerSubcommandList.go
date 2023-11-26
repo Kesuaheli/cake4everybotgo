@@ -15,18 +15,16 @@
 package birthday
 
 import (
+	"cake4everybot/data/lang"
+	"cake4everybot/util"
 	"fmt"
 	"log"
 	"time"
 
-	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
-
 	"github.com/bwmarrin/discordgo"
 )
 
-// The list subcommand. Used when executing the
-// slash-command "/birthday list".
+// The list subcommand. Used when executing the slash-command "/birthday list".
 type subcommandList struct {
 	Chat
 	*discordgo.ApplicationCommandInteractionDataOption
@@ -34,8 +32,7 @@ type subcommandList struct {
 	month *discordgo.ApplicationCommandInteractionDataOption // reqired
 }
 
-// Constructor for subcommandList, the struct for
-// the slash-command "/birthday remove".
+// Constructor for subcommandList, the struct for the slash-command "/birthday remove".
 func (cmd Chat) subcommandList() subcommandList {
 	subcommand := cmd.Interaction.ApplicationCommandData().Options[0]
 	return subcommandList{

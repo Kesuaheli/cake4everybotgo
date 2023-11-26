@@ -112,6 +112,22 @@ discord.command:
     latency: Latenz
     version: Version
 
+  adventcalendar:
+    base: adventskalender
+    base.description: Admin Commands für das Adventskalender Giveaway
+
+module:
+  adventcalendar:
+    post.message: Noch %d Mal schlafen bis Heilig Abend! Heute öffnet sich das **Türchen %d**.
+    post.message.day_23: Fast geschafft! Nur noch einmal schlafen!
+    post.message.day_24: Ho Ho Ho! Heute ist Heilig Abend!
+    post.message2: Klicke unten auf den Knopf um dich im Gewinnspiel einzutragen!
+    post.button: Gewinnspiel
+
+    enter.invalid: Das ist eine alte Nachricht, du kannst dich hier nicht mehr eintragen!
+    enter.success: Du hast dich erfolgreich eingetragen! Du hast jetzt %d Tickets.
+    enter.already_entered: Du hast dich heute bereits eingetragen! (Du hast momentan %d Tickets)
+
 youtube:
   embed_footer: YouTube Glocke
   msg.new_vid: "%s hat ein neues Video hochgeladen"

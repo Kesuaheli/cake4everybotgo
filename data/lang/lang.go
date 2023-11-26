@@ -15,12 +15,13 @@
 package lang
 
 import (
-	"log"
+	logger "log"
 	"strings"
 
 	"github.com/spf13/viper"
 )
 
+var log = logger.New(logger.Writer(), "[Config] ", logger.LstdFlags|logger.Lmsgprefix)
 var langsMap = map[string]*viper.Viper{}
 
 // Unify takes and returns a string wich defines a language, i.e.

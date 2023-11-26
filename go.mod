@@ -1,6 +1,6 @@
 module cake4everybot
 
-go 1.20
+go 1.21
 
 require (
 	github.com/bwmarrin/discordgo v0.27.1
@@ -22,7 +22,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	golang.org/x/crypto v0.13.0 // indirect
-	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

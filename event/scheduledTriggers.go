@@ -15,34 +15,47 @@
 package event
 
 import (
-	"time"
-
-	"cake4everybot/event/command/birthday"
+	"cake4everybot/modules/adventcalendar"
+	"cake4everybot/modules/birthday"
 	webYT "cake4everybot/webserver/youtube"
+
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/spf13/viper"
 )
 
 func addScheduledTriggers(s *discordgo.Session, webChan chan struct{}) {
-	go scheduleBirthdayCheck(s)
+	go scheduleFunction(s, 0, 0,
+		adventcalendar.Midnight,
+	)
+
+	go scheduleFunction(s, viper.GetInt("event.morning_hour"), viper.GetInt("event.morning_minute"),
+		birthday.Check,
+		adventcalendar.Post,
+	)
+
 	go refreshYoutube(webChan)
 }
 
-func scheduleBirthdayCheck(s *discordgo.Session) {
-	HOUR := viper.GetInt("event.birthday_hour")
-
+func scheduleFunction(s *discordgo.Session, hour, min int, f ...func(*discordgo.Session)) {
+	if len(f) == 0 {
+		return
+	}
+	log.Printf("scheduled %d function(s) for %2d:%02d!", len(f), hour, min)
 	time.Sleep(time.Second * 5)
 	for {
 		now := time.Now()
 
-		nextRun := time.Date(now.Year(), now.Month(), now.Day(), HOUR, 0, 0, 0, now.Location())
+		nextRun := time.Date(now.Year(), now.Month(), now.Day(), hour, min, 0, 0, now.Location())
 		if nextRun.Before(now) {
 			nextRun = nextRun.Add(time.Hour * 24)
 		}
 		time.Sleep(nextRun.Sub(now))
 
-		birthday.Check(s)
+		for _, f := range f {
+			f(s)
+		}
 	}
 }
 

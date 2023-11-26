@@ -17,7 +17,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"log"
+	logger "log"
 	"time"
 
 	// mysql driver used for database
@@ -25,6 +25,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+var log = logger.New(logger.Writer(), "[Config] ", logger.LstdFlags|logger.Lmsgprefix)
 var db *sql.DB
 
 type connectionConfig struct {

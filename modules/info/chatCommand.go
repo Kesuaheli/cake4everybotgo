@@ -16,8 +16,8 @@ package info
 
 import (
 	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
 	"cake4everybot/status"
+	"cake4everybot/util"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
@@ -38,8 +38,7 @@ type Chat struct {
 	ID string
 }
 
-// AppCmd (ApplicationCommand) returns the definition of the chat
-// command
+// AppCmd (ApplicationCommand) returns the definition of the chat command
 func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:                     lang.GetDefault(tp + "base"),
@@ -49,37 +48,34 @@ func (cmd Chat) AppCmd() *discordgo.ApplicationCommand {
 	}
 }
 
-// CmdHandler returns the functionality of a command
-func (cmd Chat) CmdHandler() func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+// Handle handles the functionality of a command
+func (cmd Chat) Handle(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	cmd.InteractionUtil = util.InteractionUtil{Session: s, Interaction: i}
 
-	return func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-		cmd.InteractionUtil = util.InteractionUtil{Session: s, Interaction: i}
-
-		e := &discordgo.MessageEmbed{
-			Title: lang.GetDefault(tp + "title"),
-			Color: 0x00FF00,
-		}
-		util.AddEmbedField(e,
-			lang.Get(tp+"start_time", lang.FallbackLang()),
-			fmt.Sprintf("<t:%d:R>", status.GetStartTime().Unix()),
-			true,
-		)
-		util.AddEmbedField(e,
-			lang.Get(tp+"latency", lang.FallbackLang()),
-			fmt.Sprintf("%dms", s.LastHeartbeatAck.Sub(s.LastHeartbeatSent).Milliseconds()),
-			true,
-		)
-		version := fmt.Sprintf("v%s", viper.GetString("version"))
-		versionURL := fmt.Sprintf("https://github.com/Kesuaheli/cake4everybotgo/releases/tag/%s", version)
-		util.AddEmbedField(e,
-			lang.Get(tp+"version", lang.FallbackLang()),
-			fmt.Sprintf("[%s](%s)", version, versionURL),
-			false,
-		)
-		util.SetEmbedFooter(s, tp+"display", e)
-
-		cmd.ReplyEmbed(e)
+	e := &discordgo.MessageEmbed{
+		Title: lang.GetDefault(tp + "title"),
+		Color: 0x00FF00,
 	}
+	util.AddEmbedField(e,
+		lang.Get(tp+"start_time", lang.FallbackLang()),
+		fmt.Sprintf("<t:%d:R>", status.GetStartTime().Unix()),
+		true,
+	)
+	util.AddEmbedField(e,
+		lang.Get(tp+"latency", lang.FallbackLang()),
+		fmt.Sprintf("%dms", s.LastHeartbeatAck.Sub(s.LastHeartbeatSent).Milliseconds()),
+		true,
+	)
+	version := fmt.Sprintf("v%s", viper.GetString("version"))
+	versionURL := fmt.Sprintf("https://github.com/Kesuaheli/cake4everybotgo/releases/tag/%s", version)
+	util.AddEmbedField(e,
+		lang.Get(tp+"version", lang.FallbackLang()),
+		fmt.Sprintf("[%s](%s)", version, versionURL),
+		false,
+	)
+	util.SetEmbedFooter(s, tp+"display", e)
+
+	cmd.ReplyEmbed(e)
 }
 
 // SetID sets the registered command ID for internal uses after uploading to discord

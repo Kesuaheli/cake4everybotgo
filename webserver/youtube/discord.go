@@ -16,7 +16,6 @@ package youtube
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -45,7 +44,7 @@ func SetDiscordHandler(f func(*discordgo.Session, *Video)) {
 func SubscribeChannel(channelID string) {
 	if !subscribtions[channelID] {
 		subscribtions[channelID] = true
-		log.Printf("YouTube: subscribed '%s' for announcements", channelID)
+		log.Printf("subscribed '%s' for announcements", channelID)
 	}
 }
 
@@ -54,14 +53,14 @@ func SubscribeChannel(channelID string) {
 func UnsubscribeChannel(channelID string) {
 	if subscribtions[channelID] {
 		delete(subscribtions, channelID)
-		log.Printf("YouTube: unsubscribed '%s' from announcements", channelID)
+		log.Printf("unsubscribed '%s' from announcements", channelID)
 	}
 }
 
 // RefreshSubscriptions sends a subscription request to the youtube hub
 func RefreshSubscriptions() {
 	for id := range subscribtions {
-		log.Printf("[YouTube] Requesting subscription refresh for id '%s'...", id)
+		log.Printf("Requesting subscription refresh for id '%s'...", id)
 
 		reqURL := "https://pubsubhubbub.appspot.com/subscribe"
 
@@ -80,16 +79,16 @@ func RefreshSubscriptions() {
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
-			log.Printf("[YouTube] Refresh request failed: %v", err)
+			log.Printf("Refresh request failed: %v", err)
 		}
 
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 			//delete(subscribtions, id)
 			b, _ := io.ReadAll(resp.Body)
-			log.Printf("[YouTube] Refreshing for channel '%s' failed with status %d. Body: %s", id, resp.StatusCode, string(b))
+			log.Printf("Refreshing for channel '%s' failed with status %d. Body: %s", id, resp.StatusCode, string(b))
 			continue
 		}
 
-		log.Printf("[YouTube] Successfully refreshed subscription for channel '%s'", id)
+		log.Printf("Successfully refreshed subscription for channel '%s'", id)
 	}
 }

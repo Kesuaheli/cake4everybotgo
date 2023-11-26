@@ -18,12 +18,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
+	logger "log"
 	"net/http"
 	"time"
 
 	"github.com/spf13/viper"
 )
+
+var log logger.Logger = *logger.New(logger.Writer(), "[WebYouTube] ", logger.LstdFlags|logger.Lmsgprefix)
 
 type listResponse struct {
 	Item []item `json:"items,omitempty"`

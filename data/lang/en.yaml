@@ -112,6 +112,22 @@ discord.command:
     latency: Latency
     version: Version
 
+  adventcalendar:
+    base: adventcalendar
+    base.description: Admin commands for the Advent Calendar Giveaway
+
+module:
+  adventcalendar:
+    post.message: Just sleep %d more times! Its time for **door %d**.
+    post.message.day_23: Almost there! Just sleep once more!
+    post.message.day_24: Ho Ho Ho! Its Christmas Eve!
+    post.message2: Click the button below to join the Giveaway!
+    post.button: Join
+
+    enter.invalid: This is an old message, you cannot join here anymore!
+    enter.success: You successfully joined! You know have %d tickets.
+    enter.already_entered: You already joined for today. (You have %d tickets)
+
 youtube:
   embed_footer: YouTube notification bell
   msg.new_vid: "%s just uploaded a new video"

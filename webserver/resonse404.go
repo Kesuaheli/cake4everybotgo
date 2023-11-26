@@ -15,7 +15,6 @@
 package webserver
 
 import (
-	"log"
 	"net/http"
 )
 

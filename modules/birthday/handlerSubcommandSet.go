@@ -15,19 +15,17 @@
 package birthday
 
 import (
+	"cake4everybot/data/lang"
+	"cake4everybot/util"
 	"fmt"
 	"log"
 	"strconv"
 	"time"
 
-	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
-
 	"github.com/bwmarrin/discordgo"
 )
 
-// The set subcommand. Used when executing the
-// slash-command "/birthday set".
+// The set subcommand. Used when executing the slash-command "/birthday set".
 type subcommandSet struct {
 	Chat
 	*discordgo.ApplicationCommandInteractionDataOption
@@ -38,8 +36,7 @@ type subcommandSet struct {
 	visible *discordgo.ApplicationCommandInteractionDataOption // optional
 }
 
-// Constructor for subcommandSet, the struct for
-// the slash-command "/birthday set".
+// Constructor for subcommandSet, the struct for the slash-command "/birthday set".
 func (cmd Chat) subcommandSet() subcommandSet {
 	subcommand := cmd.Interaction.ApplicationCommandData().Options[0]
 	return subcommandSet{
@@ -145,7 +142,7 @@ func (cmd subcommandSet) interactionHandler() {
 		log.Printf("WARNING: User (%d) entered an invalid date: %v\n", authorID, err)
 		embed.Description = lang.Get(tp+"msg.invalid_date", lang.FallbackLang())
 		embed.Color = 0xFF0000
-		cmd.ReplyHiddenEmbed(false, embed)
+		cmd.ReplyHiddenEmbed(embed)
 		return
 	}
 
@@ -192,7 +189,8 @@ func (cmd subcommandSet) interactionHandler() {
 	if b.Visible {
 		cmd.ReplyEmbed(embed)
 	} else {
-		cmd.ReplyHiddenEmbed(true, embed)
+		util.AddReplyHiddenField(embed)
+		cmd.ReplyHiddenEmbed(embed)
 	}
 }
 

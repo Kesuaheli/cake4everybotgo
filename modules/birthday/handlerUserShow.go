@@ -15,12 +15,11 @@
 package birthday
 
 import (
+	"cake4everybot/data/lang"
+	"cake4everybot/util"
 	"fmt"
 	"log"
 	"strconv"
-
-	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -69,7 +68,7 @@ func (cmd UserShow) handler() {
 			embed.Description = fmt.Sprintf(format, target.Mention())
 		}
 		embed.Color = 0xFF0000
-		cmd.ReplyHiddenEmbed(false, embed)
+		cmd.ReplyHiddenEmbed(embed)
 		return
 	}
 
@@ -85,6 +84,7 @@ func (cmd UserShow) handler() {
 	if b.Visible {
 		cmd.ReplyEmbed(embed)
 	} else {
-		cmd.ReplyHiddenEmbed(true, embed)
+		util.AddReplyHiddenField(embed)
+		cmd.ReplyHiddenEmbed(embed)
 	}
 }

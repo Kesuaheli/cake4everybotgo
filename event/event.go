@@ -15,22 +15,29 @@
 package event
 
 import (
+	"cake4everybot/event/command"
+	"cake4everybot/event/component"
+	logger "log"
+
 	"github.com/bwmarrin/discordgo"
 )
 
+var log = *logger.New(logger.Writer(), "[Events] ", logger.LstdFlags|logger.Lmsgprefix)
+
 // Register registers all events, like commands.
 func Register(s *discordgo.Session, guildID string) error {
-	err := registerCommands(s, guildID)
+	err := command.Register(s, guildID)
 	if err != nil {
 		return err
 	}
+	component.Register()
 
 	return nil
 }
 
 // AddListeners adds all event handlers to the given session s.
 func AddListeners(s *discordgo.Session, webChan chan struct{}) {
-	addCommandListeners(s)
+	s.AddHandler(handleInteractionCreate)
 	addVoiceStateListeners(s)
 
 	addYouTubeListeners(s)

@@ -16,13 +16,15 @@ package webserver
 
 import (
 	"cake4everybot/webserver/youtube"
-	"log"
+	logger "log"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 )
+
+var log = logger.New(logger.Writer(), "[WebServer] ", logger.LstdFlags|logger.Lmsgprefix)
 
 func initHTTP() http.Handler {
 	r := mux.NewRouter()

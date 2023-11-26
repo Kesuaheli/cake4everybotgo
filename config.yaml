@@ -27,7 +27,18 @@ youtube:
     - UC6sb0bkXREewXp2AkSOsOqg # Taomi
 
 event:
-  birthday_hour: 8 # Time to trigger daily birthday check (24h format)
+  # Time (24h format) to trigger daily events like birthday check and advent calendar post
+  morning_hour: 8
+  morning_minute: 0
+
+  adventcalendar:
+    images: data/images/adventcalendar
+    # Name:     The name of this emoji, e.g. '🎅', '❤️' when a default emoji
+    # ID:       The snowflake ID if when a custom emoji
+    # Animated: Whether this emoji is animated. Defaults to false
+    emoji.name: ✅
+    #emoji.id:
+    #emoji.animated: true
 
 webserver:
   favicon: webserver/favicon.png

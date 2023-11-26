@@ -15,14 +15,14 @@
 package youtube
 
 import (
+	"cake4everybot/data/lang"
+	"cake4everybot/database"
+	"cake4everybot/util"
+	webYT "cake4everybot/webserver/youtube"
+
 	"fmt"
 	"log"
 	"strings"
-
-	"cake4everybot/data/lang"
-	"cake4everybot/database"
-	"cake4everybot/event/command/util"
-	webYT "cake4everybot/webserver/youtube"
 
 	"github.com/bwmarrin/discordgo"
 )

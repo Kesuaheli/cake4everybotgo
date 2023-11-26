@@ -16,7 +16,6 @@ package webserver
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 )
 
