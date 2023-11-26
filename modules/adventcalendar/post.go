@@ -72,7 +72,11 @@ func postData(t time.Time) *discordgo.MessageSend {
 				fmt.Sprintf("%s.post.%s", Component.ID(Component{}), t.Format("2006.01.02")),
 				lang.GetDefault("module.adventcalendar.post.button"),
 				discordgo.PrimaryButton,
-				discordgo.ComponentEmoji{ID: "1061438652179300373"},
+				discordgo.ComponentEmoji{
+					Name:     viper.GetString("module.adventcalendar.post.emoji.name"),
+					ID:       viper.GetString("module.adventcalendar.post.emoji.id"),
+					Animated: viper.GetBool("module.adventcalendar.post.emoji.animated"),
+				},
 			),
 		}},
 	}

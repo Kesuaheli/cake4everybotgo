@@ -33,6 +33,12 @@ event:
 
   adventcalendar:
     images: data/images/adventcalendar
+    # Name:     The name of this emoji, e.g. '🎅', '❤️' when a default emoji
+    # ID:       The snowflake ID if when a custom emoji
+    # Animated: Whether this emoji is animated. Defaults to false
+    emoji.name: ✅
+    #emoji.id:
+    #emoji.animated: true
 
 webserver:
   favicon: webserver/favicon.png
