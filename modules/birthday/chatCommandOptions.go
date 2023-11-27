@@ -16,7 +16,7 @@ package birthday
 
 import (
 	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
+	"cake4everybot/util"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -143,5 +143,15 @@ func commandOptionListMonth() *discordgo.ApplicationCommandOption {
 		Choices:                  monthChoices("", 0, false),
 		MinValue:                 &minValueOne,
 		MaxValue:                 12,
+	}
+}
+
+func subCommandAnnounce() *discordgo.ApplicationCommandOption {
+	return &discordgo.ApplicationCommandOption{
+		Type:                     discordgo.ApplicationCommandOptionSubCommand,
+		Name:                     lang.GetDefault(tp + "option.announce"),
+		NameLocalizations:        *util.TranslateLocalization(tp + "option.announce"),
+		Description:              lang.GetDefault(tp + "option.announce.description"),
+		DescriptionLocalizations: *util.TranslateLocalization(tp + "option.announce.description"),
 	}
 }

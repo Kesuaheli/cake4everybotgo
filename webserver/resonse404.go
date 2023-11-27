@@ -12,24 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package util
+package webserver
 
 import (
-	"cake4everybot/data/lang"
-
-	"github.com/bwmarrin/discordgo"
+	"net/http"
 )
 
-// TranslateLocalization returns a pointer to a map of all
-// translations for the given key from discord languages that are
-// loaded in the lang package.
-func TranslateLocalization(key string) *map[discordgo.Locale]string {
-	translateMap := map[discordgo.Locale]string{}
-	for locale := range discordgo.Locales {
-		if !lang.IsLoaded(string(locale)) {
-			continue
-		}
-		translateMap[locale] = lang.Get(key, string(locale))
-	}
-	return &translateMap
+func handle404(w http.ResponseWriter, r *http.Request) {
+	log.Printf("%s: %s %s -> 404", r.RemoteAddr, r.Method, r.URL)
+	w.WriteHeader(http.StatusNotFound)
+	w.Write([]byte("Error 404\nCake not found"))
 }

@@ -15,19 +15,17 @@
 package birthday
 
 import (
+	"cake4everybot/data/lang"
+	"cake4everybot/util"
 	"fmt"
 	"log"
 	"strconv"
 	"time"
 
-	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
-
 	"github.com/bwmarrin/discordgo"
 )
 
-// The set subcommand. Used when executing the
-// slash-command "/birthday set".
+// The set subcommand. Used when executing the slash-command "/birthday set".
 type subcommandSet struct {
 	Chat
 	*discordgo.ApplicationCommandInteractionDataOption
@@ -38,8 +36,7 @@ type subcommandSet struct {
 	visible *discordgo.ApplicationCommandInteractionDataOption // optional
 }
 
-// Constructor for subcommandSet, the struct for
-// the slash-command "/birthday set".
+// Constructor for subcommandSet, the struct for the slash-command "/birthday set".
 func (cmd Chat) subcommandSet() subcommandSet {
 	subcommand := cmd.Interaction.ApplicationCommandData().Options[0]
 	return subcommandSet{
@@ -145,7 +142,7 @@ func (cmd subcommandSet) interactionHandler() {
 		log.Printf("WARNING: User (%d) entered an invalid date: %v\n", authorID, err)
 		embed.Description = lang.Get(tp+"msg.invalid_date", lang.FallbackLang())
 		embed.Color = 0xFF0000
-		cmd.ReplyHiddenEmbed(false, embed)
+		cmd.ReplyHiddenEmbed(embed)
 		return
 	}
 
@@ -192,7 +189,8 @@ func (cmd subcommandSet) interactionHandler() {
 	if b.Visible {
 		cmd.ReplyEmbed(embed)
 	} else {
-		cmd.ReplyHiddenEmbed(true, embed)
+		util.AddReplyHiddenField(embed)
+		cmd.ReplyHiddenEmbed(embed)
 	}
 }
 
@@ -231,10 +229,10 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 		MONTH             // when month is changed
 		YEAR              // when year is changed
 
-		NO_DAY   = MONTH | YEAR       // when month and year is changed
-		NO_MONTH = DAY | YEAR         // when day and year is changed
-		NO_YEAR  = DAY | MONTH        // when day and month is changed
-		ALL      = DAY | MONTH | YEAR // when day month and year is changed
+		NODAY   = MONTH | YEAR       // when month and year is changed
+		NOMONTH = DAY | YEAR         // when day and year is changed
+		NOYEAR  = DAY | MONTH        // when day and month is changed
+		ALL     = DAY | MONTH | YEAR // when day month and year is changed
 	)
 
 	// bit field of 4 bits to determin which values have changed
@@ -265,14 +263,14 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 			f.Value = fmt.Sprintf("%d", b.Year)
 		} else if b.Year == 0 {
 			f.Name = lang.Get(tp+"msg.set.update.year.remove", lang.FallbackLang())
-			was_year := lang.Get(tp+"msg.set.update.year.was", lang.FallbackLang())
-			f.Value = fmt.Sprintf(was_year, before.Year)
+			wasYear := lang.Get(tp+"msg.set.update.year.was", lang.FallbackLang())
+			f.Value = fmt.Sprintf(wasYear, before.Year)
 		} else {
 			f.Name = lang.Get(tp+"msg.set.update.year", lang.FallbackLang())
 			f.Value = fmt.Sprintf("%d -> %d", before.Year, b.Year)
 		}
 	// set field when any two or all three are changed
-	case NO_YEAR, NO_MONTH, NO_DAY, ALL:
+	case NOYEAR, NOMONTH, NODAY, ALL:
 		f.Name = lang.Get(tp+"msg.set.update.date", lang.FallbackLang())
 		f.Value = fmt.Sprintf("%s -> %s", before, b)
 		f.Inline = true
@@ -285,11 +283,11 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 	e.Fields = []*discordgo.MessageEmbedField{f}
 
 	if !f.Inline {
-		e.Fields = append(e.Fields, &discordgo.MessageEmbedField{
-			Name:   lang.Get(tp+"msg.set.date", lang.FallbackLang()),
-			Value:  b.String(),
-			Inline: true,
-		})
+		util.AddEmbedField(e,
+			lang.Get(tp+"msg.set.date", lang.FallbackLang()),
+			b.String(),
+			true,
+		)
 	}
 
 	var age string
@@ -297,11 +295,11 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 		age = fmt.Sprintf(" (%d)", b.Age()+1)
 	}
 
-	e.Fields = append(e.Fields, &discordgo.MessageEmbedField{
-		Name:   lang.Get(tp+"msg.next", lang.FallbackLang()),
-		Value:  fmt.Sprintf("<t:%d:R>%s", b.NextUnix(), age),
-		Inline: true,
-	})
+	util.AddEmbedField(e,
+		lang.Get(tp+"msg.next", lang.FallbackLang()),
+		fmt.Sprintf("<t:%d:R>%s", b.NextUnix(), age),
+		true,
+	)
 
 	if before.Visible != b.Visible {
 		var visibility string
@@ -315,11 +313,11 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 			mentionCmd := util.MentionCommand(tp+"base", tp+"option.remove")
 			visibility = fmt.Sprintf(visibility, mentionCmd)
 		}
-		e.Fields = append(e.Fields, &discordgo.MessageEmbedField{
-			Name:   lang.Get(tp+"msg.set.update.visibility", lang.FallbackLang()),
-			Value:  visibility,
-			Inline: false,
-		})
+		util.AddEmbedField(e,
+			lang.Get(tp+"msg.set.update.visibility", lang.FallbackLang()),
+			visibility,
+			false,
+		)
 	}
 
 	return nil

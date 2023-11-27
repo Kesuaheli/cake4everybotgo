@@ -14,8 +14,13 @@
 
 package util
 
-// ContainsInt reports whether at least one of num is at least once
-// anywhere in i.
+import (
+	logger "log"
+)
+
+var log = logger.New(logger.Writer(), "[Util] ", logger.LstdFlags|logger.Lmsgprefix)
+
+// ContainsInt reports whether at least one of num is at least once anywhere in i.
 func ContainsInt(i []int, num ...int) bool {
 	for _, x := range i {
 		for _, y := range num {
@@ -27,8 +32,7 @@ func ContainsInt(i []int, num ...int) bool {
 	return false
 }
 
-// ContainsString reports whether at least one of str is at least
-// once anywhere in s.
+// ContainsString reports whether at least one of str is at least once anywhere in s.
 func ContainsString(s []string, str ...string) bool {
 	for _, x := range s {
 		for _, y := range str {
@@ -49,4 +53,25 @@ func Btoi(b bool) int {
 		return 1
 	}
 	return 0
+}
+
+// ShiftL takes a slice and shifts all elements to the left. The first element pops out and is
+// returned. If s is an empty slice the zero value of the given type is returned. If t is given it
+// will be inserted at the last position instead of an element with its zero value.
+func ShiftL[T any](s []T, t ...T) (first T) {
+	for i, v := range s {
+		if i == 0 {
+			first = v
+			continue
+		}
+		s[i-1] = s[i]
+		if i == len(s)-1 {
+			var last T
+			if len(t) > 0 {
+				last = t[0]
+			}
+			s[i] = last
+		}
+	}
+	return first
 }

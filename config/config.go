@@ -15,12 +15,14 @@
 package config
 
 import (
-	"log"
+	logger "log"
 
 	"cake4everybot/data/lang"
 
 	"github.com/spf13/viper"
 )
+
+var log = logger.New(logger.Writer(), "[Config] ", logger.LstdFlags|logger.Lmsgprefix)
 
 // Load loads the given configuration file as the global config. It
 // also loads:

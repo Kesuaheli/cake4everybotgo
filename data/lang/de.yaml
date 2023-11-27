@@ -31,6 +31,12 @@ discord.command:
     option.list.option.month: monat
     option.list.option.month.description: Der Monat, aus dem alle Geburtstage aufgelistet werden sollen
 
+    option.announce: ankündigen
+    option.announce.description: Kündige manuell die heutigen Geburtstage an, falls es welche gibt
+
+    user.show:
+      base: Geburtstag zeigen
+
     weekday:
       - Montag
       - Dienstag
@@ -87,8 +93,41 @@ discord.command:
     msg.list.total.1: Es gibt nur einen Geburtstag im %s
     msg.list.total.0: Es wurden keine Geburtstage für %s eingetragen
     msg.list.total: Es gibt %s Geburtstage im %s
+    msg.announce.0: Heute gibt es keine Geburtstage
+    #TODO: Link slash command
+    msg.announce.0.description: Schaue dir mit dem liste-Befehl die nächsten Geburtstage an. Diese Nachricht siehst nur du, da es heute keine Geburtstage zum ankündigen gibt.
     msg.announce.1: Es gibt heute ein Geburtstagskind!
     msg.announce: Es gibt heute %s Geburtstagskinder!
     msg.announce.congratulate: Alles gute an
     msg.announce.with_age: "%s (wird %s)"
     msg.next: Nächster Geburtstag
+
+  info:
+    base: info
+    base.description: Zeigt ein paar Infos über den Bot
+    display: Bot-Information
+
+    title: Informationen und Status
+    start_time: Letzter Neustart
+    latency: Latenz
+    version: Version
+
+  adventcalendar:
+    base: adventskalender
+    base.description: Admin Commands für das Adventskalender Giveaway
+
+module:
+  adventcalendar:
+    post.message: Noch %d Mal schlafen bis Heilig Abend! Heute öffnet sich das **Türchen %d**.
+    post.message.day_23: Fast geschafft! Nur noch einmal schlafen!
+    post.message.day_24: Ho Ho Ho! Heute ist Heilig Abend!
+    post.message2: Klicke unten auf den Knopf um dich im Gewinnspiel einzutragen!
+    post.button: Gewinnspiel
+
+    enter.invalid: Das ist eine alte Nachricht, du kannst dich hier nicht mehr eintragen!
+    enter.success: Du hast dich erfolgreich eingetragen! Du hast jetzt %d Tickets.
+    enter.already_entered: Du hast dich heute bereits eingetragen! (Du hast momentan %d Tickets)
+
+youtube:
+  embed_footer: YouTube Glocke
+  msg.new_vid: "%s hat ein neues Video hochgeladen"

@@ -15,20 +15,19 @@
 package birthday
 
 import (
+	"cake4everybot/data/lang"
+	"cake4everybot/util"
 	"fmt"
 	"math"
 	"strconv"
 	"strings"
 	"time"
 
-	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
-
 	"github.com/bwmarrin/discordgo"
 )
 
 var (
-	day_choices_prefix = [][]int{
+	dayChoicesPrefix = [][]int{
 		{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30},         // 0
 		{1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19},     // 1
 		{2, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 12}, // 2
@@ -42,20 +41,20 @@ var (
 	}
 )
 
-// dayChoices returns a list of choices of days that matches the
-// given start string with the provided month and leap year values.
+// dayChoices returns a list of choices of days that matches the given start string with the
+// provided month and leap year values.
 func dayChoices(start string, month int, leapYear bool) (choices []*discordgo.ApplicationCommandOptionChoice) {
 	i, _ := strconv.Atoi(start)
 	if i < 0 || i > getDays(month, leapYear) {
 		return choices
 	}
 
-	if i >= len(day_choices_prefix) || len(day_choices_prefix[i]) == 0 {
+	if i >= len(dayChoicesPrefix) || len(dayChoicesPrefix[i]) == 0 {
 		choices = append(choices, intChoice(i))
 		return choices
 	}
 
-	for _, c := range day_choices_prefix[i] {
+	for _, c := range dayChoicesPrefix[i] {
 		if c > getDays(month, leapYear) {
 			continue
 		}
@@ -64,8 +63,8 @@ func dayChoices(start string, month int, leapYear bool) (choices []*discordgo.Ap
 	return choices
 }
 
-// monthChoices returns a list of choices of months that matches the
-// given start string with the provided day and leap year values.
+// monthChoices returns a list of choices of months that matches the given start string with the
+// provided day and leap year values.
 func monthChoices(start string, day int, leapYear bool) (choices []*discordgo.ApplicationCommandOptionChoice) {
 	i, err := strconv.Atoi(start)
 	if err != nil {
@@ -125,20 +124,19 @@ func monthChoices(start string, day int, leapYear bool) (choices []*discordgo.Ap
 	return choices
 }
 
-// yearChoices returns a list of choices of years that matches the
-// given start string with the provided day and month value.
+// yearChoices returns a list of choices of years that matches the given start string with the
+// provided day and month value.
 func yearChoices(start string, day, month int) (choices []*discordgo.ApplicationCommandOptionChoice) {
 	maxDate := time.Now().AddDate(-16, 0, 0)
 
 	// represents the last century: list of the last 10 decades
 	var decades []int = make([]int, 0, 10)
-	cur_decade := maxDate.Year() / 10 * 10
-	for y := cur_decade; y > cur_decade-100; y = y - 10 {
+	curDecade := maxDate.Year() / 10 * 10
+	for y := curDecade; y > curDecade-100; y = y - 10 {
 		decades = append(decades, y)
 	}
 
-	// reply with list of decades when the start string isnt number
-	// or is zero
+	// reply with list of decades when the start string isnt a number or is zero
 	y, err := strconv.Atoi(start)
 	if err != nil || y == 0 {
 		for _, dec := range decades {
@@ -159,10 +157,10 @@ func yearChoices(start string, day, month int) (choices []*discordgo.Application
 		}
 		return append(s[:i], s[i+1:]...)
 	}
-	decades_cp := make([]int, len(decades))
-	copy(decades_cp, decades)
-	for i := len(decades_cp) - 1; i >= 0; i-- {
-		dec := fmt.Sprint(decades_cp[i])
+	decadesCopy := make([]int, len(decades))
+	copy(decadesCopy, decades)
+	for i := len(decadesCopy) - 1; i >= 0; i-- {
+		dec := fmt.Sprint(decadesCopy[i])
 		if len(dec) < digits {
 			decades = rm(decades, i)
 			continue
@@ -204,8 +202,7 @@ func intChoice(i int) (choice *discordgo.ApplicationCommandOptionChoice) {
 	}
 }
 
-// monthChoice returns a single choice with the name of the month
-// defined by the given integer.
+// monthChoice returns a single choice with the name of the month defined by the given integer.
 func monthChoice(month int) (choice *discordgo.ApplicationCommandOptionChoice) {
 	key := fmt.Sprintf("%smonth.%d", tp, month-1)
 
@@ -216,16 +213,14 @@ func monthChoice(month int) (choice *discordgo.ApplicationCommandOptionChoice) {
 	}
 }
 
-// getDays returns the maximum number of days in the given month.
-// When the given month is february (month: 2), getDays returns 29,
-// as it is the max. number of day the february can have.
+// getDays returns the maximum number of days in the given month. When the given month is february
+// (month: 2), getDays returns 29, as it is the max. number of day the february can have.
 func getDays(month int, leapYear bool) int {
 	if util.ContainsInt([]int{2}, month) {
 		if leapYear {
 			return 29
-		} else {
-			return 28
 		}
+		return 28
 	} else if util.ContainsInt([]int{4, 6, 9, 11}, month) {
 		return 30
 	} else if util.ContainsInt([]int{1, 3, 5, 7, 8, 10, 12}, month) {

@@ -16,7 +16,7 @@ package birthday
 
 import (
 	"cake4everybot/data/lang"
-	"cake4everybot/event/command/util"
+	"cake4everybot/util"
 	"fmt"
 	"log"
 	"strconv"
@@ -24,15 +24,13 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// The remove subcommand. Used when executing the
-// slash-command "/birthday remove".
+// The remove subcommand. Used when executing the slash-command "/birthday remove".
 type subcommandRemove struct {
 	Chat
 	*discordgo.ApplicationCommandInteractionDataOption
 }
 
-// Constructor for subcommandremove, the struct for
-// the slash-command "/birthday remove".
+// Constructor for subcommandremove, the struct for the slash-command "/birthday remove".
 func (cmd Chat) subcommandRemove() subcommandRemove {
 	subcommand := cmd.Interaction.ApplicationCommandData().Options[0]
 	return subcommandRemove{
@@ -61,7 +59,7 @@ func (cmd subcommandRemove) handler() {
 	if !hasBDay {
 		e.Description = lang.Get(tp+"msg.remove.not_found", lang.FallbackLang())
 		e.Color = 0xFF0000
-		cmd.ReplyHiddenEmbed(false, e)
+		cmd.ReplyHiddenEmbed(e)
 		return
 	}
 
@@ -74,16 +72,17 @@ func (cmd subcommandRemove) handler() {
 
 	e.Description = lang.Get(tp+"msg.remove", lang.FallbackLang())
 	e.Color = 0x00FF00
-	was_before := lang.Get(tp+"msg.remove.was", lang.FallbackLang())
-	was_before = fmt.Sprintf(was_before, b)
+	wasBefore := lang.Get(tp+"msg.remove.was", lang.FallbackLang())
+	wasBefore = fmt.Sprintf(wasBefore, b)
 	e.Fields = []*discordgo.MessageEmbedField{{
-		Name:   was_before,
+		Name:   wasBefore,
 		Inline: true,
 	}}
 
 	if b.Visible {
 		cmd.ReplyEmbed(e)
 	} else {
-		cmd.ReplyHiddenEmbed(true, e)
+		util.AddReplyHiddenField(e)
+		cmd.ReplyHiddenEmbed(e)
 	}
 }

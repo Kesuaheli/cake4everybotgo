@@ -18,11 +18,19 @@ import (
 	"fmt"
 
 	"cake4everybot/data/lang"
-	"cake4everybot/event/command"
+	"cake4everybot/database"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/spf13/viper"
 )
+
+var commandIDMap map[string]string
+
+// SetCommandMap sets the map from command names to ther registered ID.
+// TODO: move the original command.CommandMap in a seperate Package to avoid this.
+func SetCommandMap(m map[string]string) {
+	commandIDMap = m
+}
 
 // AuthoredEmbed returns a new Embed with an author and footer set.
 //
@@ -37,7 +45,7 @@ func AuthoredEmbed[T *discordgo.User | *discordgo.Member](s *discordgo.Session, 
 	if !ok {
 		member, ok := any(author).(*discordgo.Member)
 		if !ok {
-			panic(fmt.Sprintf("Given generic type is not an discord user or member"))
+			panic("Given generic type is not an discord user or member")
 		}
 		user = member.User
 		username = member.Nick
@@ -57,8 +65,7 @@ func AuthoredEmbed[T *discordgo.User | *discordgo.Member](s *discordgo.Session, 
 	return embed
 }
 
-// SetEmbedFooter takes a pointer to an embeds and sets the standard
-// footer with the given name.
+// SetEmbedFooter takes a pointer to an embeds and sets the standard footer with the given name.
 //
 //	sectionName:
 //		translation key for the name
@@ -75,24 +82,29 @@ func SetEmbedFooter(s *discordgo.Session, sectionName string, e *discordgo.Messa
 	}
 }
 
-// AddReplyHiddenField appends the standard field for ephemral
-// embeds to the existing fields of the given embed.
+// AddEmbedField is a short hand for appending one field to the embed
+func AddEmbedField(e *discordgo.MessageEmbed, name, value string, inline bool) {
+	e.Fields = append(e.Fields, &discordgo.MessageEmbedField{Name: name, Value: value, Inline: inline})
+}
+
+// AddReplyHiddenField appends the standard field for ephemral embeds to the existing fields of the
+// given embed.
 func AddReplyHiddenField(e *discordgo.MessageEmbed) {
-	f := &discordgo.MessageEmbedField{
-		Name:   lang.Get("discord.command.generic.msg.self_hidden", lang.FallbackLang()),
-		Value:  lang.Get("discord.command.generic.msg.self_hidden.desc", lang.FallbackLang()),
-		Inline: false,
-	}
-	e.Fields = append(e.Fields, f)
+	AddEmbedField(e,
+		lang.Get("discord.command.generic.msg.self_hidden", lang.FallbackLang()),
+		lang.Get("discord.command.generic.msg.self_hidden.desc", lang.FallbackLang()),
+		false,
+	)
 }
 
 // MentionCommand returns the mention string for a slashcommand
 func MentionCommand(base string, subcommand ...string) string {
 	cBase := lang.GetDefault(base)
-	if command.CommandMap[cBase] == nil {
+
+	cID := commandIDMap[cBase]
+	if cID == "" {
 		return ""
 	}
-	cID := command.CommandMap[cBase].GetID()
 
 	var cSub string
 	for _, sub := range subcommand {
@@ -100,4 +112,42 @@ func MentionCommand(base string, subcommand ...string) string {
 	}
 
 	return fmt.Sprintf("</%s%s:%s>", cBase, cSub, cID)
+}
+
+// GetChannelsFromDatabase returns a map from guild IDs to channel IDs
+func GetChannelsFromDatabase(s *discordgo.Session, channelName string) (map[string]string, error) {
+	rows, err := database.Query("SELECT id," + channelName + " FROM guilds")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	IDMap := map[string]string{}
+	for rows.Next() {
+		var guildInt, channelInt uint64
+		err := rows.Scan(&guildInt, &channelInt)
+		if err != nil {
+			return nil, err
+		}
+		if channelInt == 0 {
+			continue
+		}
+		guildID := fmt.Sprint(guildInt)
+		channelID := fmt.Sprint(channelInt)
+
+		// validate channel
+		channel, err := s.Channel(channelID)
+		if err != nil {
+			log.Printf("Warning: could not get %s channel for id '%s: %+v\n", channelName, channelID, err)
+			continue
+		}
+		if channel.GuildID != guildID {
+			log.Printf("Warning: tried to get %s channel (from channel/%s/%s), but this channel is from guild: '%s'\n", channelName, guildID, channelID, channel.GuildID)
+			continue
+		}
+
+		IDMap[guildID] = channelID
+	}
+
+	return IDMap, nil
 }
