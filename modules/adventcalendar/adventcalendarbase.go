@@ -43,10 +43,18 @@ type giveawayEntry struct {
 	lastEntry time.Time
 }
 
-func (e giveawayEntry) toEmbedField() (f *discordgo.MessageEmbedField) {
+func (e giveawayEntry) toEmbedField(s *discordgo.Session, totalTickets int) (f *discordgo.MessageEmbedField) {
+	var name string
+	if u, err := s.User(e.userID); err != nil {
+		log.Printf("Error on getting user '%s': %v", e.userID, err)
+		name = "???"
+	} else {
+		name = u.Username
+	}
+
 	return &discordgo.MessageEmbedField{
-		Name:   e.userID,
-		Value:  fmt.Sprintf("<@%s>\n%d tickets\nlast entry: %s", e.userID, e.weight, e.lastEntry.Format(time.DateOnly)),
+		Name:   name,
+		Value:  fmt.Sprintf("<@%s>\n%d tickets\nChance: %.2f%%\nlast entry: <t:%d:R>", e.userID, e.weight, float64(e.weight*100)/float64(totalTickets), e.lastEntry.Unix()),
 		Inline: true,
 	}
 }

@@ -16,6 +16,7 @@ package adventcalendar
 
 import (
 	"cake4everybot/util"
+	"fmt"
 	"slices"
 	"time"
 
@@ -25,10 +26,10 @@ import (
 // Midnight is a scheduled function to run everyday at 0:00
 func Midnight(s *discordgo.Session) {
 	t := time.Now()
-	if t.Month() != 12 || t.Day() > 24 {
+	if t.Month() != 12 || t.Day() == 1 || t.Day() > 25 {
 		return
 	}
-	log.Printf("New Post for %s", t.Format("_2. Jan"))
+	log.Printf("Summary for %s", t.Add(-1*time.Hour).Format("_2. Jan"))
 
 	entries := getGetAllEntries()
 	slices.SortFunc(entries, func(a, b giveawayEntry) int {
@@ -45,16 +46,20 @@ func Midnight(s *discordgo.Session) {
 		return 0
 	})
 	slices.Reverse(entries)
-	var fields []*discordgo.MessageEmbedField
-	for _, e := range entries {
-		fields = append(fields, e.toEmbedField())
-	}
-
 	data := &discordgo.MessageSend{
-		Embeds: []*discordgo.MessageEmbed{{
-			Title:  "Current Tickets",
-			Fields: fields,
-		}},
+		Embeds: splitEntriesToEmbeds(s, entries),
+	}
+	if len(data.Embeds) == 0 {
+		data.Content = "Ticket Summary: *No Tickets!*"
+	} else {
+		data.Embeds[0].Title = "Current Tickets"
+		if len(entries) > 1 {
+			var totalTickets int
+			for _, e := range entries {
+				totalTickets += e.weight
+			}
+			data.Embeds[0].Description = fmt.Sprintf("__Total: %d Tickets__\nProbability per Ticket: %.2f%%\n%s", totalTickets, 100.0/float64(totalTickets), data.Embeds[0].Description)
+		}
 	}
 
 	channels, err := util.GetChannelsFromDatabase(s, "log_channel")
@@ -70,4 +75,27 @@ func Midnight(s *discordgo.Session) {
 			continue
 		}
 	}
+}
+
+func splitEntriesToEmbeds(s *discordgo.Session, entries []giveawayEntry) []*discordgo.MessageEmbed {
+	var totalTickets int
+	for _, e := range entries {
+		totalTickets += e.weight
+	}
+	numEmbeds := len(entries)/25 + 1
+	embeds := make([]*discordgo.MessageEmbed, 0, numEmbeds)
+	for i, e := range entries {
+		if i%25 == 0 {
+			new := &discordgo.MessageEmbed{}
+			if numEmbeds > 1 {
+				new.Description = fmt.Sprintf("Page %d/%d", i/25+1, numEmbeds)
+			}
+			util.SetEmbedFooter(s, "module.adventcalendar.embed_footer", new)
+			embeds = append(embeds, new)
+		}
+
+		embeds[len(embeds)-1].Fields = append(embeds[len(embeds)-1].Fields, e.toEmbedField(s, totalTickets))
+	}
+
+	return embeds
 }

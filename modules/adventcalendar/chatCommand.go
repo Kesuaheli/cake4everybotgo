@@ -62,6 +62,7 @@ func (cmd Chat) Handle(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	switch i.ApplicationCommandData().Options[0].Name {
 	case "midnight":
+		cmd.ReplyDeferedHidden()
 		Midnight(s)
 		cmd.ReplyHidden("Midnight()")
 		return

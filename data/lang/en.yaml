@@ -128,6 +128,8 @@ module:
     enter.success: You successfully joined! You know have %d tickets.
     enter.already_entered: You already joined for today. (You have %d tickets)
 
+    embed_footer: Advent Calendar Giveaway
+
 youtube:
   embed_footer: YouTube notification bell
   msg.new_vid: "%s just uploaded a new video"
