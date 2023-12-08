@@ -39,12 +39,8 @@ func Post(s *discordgo.Session) {
 		return
 	}
 
-	data := postData(t)
-	if data == nil {
-		log.Printf("ERROR: Message data for new post is nil!")
-		return
-	}
 	for _, channelID := range channels {
+		data := postData(t)
 		_, err = s.ChannelMessageSendComplex(channelID, data)
 		if err != nil {
 			log.Printf("Failed to send new post for advent calendar in channel '%s': %+v", channelID, err)
