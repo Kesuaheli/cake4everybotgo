@@ -58,7 +58,7 @@ func Midnight(s *discordgo.Session) {
 			for _, e := range entries {
 				totalTickets += e.weight
 			}
-			data.Embeds[0].Description = fmt.Sprintf("__Total: %d Tickets__\nProbability per Ticket: %.2f%%\n%s", totalTickets, 100.0/float64(totalTickets), data.Embeds[0].Description)
+			data.Embeds[0].Description = fmt.Sprintf("__Total: %d Tickets (%d users)__\nProbability per Ticket: %.2f%%\n%s", totalTickets, len(entries), 100.0/float64(totalTickets), data.Embeds[0].Description)
 		}
 	}
 
