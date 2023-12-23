@@ -4,9 +4,9 @@ go 1.21
 
 require (
 	github.com/bwmarrin/discordgo v0.27.1
-	github.com/gempir/go-twitch-irc v1.1.0
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/gorilla/mux v1.8.0
+	github.com/kesuaheli/twitchgo v0.1.0
 	github.com/spf13/viper v1.15.0
 )
 

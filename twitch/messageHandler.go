@@ -17,10 +17,10 @@ package twitch
 import (
 	"log"
 
-	twitchgo "github.com/gempir/go-twitch-irc"
+	"github.com/kesuaheli/twitchgo"
 )
 
-func messageHandler(channel string, user twitchgo.User, message twitchgo.Message) {
-	log.Printf("Twitch: %s <%s> %s", channel, user.Username, message.Text)
+func MessageHandler(t *twitchgo.Twitch, message *twitchgo.Message) {
+	log.Printf("Twitch: [%s] <%s> %s", message.Command.Arguments[0], message.Source, message.Command.Data)
 
 }

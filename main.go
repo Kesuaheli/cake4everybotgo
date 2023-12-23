@@ -27,7 +27,7 @@ import (
 	"cake4everybot/webserver"
 
 	"github.com/bwmarrin/discordgo"
-	twitchgo "github.com/gempir/go-twitch-irc"
+	"github.com/kesuaheli/twitchgo"
 	"github.com/spf13/viper"
 )
 
@@ -93,15 +93,14 @@ func main() {
 	addr := ":8080"
 	webserver.Run(addr, webChan)
 
-	client := twitchgo.NewClient(viper.GetString("twitch.name"), viper.GetString("twitch.token"))
+	client := twitchgo.New(viper.GetString("twitch.name"), viper.GetString("twitch.token"))
+	client.SetEventChannelMessage(twitch.MessageHandler)
+	err = client.Connect()
+	if err != nil {
+		log.Fatalf("could not open the twitch connection: %v", err)
+	}
+	defer client.Close()
 	twitch.Handle(client)
-
-	go func() {
-		err := client.Connect()
-		if err != nil {
-			log.Fatalf("Error on connect to Twitch: %v", err)
-		}
-	}()
 
 	// Wait to end the bot
 	log.Println("Press Ctrl+C to exit")
