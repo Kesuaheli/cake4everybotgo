@@ -20,7 +20,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func (Chat) create_marker_id() []discordgo.MessageComponent {
+func (mapBase) create_marker_id() []discordgo.MessageComponent {
 	component_group_id := "create_marker"
 	return []discordgo.MessageComponent{
 		discordgo.ActionsRow{Components: []discordgo.MessageComponent{
@@ -32,7 +32,7 @@ func (Chat) create_marker_id() []discordgo.MessageComponent {
 	}
 }
 
-func (Chat) create_marker_world() []discordgo.MessageComponent {
+func (mapBase) create_marker_world() []discordgo.MessageComponent {
 	component_group_id := "create_marker"
 	return []discordgo.MessageComponent{
 		discordgo.ActionsRow{Components: []discordgo.MessageComponent{
@@ -43,7 +43,7 @@ func (Chat) create_marker_world() []discordgo.MessageComponent {
 	}
 }
 
-func (Chat) create_marker_position() []discordgo.MessageComponent {
+func (mapBase) create_marker_position() []discordgo.MessageComponent {
 	component_group_id := "create_marker"
 	return []discordgo.MessageComponent{
 		discordgo.ActionsRow{Components: []discordgo.MessageComponent{
@@ -54,7 +54,7 @@ func (Chat) create_marker_position() []discordgo.MessageComponent {
 	}
 }
 
-func (Chat) create_marker_icon() []discordgo.MessageComponent {
+func (mapBase) create_marker_icon() []discordgo.MessageComponent {
 	component_group_id := "create_marker"
 	return []discordgo.MessageComponent{
 		discordgo.ActionsRow{Components: []discordgo.MessageComponent{

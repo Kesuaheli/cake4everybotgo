@@ -165,3 +165,7 @@ func CreateTextInputComponent(tp, component_group_id, id string, style discordgo
 		MaxLength:   maxLength,
 	}
 }
+
+func CreateMultiselectComponent() discordgo.SelectMenu {
+	return discordgo.SelectMenu{}
+}

@@ -18,7 +18,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"sync"
 
 	"cake4everybot/event/command/util"
 
@@ -47,6 +49,44 @@ type marker struct {
 	PosY   int    `json:"posY"`
 	PosZ   int    `json:"posZ"`
 	IconID string `json:"icon_id"`
+}
+
+var markerBuilder map[string]*marker
+var markerLock sync.RWMutex
+
+func (mb mapBase) markerBuilder() {
+	markerLock.RLock()
+	m, ok := markerBuilder[mb.user.ID]
+	markerLock.Unlock()
+	if !ok {
+		log.Printf("Warn [minecraftmap] User '%s' does not exist in marker builder map but tried to access", mb.user.ID)
+		mb.ReplyError()
+		return
+	}
+	if m.ID == "" || len(m.ID) < 4 ||
+		m.ID == "" || len(m.ID) < 4 {
+		mb.ReplyModal(tp, "create_marker", mb.create_marker_id()...)
+		return
+	}
+	if m.World == "" {
+		mb.ReplyHiddenComponents("W.I.P.", mb.create_marker_world())
+		return
+	}
+	if m.PosX == 0 && m.PosY == 0 && m.PosZ == 0 {
+		mb.ReplyModal(tp, "create_marker", mb.create_marker_position()...)
+	}
+	if m.IconID == "" {
+		mb.ReplyHiddenComponents("W.I.P.", mb.create_marker_icon())
+		return
+	}
+	/*
+		if m.Set == "" {
+			mb.ReplyHiddenComponents("W.I.P.", mb.create_marker_set())
+		}
+	*/
+
+	mb.ReplyHidden("coming soon...")
+
 }
 
 // Returns a readable Form of the marker

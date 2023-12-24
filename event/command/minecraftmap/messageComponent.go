@@ -16,6 +16,8 @@ package minecraftmap
 
 import (
 	"cake4everybot/event/command/util"
+	"log"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -30,5 +32,30 @@ func (cmd Chat) ComponentHandler() func(s *discordgo.Session, i *discordgo.Inter
 		} else if i.User != nil {
 			cmd.member = &discordgo.Member{User: i.User}
 		}
+		log.Println("blubb")
+
+		data := i.MessageComponentData()
+		log.Println(i.Locale)
+		id := strings.Split(data.CustomID, ".")[1]
+		switch data.ComponentType {
+		case discordgo.ButtonComponent:
+			cmd.handleButtonComponent(id)
+		default:
+			log.Printf("[minecraftmap] Component Handler: Unhandled component type '%d'.", data.ComponentType)
+		}
+	}
+}
+
+func (cmd Chat) handleButtonComponent(id string) {
+	if strings.HasPrefix(id, "world") {
+		markerLock.RLock()
+		markerBuilder[cmd.user.ID].World = id
+		markerLock.RUnlock()
+		return
+	}
+
+	switch id {
+	default:
+		log.Printf("[minecraftmap] Component Handler: Unhandled button component with id '%s'.", id)
 	}
 }

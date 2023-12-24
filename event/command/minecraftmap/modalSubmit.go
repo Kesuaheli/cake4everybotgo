@@ -53,8 +53,12 @@ func (cmd Chat) handleModalCreateMarker() {
 	data := cmd.Interaction.ModalSubmitData()
 	cmd.parseComponentData(data.Components)
 	log.Printf("label: %s, id: %s", label.Value, id.Value)
+	markerLock.RLock()
+	markerBuilder[cmd.user.ID].Label = label.Value
+	markerBuilder[cmd.user.ID].ID = id.Value
+	markerLock.RUnlock()
 
-	cmd.ReplyHiddenComponents("W.I.P.", cmd.create_marker_world())
+	cmd.markerBuilder()
 
 }
 

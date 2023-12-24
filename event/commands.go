@@ -104,7 +104,7 @@ func addCommandListeners(s *discordgo.Session) {
 	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		var cmd, ok = getCommandFromInteraction(i)
 		if !ok {
-			log.Println("WARN: Skipping handling of unregistered command")
+			log.Printf("WARN: Skipping handling of unregistered command: %s", i.Type.String())
 			return
 		}
 

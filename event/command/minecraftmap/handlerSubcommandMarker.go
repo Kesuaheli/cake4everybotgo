@@ -44,6 +44,9 @@ func (cmd subcommandMarker) handler() {
 
 // executes when running the subcommand
 func (cmd subcommandMarker) interactionHandler() {
-	cmd.ReplyModal(tp, "create_marker", cmd.create_marker_id()...)
-	cmd.ReplyHidden("W.I.P.")
+	markerLock.Lock()
+	markerBuilder[cmd.user.ID] = &marker{}
+	markerLock.Unlock()
+
+	cmd.markerBuilder()
 }
