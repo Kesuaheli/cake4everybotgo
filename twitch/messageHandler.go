@@ -20,7 +20,8 @@ import (
 	"github.com/kesuaheli/twitchgo"
 )
 
-func MessageHandler(t *twitchgo.Twitch, message *twitchgo.Message) {
-	log.Printf("Twitch: [%s] <%s> %s", message.Command.Arguments[0], message.Source, message.Command.Data)
-
+// MessageHandler handles new messages from the twitch chat(s). It will be called on every new
+// message.
+func MessageHandler(t *twitchgo.Twitch, channel string, user *twitchgo.User, message string) {
+	log.Printf("Twitch: [%s] <%s> %s", channel, user.Nickname, message)
 }

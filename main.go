@@ -94,7 +94,7 @@ func main() {
 	webserver.Run(addr, webChan)
 
 	client := twitchgo.New(viper.GetString("twitch.name"), viper.GetString("twitch.token"))
-	client.SetEventChannelMessage(twitch.MessageHandler)
+	client.OnChannelMessage(twitch.MessageHandler)
 	err = client.Connect()
 	if err != nil {
 		log.Fatalf("could not open the twitch connection: %v", err)
