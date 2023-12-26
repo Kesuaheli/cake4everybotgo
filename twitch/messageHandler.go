@@ -15,13 +15,15 @@
 package twitch
 
 import (
-	"log"
+	logger "log"
 
 	"github.com/kesuaheli/twitchgo"
 )
 
+var log logger.Logger = *logger.New(logger.Writer(), "[Twitch] ", logger.LstdFlags|logger.Lmsgprefix)
+
 // MessageHandler handles new messages from the twitch chat(s). It will be called on every new
 // message.
 func MessageHandler(t *twitchgo.Twitch, channel string, user *twitchgo.User, message string) {
-	log.Printf("Twitch: [%s] <%s> %s", channel, user.Nickname, message)
+	log.Printf("<%s@%s> %s", user.Nickname, channel, message)
 }

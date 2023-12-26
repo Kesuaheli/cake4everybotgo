@@ -15,8 +15,6 @@
 package twitch
 
 import (
-	"log"
-
 	"github.com/kesuaheli/twitchgo"
 	"github.com/spf13/viper"
 )
