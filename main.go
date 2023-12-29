@@ -94,6 +94,7 @@ func main() {
 	webserver.Run(addr, webChan)
 
 	client := twitchgo.New(viper.GetString("twitch.name"), viper.GetString("twitch.token"))
+	client.OnChannelCommandMessage("join", twitch.HandleCmdJoin)
 	client.OnChannelMessage(twitch.MessageHandler)
 	err = client.Connect()
 	if err != nil {

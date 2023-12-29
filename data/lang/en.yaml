@@ -131,3 +131,11 @@ module:
 youtube:
   embed_footer: YouTube notification bell
   msg.new_vid: "%s just uploaded a new video"
+
+twitch.command:
+  generic:
+    error: Whoops, something is not right here! 🙃 @Kesuaheli Help!
+  
+  join:
+    msg.too_few_points: "@%s you don't have enough points (%d)! You need %d more to pay the costs of %d points." 
+    msg.success: "@%s You successfully bought a ticket for %d points. Now you have %d tickets and still %d points."

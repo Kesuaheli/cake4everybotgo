@@ -15,6 +15,8 @@
 package twitch
 
 import (
+	"cake4everybot/tools/streamelements"
+
 	"github.com/kesuaheli/twitchgo"
 	"github.com/spf13/viper"
 )
@@ -26,4 +28,6 @@ func Handle(bot *twitchgo.Twitch) {
 		bot.SendCommandf("JOIN #%s", channel)
 	}
 	log.Printf("Channel list set to %v\n", channels)
+
+	se = streamelements.New(viper.GetString("streamelements.token"))
 }

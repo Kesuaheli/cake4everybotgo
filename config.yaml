@@ -40,6 +40,10 @@ event:
     #emoji.id:
     #emoji.animated: true
 
+  twitch_giveaway:
+    # The amount of points a single giveaway ticket costs.
+    ticket_cost: 1000
+
 webserver:
   favicon: webserver/favicon.png
   birthday_hour: 8 # Time to trigger daily birthday check (24h format)

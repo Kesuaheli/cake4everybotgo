@@ -131,3 +131,11 @@ module:
 youtube:
   embed_footer: YouTube Glocke
   msg.new_vid: "%s hat ein neues Video hochgeladen"
+
+twitch.command:
+  generic:
+    error: Upsi, da ist was schief gelaufen! 🙃 @Kesuaheli Hilfe!
+  
+  join:
+    msg.too_few_points: "@%s du nicht genügend Punkte(%d)! Du brauchst noch %d mehr um den Preis von %d zu bezahlen." 
+    msg.success: "@%s Du hast dir erfolgreich ein Ticket für %d Punkte gekauft. Du hast nun %d Tickets und noch %d Punkte über."
