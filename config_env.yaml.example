@@ -17,3 +17,7 @@ twitch:
   name: twitch_username
   # twitch oauth token, starts with "oauth:"
   token: 
+
+streamelements:
+  # Streamelements JSON Web Token (JWT)
+  token: PUT TOKEN.HERE
