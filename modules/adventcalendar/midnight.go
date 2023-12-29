@@ -15,6 +15,7 @@
 package adventcalendar
 
 import (
+	"cake4everybot/database"
 	"cake4everybot/util"
 	"slices"
 	"time"
@@ -30,16 +31,16 @@ func Midnight(s *discordgo.Session) {
 	}
 	log.Printf("New Post for %s", t.Format("_2. Jan"))
 
-	entries := getGetAllEntries()
-	slices.SortFunc(entries, func(a, b giveawayEntry) int {
-		if a.weight < b.weight {
+	entries := database.GetGetAllGiveawayEntries("xmas")
+	slices.SortFunc(entries, func(a, b database.GiveawayEntry) int {
+		if a.Weight < b.Weight {
 			return -1
-		} else if a.weight > b.weight {
+		} else if a.Weight > b.Weight {
 			return 1
 		}
-		if a.lastEntry.Before(b.lastEntry) {
+		if a.LastEntry.Before(b.LastEntry) {
 			return -1
-		} else if a.lastEntry.After(b.lastEntry) {
+		} else if a.LastEntry.After(b.LastEntry) {
 			return 1
 		}
 		return 0
@@ -47,7 +48,7 @@ func Midnight(s *discordgo.Session) {
 	slices.Reverse(entries)
 	var fields []*discordgo.MessageEmbedField
 	for _, e := range entries {
-		fields = append(fields, e.toEmbedField())
+		fields = append(fields, e.ToEmbedField())
 	}
 
 	data := &discordgo.MessageSend{

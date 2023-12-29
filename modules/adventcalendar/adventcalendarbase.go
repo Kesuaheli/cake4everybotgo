@@ -16,9 +16,7 @@ package adventcalendar
 
 import (
 	"cake4everybot/util"
-	"fmt"
 	logger "log"
-	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -35,18 +33,4 @@ type adventcalendarBase struct {
 	util.InteractionUtil
 	member *discordgo.Member
 	user   *discordgo.User
-}
-
-type giveawayEntry struct {
-	userID    string
-	weight    int
-	lastEntry time.Time
-}
-
-func (e giveawayEntry) toEmbedField() (f *discordgo.MessageEmbedField) {
-	return &discordgo.MessageEmbedField{
-		Name:   e.userID,
-		Value:  fmt.Sprintf("<@%s>\n%d tickets\nlast entry: %s", e.userID, e.weight, e.lastEntry.Format(time.DateOnly)),
-		Inline: true,
-	}
 }

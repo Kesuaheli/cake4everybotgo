@@ -16,6 +16,7 @@ package adventcalendar
 
 import (
 	"cake4everybot/data/lang"
+	"cake4everybot/database"
 	"cake4everybot/util"
 	"fmt"
 	"strings"
@@ -81,18 +82,18 @@ func (c *Component) handlePost(s *discordgo.Session, ids []string) {
 		return
 	}
 
-	entry := getEntry(c.user.ID)
-	if entry.userID != c.user.ID {
-		log.Printf("ERROR: getEntry() returned with userID '%s' but want '%s'", entry.userID, c.user.ID)
+	entry := database.GetGiveawayEntry("xmas", c.user.ID)
+	if entry.UserID != c.user.ID {
+		log.Printf("ERROR: getEntry() returned with userID '%s' but want '%s'", entry.UserID, c.user.ID)
 		c.ReplyError()
 		return
 	}
-	if entry.lastEntry.Equal(postTime) {
-		c.ReplyHiddenSimpleEmbedf(0x5865f2, lang.GetDefault("module.adventcalendar.enter.already_entered"), entry.weight)
+	if entry.LastEntry.Equal(postTime) {
+		c.ReplyHiddenSimpleEmbedf(0x5865f2, lang.GetDefault("module.adventcalendar.enter.already_entered"), entry.Weight)
 		return
 	}
 
-	entry = addGiveawayWeight(c.user.ID, 1)
+	entry = database.AddGiveawayWeight("xmas", c.user.ID, 1)
 
-	c.ReplyHiddenSimpleEmbedf(0x00FF00, lang.GetDefault("module.adventcalendar.enter.success"), entry.weight)
+	c.ReplyHiddenSimpleEmbedf(0x00FF00, lang.GetDefault("module.adventcalendar.enter.success"), entry.Weight)
 }
