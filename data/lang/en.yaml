@@ -115,6 +115,13 @@ discord.command:
   adventcalendar:
     base: adventcalendar
     base.description: Admin commands for the Advent Calendar Giveaway
+    option.draw: draw
+    option.draw.description: Draw a random winner from all entered tickets
+
+    msg.no_entires.draw: Tried draw a winner, but there are currently no entries.
+    msg.winner.title: Advent Calendar Pize Draw
+    msg.winner.details: "__Winner: %s__\nTickets: %d/24\nProbability of winning: %.2f%%"
+    msg.winner.congratulation: "Congratulations, %s! :heart:\nMerry XMas everyone!"
 
 module:
   adventcalendar:
@@ -125,8 +132,10 @@ module:
     post.button: Join
 
     enter.invalid: This is an old message, you cannot join here anymore!
-    enter.success: You successfully joined! You know have %d tickets.
+    enter.success: You successfully joined! You now have %d tickets.
     enter.already_entered: You already joined for today. (You have %d tickets)
+
+    embed_footer: Advent Calendar Giveaway
 
 youtube:
   embed_footer: YouTube notification bell

@@ -45,6 +45,13 @@ func (Chat) AppCmd() *discordgo.ApplicationCommand {
 				Name:        "morning",
 				Description: "Morning trigger",
 			},
+			{
+				Type:                     discordgo.ApplicationCommandOptionSubCommand,
+				Name:                     lang.GetDefault(tp + "option.draw"),
+				NameLocalizations:        *util.TranslateLocalization(tp + "option.draw"),
+				Description:              lang.GetDefault(tp + "option.draw.description"),
+				DescriptionLocalizations: *util.TranslateLocalization(tp + "option.draw.description"),
+			},
 		},
 	}
 }
@@ -62,12 +69,16 @@ func (cmd Chat) Handle(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	switch i.ApplicationCommandData().Options[0].Name {
 	case "midnight":
+		cmd.ReplyDeferedHidden()
 		Midnight(s)
 		cmd.ReplyHidden("Midnight()")
 		return
 	case "morning":
 		Post(s)
 		cmd.ReplyHidden("Post()")
+		return
+	case lang.GetDefault(tp + "option.draw"):
+		cmd.handleSubcommandDraw()
 		return
 	}
 

@@ -39,12 +39,8 @@ func Post(s *discordgo.Session) {
 		return
 	}
 
-	data := postData(t)
-	if data == nil {
-		log.Printf("ERROR: Message data for new post is nil!")
-		return
-	}
 	for _, channelID := range channels {
+		data := postData(t)
 		_, err = s.ChannelMessageSendComplex(channelID, data)
 		if err != nil {
 			log.Printf("Failed to send new post for advent calendar in channel '%s': %+v", channelID, err)
@@ -73,9 +69,9 @@ func postData(t time.Time) *discordgo.MessageSend {
 				lang.GetDefault("module.adventcalendar.post.button"),
 				discordgo.PrimaryButton,
 				discordgo.ComponentEmoji{
-					Name:     viper.GetString("module.adventcalendar.post.emoji.name"),
-					ID:       viper.GetString("module.adventcalendar.post.emoji.id"),
-					Animated: viper.GetBool("module.adventcalendar.post.emoji.animated"),
+					Name:     viper.GetString("event.adventcalendar.emoji.name"),
+					ID:       viper.GetString("event.adventcalendar.emoji.id"),
+					Animated: viper.GetBool("event.adventcalendar.emoji.animated"),
 				},
 			),
 		}},

@@ -115,6 +115,13 @@ discord.command:
   adventcalendar:
     base: adventskalender
     base.description: Admin Commands für das Adventskalender Giveaway
+    option.draw: ziehen
+    option.draw.description: Ziehe einen zufälligen Gewinner aus allen eingetragenen Tickets
+
+    msg.no_entires.draw: Konnte kein Gewinner gezogen werden, da momentan keine Tickets eingetragen sind.
+    msg.winner.title: Adventskalender Gewinnauslosung
+    msg.winner.details: "__Gewinner: %s__\nTickets: %d/24\nGewinnchance: %.2f%%"
+    msg.winner.congratulation: "Herzlichen Glückwunsch, %s! :heart:\nFrohe Weihnachten an alle!"
 
 module:
   adventcalendar:
@@ -127,6 +134,8 @@ module:
     enter.invalid: Das ist eine alte Nachricht, du kannst dich hier nicht mehr eintragen!
     enter.success: Du hast dich erfolgreich eingetragen! Du hast jetzt %d Tickets.
     enter.already_entered: Du hast dich heute bereits eingetragen! (Du hast momentan %d Tickets)
+
+    embed_footer: Adventskalender Giveaway
 
 youtube:
   embed_footer: YouTube Glocke
