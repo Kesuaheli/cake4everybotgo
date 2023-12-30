@@ -5,28 +5,16 @@ import (
 	"cake4everybot/database"
 	"cake4everybot/util"
 	"fmt"
-	"math/rand"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 func (cmd Chat) handleSubcommandDraw() {
-	var entries []database.GiveawayEntry
-	for _, e := range database.GetGetAllGiveawayEntries("xmas") {
-		for i := 0; i < e.Weight; i++ {
-			entries = append(entries, e)
-		}
-	}
-	totalTickets := len(entries)
+	winner, totalTickets := database.DrawGiveawayWinner(database.GetAllGiveawayEntries("xmas"))
 	if totalTickets == 0 {
 		cmd.ReplyHidden(lang.GetDefault(tp + "msg.no_entries.draw"))
 		return
 	}
-
-	rand.Shuffle(len(entries), func(i, j int) {
-		entries[i], entries[j] = entries[j], entries[i]
-	})
-	winner := entries[rand.Intn(totalTickets-1)]
 
 	member, err := cmd.Session.GuildMember(cmd.Interaction.GuildID, winner.UserID)
 	if err != nil {

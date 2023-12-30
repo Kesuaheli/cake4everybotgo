@@ -17,6 +17,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -132,8 +133,8 @@ func AddGiveawayWeight(prefix, userID string, amount int) GiveawayEntry {
 	return GiveawayEntry{userID, weight, lastEntry}
 }
 
-// GetGetAllGiveawayEntries gets all giveaway entries that matches prefix.
-func GetGetAllGiveawayEntries(prefix string) []GiveawayEntry {
+// GetAllGiveawayEntries gets all giveaway entries that matches prefix.
+func GetAllGiveawayEntries(prefix string) []GiveawayEntry {
 	rows, err := Query("SELECT id,weight,last_entry_id FROM giveaway")
 	if err != nil {
 		log.Printf("ERROR: could not get entries from database: %v", err)
@@ -172,4 +173,22 @@ func GetGetAllGiveawayEntries(prefix string) []GiveawayEntry {
 		entries = append(entries, GiveawayEntry{userID, weight, lastEntry})
 	}
 	return entries
+}
+
+func DrawGiveawayWinner(a []GiveawayEntry) (winner GiveawayEntry, totalTickets int) {
+	var entries []GiveawayEntry
+	for _, e := range a {
+		for i := 0; i < e.Weight; i++ {
+			entries = append(entries, e)
+		}
+	}
+	totalTickets = len(entries)
+	if totalTickets == 0 {
+		return GiveawayEntry{}, 0
+	}
+
+	rand.Shuffle(len(entries), func(i, j int) {
+		entries[i], entries[j] = entries[j], entries[i]
+	})
+	return entries[rand.Intn(totalTickets-1)], totalTickets
 }

@@ -32,7 +32,7 @@ func Midnight(s *discordgo.Session) {
 	}
 	log.Printf("Summary for %s", t.Add(-1*time.Hour).Format("_2. Jan"))
 
-	entries := database.GetGetAllGiveawayEntries("xmas")
+	entries := database.GetAllGiveawayEntries("xmas")
 	slices.SortFunc(entries, func(a, b database.GiveawayEntry) int {
 		if a.Weight < b.Weight {
 			return -1
