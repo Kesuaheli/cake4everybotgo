@@ -175,9 +175,11 @@ func GetAllGiveawayEntries(prefix string) []GiveawayEntry {
 	return entries
 }
 
-func DrawGiveawayWinner(a []GiveawayEntry) (winner GiveawayEntry, totalTickets int) {
+// DrawGiveawayWinner takes one of the given entries and draw one winner of them. The probability
+// is based on their Weight value. A higher Weight means a higher probability.
+func DrawGiveawayWinner(e []GiveawayEntry) (winner GiveawayEntry, totalTickets int) {
 	var entries []GiveawayEntry
-	for _, e := range a {
+	for _, e := range e {
 		for i := 0; i < e.Weight; i++ {
 			entries = append(entries, e)
 		}
