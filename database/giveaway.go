@@ -206,14 +206,16 @@ type GiveawayPrizeType string
 type GiveawayPrizeGroupSort string
 
 const (
-	// A single giveaway prize
+	// GiveawayPrizeTypeSingle describes a single giveaway prize
 	GiveawayPrizeTypeSingle GiveawayPrizeType = "single"
-	// A group contains a pool of giveaway prizes
+	// GiveawayPrizeTypeGroup describes a group containing a pool of giveaway prizes
 	GiveawayPrizeTypeGroup GiveawayPrizeType = "group"
 
-	// The pool in this group is ordered and prizes should be drawn in ascending order
+	// GiveawayPrizeGroupOrdered defines that the pool in this group is ordered and prizes should be
+	// drawn in ascending order
 	GiveawayPrizeGroupOrdered GiveawayPrizeGroupSort = "ordered"
-	// The pool in this group contains a set of prizes that should be drawn in a random order
+	// GiveawayPrizeGroupRandom defines that the pool in this group contains a set of prizes that
+	// should be drawn in a random order
 	GiveawayPrizeGroupRandom GiveawayPrizeGroupSort = "random"
 )
 
