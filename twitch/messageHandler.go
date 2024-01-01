@@ -18,8 +18,11 @@ import (
 	"cake4everybot/data/lang"
 	"cake4everybot/database"
 	"cake4everybot/tools/streamelements"
+	"encoding/json"
 	"fmt"
 	logger "log"
+	"math/rand"
+	"os"
 	"strings"
 	"time"
 
@@ -44,7 +47,79 @@ func HandleCmdJoin(t *twitchgo.Twitch, channel string, user *twitchgo.User, args
 	channel, _ = strings.CutPrefix(channel, "#")
 	const tp = tp + "join."
 
-	log.Printf("[%s@%s] executed join command with %d args: %v", user.Nickname, channel, len(args), args)
+	p, err := database.NewGiveawayPrize(viper.GetString("event.twitch_giveaway.prizes"))
+	if err != nil {
+		log.Printf("Error reading prizes file: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+	if !p.HasPrizeAvailable() {
+		t.SendMessagef(channel, lang.GetDefault(tp+"msg.no_prizes"), user.Nickname)
+		return
+	}
+	if p.HasPrizeWon(user.Nickname) {
+		t.SendMessagef(channel, lang.GetDefault(tp+"msg.won"), user.Nickname)
+		return
+	}
+	entry := database.GetGiveawayEntry("tw11", user.Nickname)
+	if entry.UserID == "" {
+		log.Printf("Error getting database giveaway entry: %v", err)
+		t.SendMessage(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+	if entry.Weight >= 10 {
+		t.SendMessagef(channel, lang.GetDefault(tp+"msg.max_tickets"), user.Nickname)
+		return
+	}
+
+	data, err := os.ReadFile(viper.GetString("event.twitch_giveaway.times"))
+	if os.IsNotExist(err) {
+		data = []byte("{}")
+	} else if err != nil {
+		log.Printf("Error reading times file: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+	var times = map[string]time.Time{}
+	err = json.Unmarshal(data, &times)
+	if err != nil {
+		log.Printf("Error parsing times file: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+
+	m := viper.GetDuration("event.twitch_giveaway.cooldown")
+	next := times[user.Nickname].Add(m * time.Minute)
+	cooldown := time.Until(next).Round(time.Second)
+
+	if cooldown > time.Second {
+		msgs := lang.GetSlice(tp+"msg.cooldown", lang.FallbackLang())
+		var i int
+		if len(msgs) >= 2 {
+			rand.Shuffle(len(msgs), func(i, j int) {
+				msgs[i], msgs[j] = msgs[j], msgs[i]
+			})
+			i = rand.Intn(len(msgs) - 1)
+		}
+		t.SendMessagef(channel, msgs[i], user.Nickname, cooldown.String())
+		return
+	}
+
+	times[user.Nickname] = time.Now()
+	data, err = json.Marshal(times)
+	if err != nil {
+		log.Printf("Error marshaling times file: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+
+	err = os.WriteFile(viper.GetString("event.twitch_giveaway.times"), data, 0644)
+	if err != nil {
+		log.Printf("Error writing times file: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+
 	seChannel, err := se.GetChannel(channel)
 	if err != nil {
 		log.Printf("Error getting streamelements channel '%s': %v", channel, err)
@@ -63,9 +138,9 @@ func HandleCmdJoin(t *twitchgo.Twitch, channel string, user *twitchgo.User, args
 		t.SendMessagef(channel, lang.GetDefault(tp+"msg.too_few_points"), user.Nickname, sePoints.Points, joinCost-sePoints.Points, joinCost)
 		return
 	}
-	entry := database.AddGiveawayWeight("tw11", user.Nickname, 1)
+	entry = database.AddGiveawayWeight("tw11", user.Nickname, 1)
 	if entry.UserID == "" {
-		log.Println("Error getting database giveaway entry", seChannel.ID, channel, user.Nickname, err)
+		log.Printf("Error getting database giveaway entry: %v", err)
 		t.SendMessage(channel, lang.GetDefault("twitch.command.generic.error"))
 		return
 	}
@@ -91,7 +166,20 @@ func HandleCmdTickets(t *twitchgo.Twitch, channel string, source *twitchgo.User,
 		}
 	}
 
-	// TODO: check if 'userID' is already a winner
+	p, err := database.NewGiveawayPrize(viper.GetString("event.twitch_giveaway.prizes"))
+	if err != nil {
+		log.Printf("Error reading prizes file: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+	if p.HasPrizeWon(userID) {
+		if source.Nickname == userID {
+			t.SendMessagef(channel, lang.GetDefault(tp+"msg.won"), source.Nickname)
+		} else {
+			t.SendMessagef(channel, lang.GetDefault(tp+"msg.won.user"), source.Nickname, userID)
+		}
+		return
+	}
 
 	entry := database.GetGiveawayEntry("tw11", userID)
 	if entry.Weight >= 10 {
@@ -102,7 +190,7 @@ func HandleCmdTickets(t *twitchgo.Twitch, channel string, source *twitchgo.User,
 		}
 		return
 	}
-	if source.Nickname == userID {
+	if source.Nickname != userID {
 		if entry.Weight == 0 {
 			t.SendMessagef(channel, lang.GetDefault(tp+"msg.num.0.user"), source.Nickname, userID)
 		} else {
@@ -123,7 +211,7 @@ func HandleCmdTickets(t *twitchgo.Twitch, channel string, source *twitchgo.User,
 		log.Printf("Error on getting SE channel: %v", err)
 		goto skipPoints
 	}
-	if sePoints, err := se.GetPoints(seChannel.ID, userID); err == nil {
+	if sePoints, err := se.GetPoints(seChannel.ID, userID); err != nil {
 		log.Printf("Error on getting SE points: %v", err)
 		goto skipPoints
 	} else {
@@ -131,16 +219,34 @@ func HandleCmdTickets(t *twitchgo.Twitch, channel string, source *twitchgo.User,
 	}
 
 	if joinCost := viper.GetInt("event.twitch_giveaway.ticket_cost"); joinCost > curPoints {
-		msg += " " + fmt.Sprintf(lang.GetDefault(tp+"msg.extra.need_points"), source.Nickname, joinCost-curPoints)
+		msg += " " + fmt.Sprintf(lang.GetDefault(tp+"msg.extra.need_points"), joinCost-curPoints)
 	} else {
-		msg += " " + fmt.Sprintf(lang.GetDefault(tp+"msg.extra.can_buy"), source.Nickname)
+		msg += " " + lang.GetDefault(tp+"msg.extra.can_buy")
 	}
 skipPoints:
 
-	// TODO: get cooldown of 'userID'
-	cooldown := time.Duration(0)
+	data, err := os.ReadFile(viper.GetString("event.twitch_giveaway.times"))
+	if os.IsNotExist(err) {
+		data = []byte("{}")
+	} else if err != nil {
+		log.Printf("Error reading times file: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+	var times = map[string]time.Time{}
+	err = json.Unmarshal(data, &times)
+	if err != nil {
+		log.Printf("Error parsing times file: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+
+	m := viper.GetDuration("event.twitch_giveaway.cooldown")
+	next := times[userID].Add(m * time.Minute)
+	cooldown := time.Until(next).Round(time.Second)
+
 	if cooldown > 3*time.Second {
-		msg += " " + fmt.Sprintf(lang.GetDefault(tp+"msg.extra.cooldown"), cooldown.Truncate(time.Second).String())
+		msg += " " + fmt.Sprintf(lang.GetDefault(tp+"msg.extra.cooldown"), cooldown.String())
 	}
 
 	t.SendMessage(channel, msg)

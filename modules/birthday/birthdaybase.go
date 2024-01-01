@@ -51,7 +51,7 @@ type birthdayEntry struct {
 // Returns a readable Form of the date
 func (b birthdayEntry) String() string {
 	if b.Year == 0 {
-		month := lang.GetSlice(tp+"month", b.Month-1, lang.FallbackLang())
+		month := lang.GetSliceElement(tp+"month", b.Month-1, lang.FallbackLang())
 		return fmt.Sprintf("%d. %s", b.Day, month)
 	}
 	return fmt.Sprintf("<t:%d:D>", b.time.Unix())

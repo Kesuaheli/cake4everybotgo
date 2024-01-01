@@ -167,7 +167,7 @@ func GetDefault(key string) string {
 	return Get(key, FallbackLang())
 }
 
-// GetSlice returns the configured translation for index i in the
+// GetSliceElement returns the configured translation for index i in the
 // list at key in the given language lang.
 //   - If lang is not a loaded language, Get translates key with the
 //     fallback language.
@@ -180,7 +180,7 @@ func GetDefault(key string) string {
 //
 // In all four of these 'fail cases', Get will print a warning
 // message in the log
-func GetSlice(key string, i int, lang string) string {
+func GetSliceElement(key string, i int, lang string) string {
 	if len(langsMap) == 0 {
 		log.Println()
 		log.Printf("ERROR: Tried to get translation, but no language loaded\n")
@@ -200,7 +200,7 @@ func GetSlice(key string, i int, lang string) string {
 			return key
 		}
 		log.Printf("WARNING: language '%s' is not loaded, using '%s' as fallback instead\n", lang, fLang)
-		return Get(key, fLang)
+		return GetSliceElement(key, i, fLang)
 	}
 
 	s := v.GetStringSlice(key)
@@ -218,7 +218,35 @@ func GetSlice(key string, i int, lang string) string {
 		return key
 	}
 	log.Printf("WARNING: key '%s' is not defined in language '%s', using '%s' as fallback instead\n", key, lang, fLang)
-	return Get(key, fLang)
+	return GetSliceElement(key, i, fLang)
+}
+
+// GetSlice is similar sto GetSliceElement, but instead returns the hole sting slice without any
+// checks.
+func GetSlice(key string, lang string) []string {
+	if len(langsMap) == 0 {
+		log.Println()
+		log.Printf("ERROR: Tried to get translation, but no language loaded\n")
+		log.Println()
+		return []string{key}
+	}
+
+	lang = Unify(lang)
+
+	v, ok := langsMap[lang]
+	fLang := FallbackLang()
+	if !ok {
+		if lang == fLang {
+			log.Println()
+			log.Printf("ERROR: Tried to get key from fallback language ('%s'), but its not load\n", fLang)
+			log.Println()
+			return []string{key}
+		}
+		log.Printf("WARNING: language '%s' is not loaded, using '%s' as fallback instead\n", lang, fLang)
+		return GetSlice(key, fLang)
+	}
+
+	return v.GetStringSlice(key)
 }
 
 // GetLangs returns all loaded languages

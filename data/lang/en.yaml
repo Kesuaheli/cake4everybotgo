@@ -147,7 +147,7 @@ twitch.command:
   
   join:
     msg.too_few_points: "@%s you don't have enough points (%d)! You need %d more to pay the costs of %d points." 
-    msg.success: "@%s you successfully bought a ticket for %d points. Now you have %d tickets and still %d points."
+    msg.success: "@%s you successfully bought a ticket for %d points. Now you have %d tickets and %d points left."
 
   tickets:
     msg.won: "@%s, you already won something and can no longer own tickets."

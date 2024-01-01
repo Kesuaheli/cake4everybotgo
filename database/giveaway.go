@@ -289,15 +289,20 @@ func (p GiveawayPrize) SaveFile() error {
 
 // HasPrizeAvailable returns whether p has at least one prize without a winner
 func (p GiveawayPrize) HasPrizeAvailable() bool {
+	return p.HasPrizeWon("")
+}
+
+// HasPrizeWon returns whether p has at least one prize where the winner is the same as userID
+func (p GiveawayPrize) HasPrizeWon(userID string) bool {
 	if p.giveawayPrizeInterface == nil {
 		return false
 	}
 
 	switch t := p.giveawayPrizeInterface.(type) {
 	case *GiveawayPrizeSingle:
-		return t.Winner == ""
+		return t.Winner == userID
 	case *GiveawayPrizeGroup:
-		return t.HasPrizeAvailable()
+		return t.HasPrizeWon(userID)
 	}
 	return false
 }
@@ -407,8 +412,13 @@ func (pg GiveawayPrizeGroup) prizeType() GiveawayPrizeType {
 
 // HasPrizeAvailable returns whether pg contains at least one prize without a winner
 func (pg GiveawayPrizeGroup) HasPrizeAvailable() bool {
+	return pg.HasPrizeWon("")
+}
+
+// HasPrizeWon returns whether pg contains at least one prize where the winner is the same as userID
+func (pg GiveawayPrizeGroup) HasPrizeWon(userID string) bool {
 	for _, p := range pg.Pool {
-		if p.HasPrizeAvailable() {
+		if p.HasPrizeWon(userID) {
 			return true
 		}
 	}

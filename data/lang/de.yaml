@@ -146,6 +146,17 @@ twitch.command:
     error: Upsi, da ist was schief gelaufen! 🙃 @Kesuaheli Hilfe!
   
   join:
+    msg.no_prizes: "@%s es gibt momentan keine Preise zu gewinnen. Du kannst diesen Befehl momentan nicht ausführen."
+    msg.won: "@%s, du hast schon etwas gewonnen und kannst keine Tickets mehr kaufen."
+    msg.max_tickets: "@%s, du hast bereits schon alle 10/10 Tickets gekauft. Lass anderen auch eine Chance ;)"
+    msg.cooldown: 
+      - "@%s, du musst noch %s warten um dir ein weiteres Ticket kaufen zu können."
+      - "@%s, du bist mir zu schnell. Warte noch so %s um wieder eins zu kaufen."
+      - "@%s Ein Ticket kannst du zwar erst in %s kaufen, aber den Stream kannst du in der Zwischenzeit durchgehend schauen ;)"
+      - Schon wieder, @%s? Du hattest doch erst ein Ticket gekauft. Warte noch %s.
+      - "@%s Ein weiteres Ticket ist in Arbeit... du kannst es dir in %s abholen."
+      - "@%s Beep Boop 🤖 Dein Ticket wird gedruckt. Vorraussichtliche Druckzeit: noch %s verbleibend"
+      - "@%s, damit du mehr vom Stream genießen kannst, kannst du erst in %s wieder ein Ticket kaufen."
     msg.too_few_points: "@%s du nicht genügend Punkte(%d)! Du brauchst noch %d mehr um den Preis von %d zu bezahlen." 
     msg.success: "@%s du hast dir erfolgreich ein Ticket für %d Punkte gekauft. Du hast nun %d Tickets und noch %d Punkte über."
 
