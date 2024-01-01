@@ -43,6 +43,8 @@ event:
   twitch_giveaway:
     # The amount of points a single giveaway ticket costs.
     ticket_cost: 1000
+    # the filepath for of the json giveaway prizes
+    prizes: twitch/prizes.json
 
 webserver:
   favicon: webserver/favicon.png

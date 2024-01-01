@@ -147,4 +147,9 @@ twitch.command:
   
   join:
     msg.too_few_points: "@%s you don't have enough points (%d)! You need %d more to pay the costs of %d points." 
-    msg.success: "@%s You successfully bought a ticket for %d points. Now you have %d tickets and still %d points."
+    msg.success: "@%s you successfully bought a ticket for %d points. Now you have %d tickets and still %d points."
+
+  draw:
+    msg.no_prizes: "@%s There're currently no prizes available. You can't perfrom this command now."
+    msg.no_entries: "@%s There're currently no entries and therefore no winner can be drawn."
+    msg.winner: Congratulations! @%s won %s. You had %d/10 tickets and a win probability of %.2f%%.

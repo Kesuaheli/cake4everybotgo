@@ -25,7 +25,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-const tp string = "twitch.command.join."
+const tp string = "twitch.command."
 
 var log logger.Logger = *logger.New(logger.Writer(), "[Twitch] ", logger.LstdFlags|logger.Lmsgprefix)
 var se *streamelements.Streamelements
@@ -40,6 +40,8 @@ func MessageHandler(t *twitchgo.Twitch, channel string, user *twitchgo.User, mes
 // and removes the configured cost amount for a ticket.
 func HandleCmdJoin(t *twitchgo.Twitch, channel string, user *twitchgo.User, args []string) {
 	channel, _ = strings.CutPrefix(channel, "#")
+	const tp = tp + "join."
+
 	log.Printf("[%s@%s] executed join command with %d args: %v", user.Nickname, channel, len(args), args)
 	seChannel, err := se.GetChannel(channel)
 	if err != nil {
@@ -72,4 +74,51 @@ func HandleCmdJoin(t *twitchgo.Twitch, channel string, user *twitchgo.User, args
 		return
 	}
 	t.SendMessagef(channel, lang.GetDefault(tp+"msg.success"), user.Nickname, joinCost, entry.Weight, sePoints.Points-joinCost)
+}
+
+// HandleCmdDraw is the handler for the draw command in a twitch chat. This handler selects a random
+// winner and removes their tickets.
+func HandleCmdDraw(t *twitchgo.Twitch, channel string, user *twitchgo.User, args []string) {
+	channel, _ = strings.CutPrefix(channel, "#")
+	const tp = tp + "draw."
+
+	//only accept broadcaster
+	if channel != user.Nickname {
+		return
+	}
+
+	p, err := database.NewGiveawayPrize(viper.GetString("event.twitch_giveaway.prizes"))
+	if err != nil {
+		log.Printf("Error reading prizes file: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+	prize, ok := p.GetNextPrize()
+	if !ok {
+		t.SendMessagef(channel, lang.GetDefault(tp+"msg.no_prizes"), user.Nickname)
+		return
+	}
+
+	winner, totalTickets := database.DrawGiveawayWinner(database.GetAllGiveawayEntries("tw11"))
+	if totalTickets == 0 {
+		t.SendMessagef(channel, lang.GetDefault(tp+"msg.no_entries"), user.Nickname)
+		return
+	}
+
+	t.SendMessagef(channel, lang.GetDefault(tp+"msg.winner"), winner.UserID, prize.Name, winner.Weight, float64(winner.Weight*100)/float64(totalTickets))
+
+	err = database.DeleteGiveawayEntry(winner.UserID)
+	if err != nil {
+		log.Printf("Error deleting database giveaway entry: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+
+	prize.Winner = winner.UserID
+	err = p.SaveFile()
+	if err != nil {
+		log.Printf("Error saving prizes file: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
 }

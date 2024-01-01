@@ -90,6 +90,19 @@ func GetGiveawayEntry(prefix, userID string) GiveawayEntry {
 	return GiveawayEntry{userID, weight, lastEntry}
 }
 
+// DeleteGiveawayEntry deletes the giveaway entry for the given user identifier from the database.
+//
+// If an error occours it will be returned. However if no datbase entry matched it returns err ==
+// nil, not err == sql.ErrNoRows. Because sql.ErrNoRows also results in the non-existence of the
+// requested row and therefore is treated as a successful call.
+func DeleteGiveawayEntry(userID string) error {
+	_, err := Exec("DELETE FROM giveaway WHERE id=?", userID)
+	if err == sql.ErrNoRows {
+		return nil
+	}
+	return err
+}
+
 // AddGiveawayWeight adds amount to the given user identifier.
 //
 // However if their last entry wasn't prefixed with prefix, their weight will be resetted and starts
@@ -182,6 +195,11 @@ func GetAllGiveawayEntries(prefix string) []GiveawayEntry {
 // DrawGiveawayWinner takes one of the given entries and draw one winner of them. The probability
 // is based on their Weight value. A higher Weight means a higher probability.
 func DrawGiveawayWinner(e []GiveawayEntry) (winner GiveawayEntry, totalTickets int) {
+	// skip randomizing when there is only one entry
+	if len(e) == 1 {
+		return e[0], e[0].Weight
+	}
+
 	var entries []GiveawayEntry
 	for _, e := range e {
 		for i := 0; i < e.Weight; i++ {
