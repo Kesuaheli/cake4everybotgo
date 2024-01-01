@@ -18,8 +18,10 @@ import (
 	"cake4everybot/data/lang"
 	"cake4everybot/database"
 	"cake4everybot/tools/streamelements"
+	"fmt"
 	logger "log"
 	"strings"
+	"time"
 
 	"github.com/kesuaheli/twitchgo"
 	"github.com/spf13/viper"
@@ -74,6 +76,74 @@ func HandleCmdJoin(t *twitchgo.Twitch, channel string, user *twitchgo.User, args
 		return
 	}
 	t.SendMessagef(channel, lang.GetDefault(tp+"msg.success"), user.Nickname, joinCost, entry.Weight, sePoints.Points-joinCost)
+}
+
+// HandleCmdTickets is the handler for the tickets command in a twitch chat. This handler simply
+// prints the users amount of tickets
+func HandleCmdTickets(t *twitchgo.Twitch, channel string, source *twitchgo.User, args []string) {
+	channel, _ = strings.CutPrefix(channel, "#")
+	const tp = tp + "tickets."
+
+	var userID string = source.Nickname
+	if len(args) >= 1 {
+		if s, _ := strings.CutPrefix(args[0], "@"); s != "" {
+			userID = strings.ToLower(s)
+		}
+	}
+
+	// TODO: check if 'userID' is already a winner
+
+	entry := database.GetGiveawayEntry("tw11", userID)
+	if entry.Weight >= 10 {
+		if source.Nickname == userID {
+			t.SendMessagef(channel, lang.GetDefault(tp+"msg.max_tickets"), source.Nickname)
+		} else {
+			t.SendMessagef(channel, lang.GetDefault(tp+"msg.max_tickets.user"), source.Nickname, userID)
+		}
+		return
+	}
+	if source.Nickname == userID {
+		if entry.Weight == 0 {
+			t.SendMessagef(channel, lang.GetDefault(tp+"msg.num.0.user"), source.Nickname, userID)
+		} else {
+			t.SendMessagef(channel, lang.GetDefault(tp+"msg.num.user"), source.Nickname, userID, entry.Weight)
+		}
+		return
+	}
+	var msg string
+	if entry.Weight == 0 {
+		msg = fmt.Sprintf(lang.GetDefault(tp+"msg.num.0"), source.Nickname)
+	} else {
+		msg = fmt.Sprintf(lang.GetDefault(tp+"msg.num"), source.Nickname, entry.Weight)
+	}
+
+	var curPoints int
+	seChannel, err := se.GetChannel(channel)
+	if err != nil {
+		log.Printf("Error on getting SE channel: %v", err)
+		goto skipPoints
+	}
+	if sePoints, err := se.GetPoints(seChannel.ID, userID); err == nil {
+		log.Printf("Error on getting SE points: %v", err)
+		goto skipPoints
+	} else {
+		curPoints = sePoints.Points
+	}
+
+	if joinCost := viper.GetInt("event.twitch_giveaway.ticket_cost"); joinCost > curPoints {
+		msg += " " + fmt.Sprintf(lang.GetDefault(tp+"msg.extra.need_points"), source.Nickname, joinCost-curPoints)
+	} else {
+		msg += " " + fmt.Sprintf(lang.GetDefault(tp+"msg.extra.can_buy"), source.Nickname)
+	}
+skipPoints:
+
+	// TODO: get cooldown of 'userID'
+	cooldown := time.Duration(0)
+	if cooldown > 3*time.Second {
+		msg += " " + fmt.Sprintf(lang.GetDefault(tp+"msg.extra.cooldown"), cooldown.Truncate(time.Second).String())
+	}
+
+	t.SendMessage(channel, msg)
 }
 
 // HandleCmdDraw is the handler for the draw command in a twitch chat. This handler selects a random

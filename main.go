@@ -95,6 +95,7 @@ func main() {
 
 	client := twitchgo.New(viper.GetString("twitch.name"), viper.GetString("twitch.token"))
 	client.OnChannelCommandMessage("join", twitch.HandleCmdJoin)
+	client.OnChannelCommandMessage("tickets", twitch.HandleCmdTickets)
 	client.OnChannelCommandMessage("draw", twitch.HandleCmdDraw)
 	client.OnChannelMessage(twitch.MessageHandler)
 	err = client.Connect()

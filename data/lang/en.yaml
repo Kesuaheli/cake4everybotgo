@@ -149,6 +149,19 @@ twitch.command:
     msg.too_few_points: "@%s you don't have enough points (%d)! You need %d more to pay the costs of %d points." 
     msg.success: "@%s you successfully bought a ticket for %d points. Now you have %d tickets and still %d points."
 
+  tickets:
+    msg.won: "@%s, you already won something and can no longer own tickets."
+    msg.won.user: "@%s %s already won something and can no longer own tickets."
+    msg.max_tickets: "@%s, you bought all 10/10 tickets."
+    msg.max_tickets.user: "@%s, %s bought all 10/10 tickets."
+    msg.num.0: "@%s, you don't have any tickets yet."
+    msg.num.0.user: "@%s, %s doesn't have any tickets yet."
+    msg.num: "@%s, you have %d/10 tickets."
+    msg.num.user: "@%s, %s has %d/10 tickets."
+    msg.extra.need_points: For your next ticket, you'll need %d points more.
+    msg.extra.can_buy: You can buy a ticket with !ticket.
+    msg.extra.cooldown: But right now you're still %s in cooldown, before you can use the ticket command.
+
   draw:
     msg.no_prizes: "@%s There're currently no prizes available. You can't perfrom this command now."
     msg.no_entries: "@%s There're currently no entries and therefore no winner can be drawn."
