@@ -105,21 +105,6 @@ func HandleCmdJoin(t *twitchgo.Twitch, channel string, user *twitchgo.User, args
 		return
 	}
 
-	times[user.Nickname] = time.Now()
-	data, err = json.Marshal(times)
-	if err != nil {
-		log.Printf("Error marshaling times file: %v", err)
-		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
-		return
-	}
-
-	err = os.WriteFile(viper.GetString("event.twitch_giveaway.times"), data, 0644)
-	if err != nil {
-		log.Printf("Error writing times file: %v", err)
-		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
-		return
-	}
-
 	seChannel, err := se.GetChannel(channel)
 	if err != nil {
 		log.Printf("Error getting streamelements channel '%s': %v", channel, err)
@@ -144,6 +129,21 @@ func HandleCmdJoin(t *twitchgo.Twitch, channel string, user *twitchgo.User, args
 		t.SendMessage(channel, lang.GetDefault("twitch.command.generic.error"))
 		return
 	}
+
+	times[user.Nickname] = time.Now()
+	data, err = json.Marshal(times)
+	if err != nil {
+		log.Printf("Error marshaling times file: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+	err = os.WriteFile(viper.GetString("event.twitch_giveaway.times"), data, 0644)
+	if err != nil {
+		log.Printf("Error writing times file: %v", err)
+		t.SendMessagef(channel, lang.GetDefault("twitch.command.generic.error"))
+		return
+	}
+
 	err = se.AddPoints(seChannel.ID, user.Nickname, -joinCost)
 	if err != nil {
 		log.Printf("Error adding points for '%s(%s)/%s/-%d': %v", seChannel.ID, channel, user.Nickname, joinCost, err)
