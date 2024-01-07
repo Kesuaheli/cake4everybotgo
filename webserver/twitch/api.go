@@ -56,7 +56,6 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	return
 }
 
 func handleVerification(w http.ResponseWriter, r *http.Request, rEvent RawEvent) {
