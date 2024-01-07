@@ -7,14 +7,27 @@ import (
 	"net/http"
 )
 
+// RawEvent represents the http body comming with a call to the /twitch_pubsub enpoints
 type RawEvent struct {
-	Challenge    string       `json:"challenge"`
+	// Challenge cointains the string to return when receiving a webhook callback verification.
+	// Otherwise it is an empty string
+	Challenge string `json:"challenge"`
+
+	// Subscription contains the informations this event is about.
 	Subscription Subscription `json:"subscription"`
-	Event        interface{}  `json:"event"`
+
+	// Event is the actual event.
+	//
+	// It is not set in a webhook callback verification.
+	Event interface{} `json:"event"`
 }
 
 var log = logger.New(logger.Writer(), "[WebTwitch] ", logger.LstdFlags|logger.Lmsgprefix)
 
+// HandlePost is the HTTP/POST handler for the Twitch PubSub endpoint.
+//
+// It is called to handle a webhook comming from twitch. This could be a hub challenge verification
+// or a event notification.
 func HandlePost(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
