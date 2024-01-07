@@ -157,7 +157,7 @@ twitch.command:
       - "@%s Ein weiteres Ticket ist in Arbeit... du kannst es dir in %s abholen."
       - "@%s Beep Boop 🤖 Dein Ticket wird gedruckt. Vorraussichtliche Druckzeit: noch %s verbleibend"
       - "@%s, damit du mehr vom Stream genießen kannst, kannst du erst in %s wieder ein Ticket kaufen."
-    msg.too_few_points: "@%s du nicht genügend Punkte(%d)! Du brauchst noch %d mehr um den Preis von %d zu bezahlen." 
+    msg.too_few_points: "@%s du nicht genügend Punkte (%d)! Du brauchst noch %d mehr um den Preis von %d zu bezahlen." 
     msg.success: "@%s du hast dir erfolgreich ein Ticket für %d Punkte gekauft. Du hast nun %d Tickets und noch %d Punkte über."
 
   tickets:
