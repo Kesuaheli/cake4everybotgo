@@ -1,10 +1,15 @@
 package twitch
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"io"
 	logger "log"
 	"net/http"
+
+	"github.com/spf13/viper"
 )
 
 // RawEvent represents the http body comming with a call to the /twitch_pubsub enpoints
@@ -35,6 +40,13 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	// before anything, check the hash
+	if !verifyTwitchMessage(r.Header, body) {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
 	var rEvent RawEvent
 	err = json.Unmarshal(body, &rEvent)
 	if err != nil {
@@ -56,6 +68,24 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
+}
+
+func verifyTwitchMessage(header http.Header, body []byte) bool {
+	// read more at https://dev.twitch.tv/docs/eventsub/handling-webhook-events/#verifying-the-event-message
+	msgID := header.Get("Twitch-Eventsub-Message-Id")
+	msgTime := header.Get("Twitch-Eventsub-Message-Timestamp")
+	data := append([]byte(msgID+msgTime), body...)
+
+	h := hmac.New(sha256.New, []byte(viper.GetString("twitch.webhookSecret")))
+	h.Write(data)
+	hmacData := h.Sum(nil)
+
+	hmacHex := make([]byte, 128)
+	n := hex.Encode(hmacHex, hmacData)
+	hmacHex = append([]byte("sha256="), hmacHex[:n]...)
+
+	signature := []byte(header.Get("Twitch-Eventsub-Message-Signature"))
+	return hmac.Equal(hmacHex, signature)
 }
 
 func handleVerification(w http.ResponseWriter, r *http.Request, rEvent RawEvent) {

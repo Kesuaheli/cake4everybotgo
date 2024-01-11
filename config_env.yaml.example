@@ -17,6 +17,8 @@ twitch:
   name: twitch_username
   # twitch oauth token, starts with "oauth:"
   token: 
+  # a custom secret for the webhook, used for verifying hashes
+  webhookSecret: 
 
 streamelements:
   # Streamelements JSON Web Token (JWT)
