@@ -146,6 +146,17 @@ twitch.command:
     error: Whoops, something is not right here! 🙃 @Kesuaheli Help!
   
   join:
+    msg.no_prizes: "@%s there's nothing to win at the moment. You can't use this command at the moment."
+    msg.won: "@%s, you've won a price already and aren't allow to buy more tickets ."
+    msg.max_tickets: "@%s, you've bought all 10/10 tickets already. Give others a chance too ;)"
+    msg.cooldown: 
+      - "@%s, you have to wait %s to buy another ticket."
+      - "@%s, you're too fast! Wait like %s to buy another one."
+      - "@%s Although you won't be able to buy another ticket for %s, you can watch the stream continuously in the meantime ;)"
+      - Already, @%s? Didn't you just bought a ticket? Wait another %s.
+      - "@%s Another ticket is in progress... you can claim it in %s."
+      - "@%s Beep boop 🤖 Your ticket will be printed. Estimated printing time: %s remaining"
+      - "@%s, to enjoy more of the stream, you can only buy a ticket again in %s."
     msg.too_few_points: "@%s you don't have enough points (%d)! You need %d more to pay the costs of %d points." 
     msg.success: "@%s you successfully bought a ticket for %d points. Now you have %d tickets and %d points left."
 
