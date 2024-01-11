@@ -23,7 +23,6 @@ import (
 	"cake4everybot/config"
 	"cake4everybot/database"
 	"cake4everybot/event"
-	"cake4everybot/twitch"
 	"cake4everybot/webserver"
 
 	"github.com/bwmarrin/discordgo"
@@ -64,27 +63,38 @@ func main() {
 	database.Connect()
 	defer database.Close()
 
-	log.Println("Logging in to Discord")
-	s, err := discordgo.New("Bot " + viper.GetString("discord.token"))
+	// initializing Discord and Twitch bots
+	discordBot, err := discordgo.New("Bot " + viper.GetString("discord.token"))
 	if err != nil {
-		log.Fatalf("invalid bot parameters: %v", err)
+		log.Fatalf("invalid discord bot parameters: %v", err)
 	}
 
-	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+	discordBot.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
 		log.Printf("Logged in to Discord as %s#%s\n", s.State.User.Username, s.State.User.Discriminator)
 	})
 
-	event.AddListeners(s, webChan)
+	twitchBot := twitchgo.New(viper.GetString("twitch.name"), viper.GetString("twitch.token"))
 
-	// open connection to Discord and login
-	err = s.Open()
+	// adding listeners for events
+	event.AddListeners(discordBot, twitchBot, webChan)
+
+	// open connection and login to Discord and Twitch
+	log.Println("Logging in to Discord")
+	err = discordBot.Open()
 	if err != nil {
 		log.Fatalf("could not open the discord session: %v", err)
 	}
-	defer s.Close()
+	defer discordBot.Close()
+
+	log.Println("Logging in to Twitch")
+	err = twitchBot.Connect()
+	if err != nil {
+		log.Fatalf("could not open the twitch connection: %v", err)
+	}
+	defer twitchBot.Close()
 
 	// register all events.
-	err = event.Register(s, viper.GetString("discord.guildID"))
+	err = event.PostRegister(discordBot, twitchBot, viper.GetString("discord.guildID"))
 	if err != nil {
 		log.Printf("Error registering events: %v\n", err)
 	}
@@ -92,18 +102,6 @@ func main() {
 	log.Println("Starting webserver...")
 	addr := ":8080"
 	webserver.Run(addr, webChan)
-
-	client := twitchgo.New(viper.GetString("twitch.name"), viper.GetString("twitch.token"))
-	client.OnChannelCommandMessage("join", twitch.HandleCmdJoin)
-	client.OnChannelCommandMessage("tickets", twitch.HandleCmdTickets)
-	client.OnChannelCommandMessage("draw", twitch.HandleCmdDraw)
-	client.OnChannelMessage(twitch.MessageHandler)
-	err = client.Connect()
-	if err != nil {
-		log.Fatalf("could not open the twitch connection: %v", err)
-	}
-	defer client.Close()
-	twitch.Handle(client)
 
 	// Wait to end the bot
 	log.Println("Press Ctrl+C to exit")

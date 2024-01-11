@@ -17,29 +17,38 @@ package event
 import (
 	"cake4everybot/event/command"
 	"cake4everybot/event/component"
+	"cake4everybot/event/twitch"
 	logger "log"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/kesuaheli/twitchgo"
 )
 
 var log = *logger.New(logger.Writer(), "[Events] ", logger.LstdFlags|logger.Lmsgprefix)
 
-// Register registers all events, like commands.
-func Register(s *discordgo.Session, guildID string) error {
-	err := command.Register(s, guildID)
+// PostRegister registers all events, like commands after the bots are started.
+func PostRegister(dc *discordgo.Session, t *twitchgo.Twitch, guildID string) error {
+	err := command.Register(dc, guildID)
 	if err != nil {
 		return err
 	}
 	component.Register()
 
+	twitch.Register(t)
+
 	return nil
 }
 
-// AddListeners adds all event handlers to the given session s.
-func AddListeners(s *discordgo.Session, webChan chan struct{}) {
-	s.AddHandler(handleInteractionCreate)
-	addVoiceStateListeners(s)
+// AddListeners adds all event handlers to the given bots.
+func AddListeners(dc *discordgo.Session, t *twitchgo.Twitch, webChan chan struct{}) {
+	dc.AddHandler(handleInteractionCreate)
+	addVoiceStateListeners(dc)
 
-	addYouTubeListeners(s)
-	addScheduledTriggers(s, webChan)
+	t.OnChannelCommandMessage("join", twitch.HandleCmdJoin)
+	t.OnChannelCommandMessage("tickets", twitch.HandleCmdTickets)
+	t.OnChannelCommandMessage("draw", twitch.HandleCmdDraw)
+	t.OnChannelMessage(twitch.MessageHandler)
+
+	addYouTubeListeners(dc)
+	addScheduledTriggers(dc, t, webChan)
 }
