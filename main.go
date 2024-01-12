@@ -20,13 +20,14 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/bwmarrin/discordgo"
-	"github.com/spf13/viper"
-
 	"cake4everybot/config"
 	"cake4everybot/database"
 	"cake4everybot/event"
 	"cake4everybot/webserver"
+
+	"github.com/bwmarrin/discordgo"
+	"github.com/kesuaheli/twitchgo"
+	"github.com/spf13/viper"
 )
 
 var log = logger.New(logger.Writer(), "[MAIN] ", logger.LstdFlags|logger.Lmsgprefix)
@@ -62,27 +63,38 @@ func main() {
 	database.Connect()
 	defer database.Close()
 
-	log.Println("Logging in to Discord")
-	s, err := discordgo.New("Bot " + viper.GetString("discord.token"))
+	// initializing Discord and Twitch bots
+	discordBot, err := discordgo.New("Bot " + viper.GetString("discord.token"))
 	if err != nil {
-		log.Fatalf("invalid bot parameters: %v", err)
+		log.Fatalf("invalid discord bot parameters: %v", err)
 	}
 
-	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+	discordBot.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
 		log.Printf("Logged in to Discord as %s#%s\n", s.State.User.Username, s.State.User.Discriminator)
 	})
 
-	event.AddListeners(s, webChan)
+	twitchBot := twitchgo.New(viper.GetString("twitch.name"), viper.GetString("twitch.token"))
 
-	// open connection to Discord and login
-	err = s.Open()
+	// adding listeners for events
+	event.AddListeners(discordBot, twitchBot, webChan)
+
+	// open connection and login to Discord and Twitch
+	log.Println("Logging in to Discord")
+	err = discordBot.Open()
 	if err != nil {
 		log.Fatalf("could not open the discord session: %v", err)
 	}
-	defer s.Close()
+	defer discordBot.Close()
+
+	log.Println("Logging in to Twitch")
+	err = twitchBot.Connect()
+	if err != nil {
+		log.Fatalf("could not open the twitch connection: %v", err)
+	}
+	defer twitchBot.Close()
 
 	// register all events.
-	err = event.Register(s, viper.GetString("discord.guildID"))
+	err = event.PostRegister(discordBot, twitchBot, viper.GetString("discord.guildID"))
 	if err != nil {
 		log.Printf("Error registering events: %v\n", err)
 	}

@@ -253,8 +253,8 @@ func (cmd subcommandSet) handleUpdate(b birthdayEntry, e *discordgo.MessageEmbed
 	// set field when only month is changed
 	case MONTH:
 		f.Name = lang.Get(tp+"msg.set.update.month", lang.FallbackLang())
-		mNameBefore := lang.GetSlice(tp+"month", before.Month-1, lang.FallbackLang())
-		mName := lang.GetSlice(tp+"month", b.Month-1, lang.FallbackLang())
+		mNameBefore := lang.GetSliceElement(tp+"month", before.Month-1, lang.FallbackLang())
+		mName := lang.GetSliceElement(tp+"month", b.Month-1, lang.FallbackLang())
 		f.Value = fmt.Sprintf("%s -> %s", mNameBefore, mName)
 	// set field when only year is changed
 	case YEAR:

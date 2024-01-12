@@ -11,3 +11,15 @@ discord:
   token: PUT.TOKEN.HERE
   # ID of guild currently used for adding commands
   guildID: 0
+
+twitch:
+  # username of the bot account
+  name: twitch_username
+  # twitch oauth token, starts with "oauth:"
+  token: 
+  # a custom secret for the webhook, used for verifying hashes
+  webhookSecret: 
+
+streamelements:
+  # Streamelements JSON Web Token (JWT)
+  token: PUT TOKEN.HERE

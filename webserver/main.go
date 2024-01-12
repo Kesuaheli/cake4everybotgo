@@ -15,6 +15,7 @@
 package webserver
 
 import (
+	"cake4everybot/webserver/twitch"
 	"cake4everybot/webserver/youtube"
 	logger "log"
 	"net/http"
@@ -33,6 +34,7 @@ func initHTTP() http.Handler {
 	r.NotFoundHandler = http.HandlerFunc(handle404)
 
 	r.HandleFunc("/favicon.ico", favicon)
+	r.HandleFunc("/api/twitch_pubsub", twitch.HandlePost).Methods(http.MethodPost)
 	r.HandleFunc("/api/yt_pubsubhubbub/", youtube.HandleGet).Methods("GET")
 	r.HandleFunc("/api/yt_pubsubhubbub/", youtube.HandlePost).Methods("POST")
 

@@ -57,7 +57,7 @@ func (cmd subcommandList) handler() {
 		return
 	}
 
-	monthName := lang.GetSlice(tp+"month", month-1, lang.FallbackLang())
+	monthName := lang.GetSliceElement(tp+"month", month-1, lang.FallbackLang())
 	var (
 		header, key, value string
 		a                  []any

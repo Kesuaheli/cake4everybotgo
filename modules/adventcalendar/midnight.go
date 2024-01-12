@@ -15,6 +15,7 @@
 package adventcalendar
 
 import (
+	"cake4everybot/database"
 	"cake4everybot/util"
 	"fmt"
 	"slices"
@@ -31,16 +32,16 @@ func Midnight(s *discordgo.Session) {
 	}
 	log.Printf("Summary for %s", t.Add(-1*time.Hour).Format("_2. Jan"))
 
-	entries := getGetAllEntries()
-	slices.SortFunc(entries, func(a, b giveawayEntry) int {
-		if a.weight < b.weight {
+	entries := database.GetAllGiveawayEntries("xmas")
+	slices.SortFunc(entries, func(a, b database.GiveawayEntry) int {
+		if a.Weight < b.Weight {
 			return -1
-		} else if a.weight > b.weight {
+		} else if a.Weight > b.Weight {
 			return 1
 		}
-		if a.lastEntry.Before(b.lastEntry) {
+		if a.LastEntry.Before(b.LastEntry) {
 			return -1
-		} else if a.lastEntry.After(b.lastEntry) {
+		} else if a.LastEntry.After(b.LastEntry) {
 			return 1
 		}
 		return 0
@@ -56,7 +57,7 @@ func Midnight(s *discordgo.Session) {
 		if len(entries) > 1 {
 			var totalTickets int
 			for _, e := range entries {
-				totalTickets += e.weight
+				totalTickets += e.Weight
 			}
 			data.Embeds[0].Description = fmt.Sprintf("__Total: %d Tickets (%d users)__\nProbability per Ticket: %.2f%%\n%s", totalTickets, len(entries), 100.0/float64(totalTickets), data.Embeds[0].Description)
 		}
@@ -77,10 +78,10 @@ func Midnight(s *discordgo.Session) {
 	}
 }
 
-func splitEntriesToEmbeds(s *discordgo.Session, entries []giveawayEntry) []*discordgo.MessageEmbed {
+func splitEntriesToEmbeds(s *discordgo.Session, entries []database.GiveawayEntry) []*discordgo.MessageEmbed {
 	var totalTickets int
 	for _, e := range entries {
-		totalTickets += e.weight
+		totalTickets += e.Weight
 	}
 	numEmbeds := len(entries)/25 + 1
 	embeds := make([]*discordgo.MessageEmbed, 0, numEmbeds)
@@ -94,7 +95,7 @@ func splitEntriesToEmbeds(s *discordgo.Session, entries []giveawayEntry) []*disc
 			embeds = append(embeds, new)
 		}
 
-		embeds[len(embeds)-1].Fields = append(embeds[len(embeds)-1].Fields, e.toEmbedField(s, totalTickets))
+		embeds[len(embeds)-1].Fields = append(embeds[len(embeds)-1].Fields, e.ToEmbedField(s, totalTickets))
 	}
 
 	return embeds

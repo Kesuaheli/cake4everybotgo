@@ -22,15 +22,16 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/kesuaheli/twitchgo"
 	"github.com/spf13/viper"
 )
 
-func addScheduledTriggers(s *discordgo.Session, webChan chan struct{}) {
-	go scheduleFunction(s, 0, 0,
+func addScheduledTriggers(dc *discordgo.Session, t *twitchgo.Twitch, webChan chan struct{}) {
+	go scheduleFunction(dc, t, 0, 0,
 		adventcalendar.Midnight,
 	)
 
-	go scheduleFunction(s, viper.GetInt("event.morning_hour"), viper.GetInt("event.morning_minute"),
+	go scheduleFunction(dc, t, viper.GetInt("event.morning_hour"), viper.GetInt("event.morning_minute"),
 		birthday.Check,
 		adventcalendar.Post,
 	)
@@ -38,11 +39,11 @@ func addScheduledTriggers(s *discordgo.Session, webChan chan struct{}) {
 	go refreshYoutube(webChan)
 }
 
-func scheduleFunction(s *discordgo.Session, hour, min int, f ...func(*discordgo.Session)) {
-	if len(f) == 0 {
+func scheduleFunction(dc *discordgo.Session, t *twitchgo.Twitch, hour, min int, callbacks ...interface{}) {
+	if len(callbacks) == 0 {
 		return
 	}
-	log.Printf("scheduled %d function(s) for %2d:%02d!", len(f), hour, min)
+	log.Printf("scheduled %d function(s) for %2d:%02d!", len(callbacks), hour, min)
 	time.Sleep(time.Second * 5)
 	for {
 		now := time.Now()
@@ -53,8 +54,13 @@ func scheduleFunction(s *discordgo.Session, hour, min int, f ...func(*discordgo.
 		}
 		time.Sleep(nextRun.Sub(now))
 
-		for _, f := range f {
-			f(s)
+		for _, c := range callbacks {
+			switch f := c.(type) {
+			case func(*discordgo.Session):
+				f(dc)
+			case func(*twitchgo.Twitch):
+				f(t)
+			}
 		}
 	}
 }

@@ -40,5 +40,23 @@ event:
     #emoji.id:
     #emoji.animated: true
 
+  twitch_giveaway:
+    # The amount of points a single giveaway ticket costs.
+    ticket_cost: 1000
+    # Cooldown in minutes before beeing able to by another ticket
+    cooldown: 15
+    # the filepath for of the json giveaway prizes
+    prizes: twitch/prizes.json
+    # the filepath for storing the giveaway cooldown times
+    times: twitch/times.json
+
 webserver:
   favicon: webserver/favicon.png
+  birthday_hour: 8 # Time to trigger daily birthday check (24h format)
+
+twitch:
+  name: c4e_bot
+  channels:
+    - kesuaheli
+    - taomi_
+    - c4e_bot

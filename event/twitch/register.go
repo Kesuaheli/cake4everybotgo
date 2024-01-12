@@ -12,25 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package adventcalendar
+package twitch
 
 import (
-	"cake4everybot/util"
-	logger "log"
+	"cake4everybot/tools/streamelements"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/kesuaheli/twitchgo"
+	"github.com/spf13/viper"
 )
 
-const (
-	// Prefix for translation key, i.e.:
-	//   key := tp+"base" // => adventcalendar
-	tp = "discord.command.adventcalendar."
-)
+// Register is setting up the twitch bot. Like joining channels and other stuff that is available
+// after the bot is connected
+func Register(bot *twitchgo.Twitch) {
+	channels := viper.GetStringSlice("twitch.channels")
+	for _, channel := range channels {
+		bot.SendCommandf("JOIN #%s", channel)
+	}
+	log.Printf("Channel list set to %v\n", channels)
 
-var log = logger.New(logger.Writer(), "[Advent] ", logger.LstdFlags|logger.Lmsgprefix)
-
-type adventcalendarBase struct {
-	util.InteractionUtil
-	member *discordgo.Member
-	user   *discordgo.User
+	se = streamelements.New(viper.GetString("streamelements.token"))
 }
