@@ -8,6 +8,8 @@ import (
 	"io"
 	logger "log"
 	"net/http"
+	"slices"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -27,7 +29,10 @@ type RawEvent struct {
 	Event interface{} `json:"event"`
 }
 
-var log = logger.New(logger.Writer(), "[WebTwitch] ", logger.LstdFlags|logger.Lmsgprefix)
+var (
+	log          = logger.New(logger.Writer(), "[WebTwitch] ", logger.LstdFlags|logger.Lmsgprefix)
+	lastMessages = make([]string, 10)
+)
 
 // HandlePost is the HTTP/POST handler for the Twitch PubSub endpoint.
 //
@@ -85,7 +90,25 @@ func verifyTwitchMessage(header http.Header, body []byte) bool {
 	hmacHex = append([]byte("sha256="), hmacHex[:n]...)
 
 	signature := []byte(header.Get("Twitch-Eventsub-Message-Signature"))
-	return hmac.Equal(hmacHex, signature)
+	if !hmac.Equal(hmacHex, signature) {
+		return false
+	}
+
+	t, err := time.Parse(time.RFC3339, msgTime)
+	if err != nil {
+		log.Printf("Error parsing timestamp '%s': %v", msgTime, err)
+		return false
+	}
+
+	if time.Until(t) > -10*time.Minute {
+		return false
+	}
+
+	if slices.Contains(lastMessages, msgID) {
+		return false
+	}
+	lastMessages = append(lastMessages[1:], msgID)
+	return true
 }
 
 func handleVerification(w http.ResponseWriter, r *http.Request, rEvent RawEvent) {
