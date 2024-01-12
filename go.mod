@@ -6,7 +6,7 @@ require (
 	github.com/bwmarrin/discordgo v0.27.1
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/gorilla/mux v1.8.0
-	github.com/kesuaheli/twitchgo v0.2.3
+	github.com/kesuaheli/twitchgo v0.2.5
 	github.com/spf13/viper v1.15.0
 )
 
