@@ -111,7 +111,7 @@ func verifyTwitchMessage(header http.Header, body []byte) bool {
 	return true
 }
 
-func handleVerification(w http.ResponseWriter, r *http.Request, rEvent RawEvent) {
+func handleVerification(w http.ResponseWriter, _ *http.Request, rEvent RawEvent) {
 	if rEvent.Challenge == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
