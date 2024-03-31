@@ -91,6 +91,7 @@ func verifyTwitchMessage(header http.Header, body []byte) bool {
 
 	signature := []byte(header.Get("Twitch-Eventsub-Message-Signature"))
 	if !hmac.Equal(hmacHex, signature) {
+		log.Printf("calculated sha does not match, got '%s' want '%s'", hmacHex, signature)
 		return false
 	}
 
@@ -101,10 +102,12 @@ func verifyTwitchMessage(header http.Header, body []byte) bool {
 	}
 
 	if time.Until(t) < -10*time.Minute {
+		log.Printf("message is older than 10 minutes: %v (%s)", time.Until(t), t)
 		return false
 	}
 
 	if slices.Contains(lastMessages, msgID) {
+		log.Printf("message id already verified: id '%s' found in last messages: %v", msgID, lastMessages)
 		return false
 	}
 	lastMessages = append(lastMessages[1:], msgID)
