@@ -66,7 +66,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 		handleVerification(w, r, rEvent)
 		return
 	case "notification":
-		log.Printf("Event notification: %+v", rEvent)
+		go dcHandler(dcSession, &rEvent)
 	default:
 		log.Printf("Unknown message type '%s'", messageType)
 		w.WriteHeader(http.StatusBadRequest)
@@ -100,7 +100,7 @@ func verifyTwitchMessage(header http.Header, body []byte) bool {
 		return false
 	}
 
-	if time.Until(t) > -10*time.Minute {
+	if time.Until(t) < -10*time.Minute {
 		return false
 	}
 
