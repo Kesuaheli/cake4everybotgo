@@ -17,6 +17,8 @@ package event
 import (
 	"cake4everybot/modules/adventcalendar"
 	"cake4everybot/modules/birthday"
+
+	webTwitch "cake4everybot/webserver/twitch"
 	webYT "cake4everybot/webserver/youtube"
 
 	"time"
@@ -37,6 +39,7 @@ func addScheduledTriggers(dc *discordgo.Session, t *twitchgo.Twitch, webChan cha
 	)
 
 	go refreshYoutube(webChan)
+	go refreshTwitch(webChan)
 }
 
 func scheduleFunction(dc *discordgo.Session, t *twitchgo.Twitch, hour, min int, callbacks ...interface{}) {
@@ -69,6 +72,16 @@ func refreshYoutube(webChan chan struct{}) {
 	<-webChan
 	for {
 		webYT.RefreshSubscriptions()
+
+		// loop every 4 days
+		time.Sleep(4 * 24 * time.Hour)
+	}
+}
+
+func refreshTwitch(webChan chan struct{}) {
+	<-webChan
+	for {
+		webTwitch.RefreshSubscriptions()
 
 		// loop every 4 days
 		time.Sleep(4 * 24 * time.Hour)
