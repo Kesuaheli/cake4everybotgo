@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"io"
 	logger "log"
 	"net/http"
@@ -14,8 +15,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-// RawEvent represents the http body comming with a call to the /twitch_pubsub enpoints
-type RawEvent struct {
+// rawEvent represents the http body comming with a call to the /twitch_pubsub enpoints
+type rawEvent struct {
 	// Challenge cointains the string to return when receiving a webhook callback verification.
 	// Otherwise it is an empty string
 	Challenge string `json:"challenge"`
@@ -52,7 +53,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var rEvent RawEvent
+	var rEvent rawEvent
 	err = json.Unmarshal(body, &rEvent)
 	if err != nil {
 		log.Printf("Failed to unmarshal body: %v", err)
@@ -66,7 +67,12 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 		handleVerification(w, r, rEvent)
 		return
 	case "notification":
-		go dcHandler(dcSession, &rEvent)
+		data, _ := json.Marshal(rEvent.Event)
+		if err := handleNotification(data, rEvent.Subscription.Type); err != nil {
+			log.Printf("Error on notification event: %v", err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 	default:
 		log.Printf("Unknown message type '%s'", messageType)
 		w.WriteHeader(http.StatusBadRequest)
@@ -114,7 +120,7 @@ func verifyTwitchMessage(header http.Header, body []byte) bool {
 	return true
 }
 
-func handleVerification(w http.ResponseWriter, _ *http.Request, rEvent RawEvent) {
+func handleVerification(w http.ResponseWriter, _ *http.Request, rEvent rawEvent) {
 	if rEvent.Challenge == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -131,4 +137,33 @@ func handleVerification(w http.ResponseWriter, _ *http.Request, rEvent RawEvent)
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusAccepted)
 	w.Write([]byte(rEvent.Challenge))
+}
+
+func handleNotification(data []byte, notificationType string) error {
+	switch notificationType {
+	case "channel.update":
+		var e ChannelUpdateEvent
+		err := json.Unmarshal(data, &e)
+		if err != nil {
+			return fmt.Errorf("parse channel update: %v", err)
+		}
+		go dcChannelUpdateHandler(dcSession, &e)
+	case "stream.online":
+		var e StreamOnlineEvent
+		err := json.Unmarshal(data, &e)
+		if err != nil {
+			return fmt.Errorf("parse online: %v", err)
+		}
+		go dcStreamOnlineHandler(dcSession, &e)
+	case "stream.offline":
+		var e StreamOfflineEvent
+		err := json.Unmarshal(data, &e)
+		if err != nil {
+			return fmt.Errorf("parse offline: %v", err)
+		}
+		go dcStreamOfflineHandler(dcSession, &e)
+	default:
+		log.Printf("Unhandled notification type '%s': %s", notificationType, data)
+	}
+	return nil
 }

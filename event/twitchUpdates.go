@@ -24,7 +24,9 @@ import (
 
 func addTwitchListeners(s *discordgo.Session) {
 	webTwitch.SetDiscordSession(s)
-	webTwitch.SetDiscordHandler(twitch.Announce)
+	webTwitch.SetDiscordChannelUpdateHandler(twitch.HandleChannelUpdate)
+	webTwitch.SetDiscordStreamOnlineHandler(twitch.HandleStreamOnline)
+	webTwitch.SetDiscordStreamOfflineHandler(twitch.HandleStreamOfflineEvent)
 
 	channels := viper.GetStringSlice("announce.twitch")
 	for _, channelID := range channels {

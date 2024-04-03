@@ -3,7 +3,9 @@ package twitch
 import "github.com/bwmarrin/discordgo"
 
 var dcSession *discordgo.Session
-var dcHandler func(*discordgo.Session, *RawEvent)
+var dcChannelUpdateHandler func(*discordgo.Session, *ChannelUpdateEvent)
+var dcStreamOnlineHandler func(*discordgo.Session, *StreamOnlineEvent)
+var dcStreamOfflineHandler func(*discordgo.Session, *StreamOfflineEvent)
 var subscribtions = make(map[string]bool)
 
 // SetDiscordSession sets the discord.Sesstion to use for calling
@@ -12,10 +14,22 @@ func SetDiscordSession(s *discordgo.Session) {
 	dcSession = s
 }
 
-// SetDiscordHandler sets the function to use when calling event
+// SetDiscordChannelUpdateHandler sets the function to use when calling event
 // handlers.
-func SetDiscordHandler(f func(*discordgo.Session, *RawEvent)) {
-	dcHandler = f
+func SetDiscordChannelUpdateHandler(f func(*discordgo.Session, *ChannelUpdateEvent)) {
+	dcChannelUpdateHandler = f
+}
+
+// SetDiscordStreamOnlineHandler sets the function to use when calling event
+// handlers.
+func SetDiscordStreamOnlineHandler(f func(*discordgo.Session, *StreamOnlineEvent)) {
+	dcStreamOnlineHandler = f
+}
+
+// SetDiscordStreamOfflineHandler sets the function to use when calling event
+// handlers.
+func SetDiscordStreamOfflineHandler(f func(*discordgo.Session, *StreamOfflineEvent)) {
+	dcStreamOfflineHandler = f
 }
 
 // SubscribeChannel subscribe to the event listener for new videos of
