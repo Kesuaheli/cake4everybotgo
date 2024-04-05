@@ -137,6 +137,10 @@ module:
 
     embed_footer: Advent Calendar Giveaway
 
+  twitch:
+    embed_category: Category
+    embed_footer: Twitch notification bell
+
 youtube:
   embed_footer: YouTube notification bell
   msg.new_vid: "%s just uploaded a new video"

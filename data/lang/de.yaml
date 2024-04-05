@@ -137,6 +137,10 @@ module:
 
     embed_footer: Adventskalender Giveaway
 
+  twitch:
+    embed_category: Ketegorie
+    embed_footer: Twitch Glocke
+
 youtube:
   embed_footer: YouTube Glocke
   msg.new_vid: "%s hat ein neues Video hochgeladen"
