@@ -66,6 +66,7 @@ type SubscriptionTransport struct {
 	WebSocketSessionID string `json:"session_id,omitempty"`
 }
 
+// ChannelUpdateEvent represents a "channel.update" event from twitch.
 type ChannelUpdateEvent struct {
 	BroadcasterUserID           string   `json:"broadcaster_user_id"`           // The broadcaster’s user ID.
 	BroadcasterUserLogin        string   `json:"broadcaster_user_login"`        // The broadcaster’s user login.
@@ -77,6 +78,7 @@ type ChannelUpdateEvent struct {
 	ContentClassificationLabels []string `json:"content_classification_labels"` // Array of content classification label IDs currently applied on the Channel. To retrieve a list of all possible IDs, use the Get Content Classification Labels API endpoint.
 }
 
+// StreamOnlineEvent represents a "stream.online" event from twitch.
 type StreamOnlineEvent struct {
 	ID                   string    `json:"id"`                     // The id of the stream.
 	BroadcasterUserID    string    `json:"broadcaster_user_id"`    // The broadcaster’s user id.
@@ -86,13 +88,15 @@ type StreamOnlineEvent struct {
 	StartedAt            time.Time `json:"started_at"`             // The timestamp at which the stream went online at.
 }
 
+// StreamOfflineEvent represents a "stream.offline" event from twitch.
 type StreamOfflineEvent struct {
 	BroadcasterUserID    string `json:"broadcaster_user_id"`    // The broadcaster’s user id.
 	BroadcasterUserLogin string `json:"broadcaster_user_login"` // The broadcaster’s user login.
 	BroadcasterUserName  string `json:"broadcaster_user_name"`  // The broadcaster’s user display name.
 }
 
-func RefreshSubscriptions() {
+// RegisterEventSubscription registers the callback URL for a twitch API event at twitch.
+func RegisterEventSubscription() {
 	reqURL := "https://api.twitch.tv/helix/eventsub/subscriptions"
 	clientID := viper.GetString("twitch.clientID")
 	clientSecret := viper.GetString("twitch.clientSecret")

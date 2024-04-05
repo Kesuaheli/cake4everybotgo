@@ -12,12 +12,11 @@ import (
 
 // Client is the data struct for a auth client
 type Client struct {
-	RequestUrl   string    `json:"request_url"`
+	RequestURL   string    `json:"request_url"`
 	ClientID     string    `json:"client_id"`
 	ClientSecret string    `json:"client_secret"`
 	Scope        string    `json:"scope"`
 	ExpiryDate   time.Time `json:"expiry_date"`
-	token        string    `json:"-"`
 }
 
 // Token is a data struct to hold a token response from the auth server
@@ -27,9 +26,9 @@ type Token struct {
 }
 
 // New creates a new client to generate a token from
-func New(request_url, clientID, secret, scope string) *Client {
+func New(requestURL, clientID, secret, scope string) *Client {
 	c := &Client{
-		RequestUrl:   request_url,
+		RequestURL:   requestURL,
 		ClientID:     clientID,
 		ClientSecret: secret,
 		Scope:        scope,
@@ -49,7 +48,7 @@ func (c *Client) GenerateToken() (string, error) {
 	}
 	body := strings.NewReader(form.Encode())
 
-	req, err := http.NewRequest(http.MethodPost, c.RequestUrl, body)
+	req, err := http.NewRequest(http.MethodPost, c.RequestURL, body)
 	if err != nil {
 		return "", err
 	}
