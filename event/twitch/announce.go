@@ -7,7 +7,6 @@ import (
 	webTwitch "cake4everybot/webserver/twitch"
 	"database/sql"
 	"fmt"
-	"net/http"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -86,39 +85,38 @@ func HandleStreamOffline(s *discordgo.Session, e *webTwitch.StreamOfflineEvent) 
 }
 
 func getAnnouncementMessage(s *discordgo.Session, announcement *database.Announcement) (msg *discordgo.Message, err error) {
-	channel, err := s.Channel(announcement.ChannelID)
+	if announcement.MessageID != "" {
+		return s.ChannelMessage(announcement.ChannelID, announcement.MessageID)
+	}
+
+	msgs, err := s.ChannelMessages(announcement.ChannelID, 1, "", "", "")
 	if err != nil {
-		return nil, fmt.Errorf("get channel '%s': %v", announcement, err)
+		return nil, fmt.Errorf("get last message: %v", err)
 	}
 
-	if channel.LastMessageID == "" {
-		return newAnnouncementMessage(s, channel)
+	if len(msgs) == 0 {
+		return newAnnouncementMessage(s, announcement)
 	}
 
-	msg, err = s.ChannelMessage(channel.ID, channel.LastMessageID)
-	if err != nil {
-		if restErr, ok := err.(*discordgo.RESTError); ok {
-			// if the lastMessageID returns a 404, i.e. it was deleted, create a new one
-			if restErr.Response.StatusCode == http.StatusNotFound {
-				return newAnnouncementMessage(s, channel)
-			}
-		}
-		return nil, err
-	}
-
+	msg = msgs[0]
 	if msg.Author.ID != s.State.User.ID {
-		msg, err = newAnnouncementMessage(s, channel)
+		msg, err = newAnnouncementMessage(s, announcement)
 	}
 
 	return msg, err
 }
 
-func newAnnouncementMessage(s *discordgo.Session, channel *discordgo.Channel) (*discordgo.Message, error) {
+func newAnnouncementMessage(s *discordgo.Session, announcement *database.Announcement) (msg *discordgo.Message, err error) {
 	embed := &discordgo.MessageEmbed{
 		Description: "-",
 	}
 	util.SetEmbedFooter(s, "module.twitch.embed_footer", embed)
-	return s.ChannelMessageSendEmbed(channel.ID, embed)
+
+	msg, err = s.ChannelMessageSendEmbed(announcement.ChannelID, embed)
+	if err != nil {
+		return
+	}
+	return msg, announcement.UpdateAnnouncementMessage(msg.ID)
 }
 
 func updateAnnouncementMessage(s *discordgo.Session, announcement *database.Announcement, updateEmbed func(embed *discordgo.MessageEmbed)) error {

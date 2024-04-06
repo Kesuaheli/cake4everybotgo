@@ -72,3 +72,13 @@ func GetAnnouncement(platform Platform, platformID string) ([]*Announcement, err
 	}
 	return announcements, err
 }
+
+// UpdateAnnouncementMessage updates the message id of a with newID.
+func (a *Announcement) UpdateAnnouncementMessage(newID string) error {
+	_, err := Exec("UPDATE announcements SET message_id=? WHERE guild_id=? AND channel_id=? AND message_id=? AND role_id=? AND platform=? AND platform_id=?",
+		newID,
+		a.GuildID, a.ChannelID, a.MessageID, a.RoleID, a.Platform, a.PlatformID,
+	)
+	a.MessageID = newID
+	return err
+}
