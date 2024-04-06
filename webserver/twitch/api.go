@@ -73,6 +73,8 @@ func HandlePost(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
+	case "revocation":
+		log.Println("requested to revoke")
 	default:
 		log.Printf("Unknown message type '%s'", messageType)
 		w.WriteHeader(http.StatusBadRequest)

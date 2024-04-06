@@ -14,7 +14,7 @@ import (
 
 // HandleChannelUpdate is the event handler for the "channel.update" event from twitch.
 func HandleChannelUpdate(s *discordgo.Session, e *webTwitch.ChannelUpdateEvent) {
-	announcements, err := database.GetAnnouncement("twitch", e.BroadcasterUserID)
+	announcements, err := database.GetAnnouncement(database.AnnouncementPlatformTwitch, e.BroadcasterUserID)
 	if err == sql.ErrNoRows {
 		return
 	} else if err != nil {
@@ -32,7 +32,7 @@ func HandleChannelUpdate(s *discordgo.Session, e *webTwitch.ChannelUpdateEvent) 
 	}
 
 	for _, announcement := range announcements {
-		err = updateAnnouncementMessage(s, announcement.ChannelID, updateEmbed)
+		err = updateAnnouncementMessage(s, announcement, updateEmbed)
 		if err != nil {
 			log.Printf("Error: %v", err)
 		}
@@ -41,7 +41,7 @@ func HandleChannelUpdate(s *discordgo.Session, e *webTwitch.ChannelUpdateEvent) 
 
 // HandleStreamOnline is the event handler for the "stream.online" event from twitch.
 func HandleStreamOnline(s *discordgo.Session, e *webTwitch.StreamOnlineEvent) {
-	announcements, err := database.GetAnnouncement("twitch", e.BroadcasterUserID)
+	announcements, err := database.GetAnnouncement(database.AnnouncementPlatformTwitch, e.BroadcasterUserID)
 	if err == sql.ErrNoRows {
 		return
 	} else if err != nil {
@@ -55,7 +55,7 @@ func HandleStreamOnline(s *discordgo.Session, e *webTwitch.StreamOnlineEvent) {
 	}
 
 	for _, announcement := range announcements {
-		err = updateAnnouncementMessage(s, announcement.ChannelID, updateEmbed)
+		err = updateAnnouncementMessage(s, announcement, updateEmbed)
 		if err != nil {
 			log.Printf("Error: %v", err)
 		}
@@ -64,7 +64,7 @@ func HandleStreamOnline(s *discordgo.Session, e *webTwitch.StreamOnlineEvent) {
 
 // HandleStreamOffline is the event handler for the "stream.offline" event from twitch.
 func HandleStreamOffline(s *discordgo.Session, e *webTwitch.StreamOfflineEvent) {
-	announcements, err := database.GetAnnouncement("twitch", e.BroadcasterUserID)
+	announcements, err := database.GetAnnouncement(database.AnnouncementPlatformTwitch, e.BroadcasterUserID)
 	if err == sql.ErrNoRows {
 		return
 	} else if err != nil {
@@ -78,14 +78,19 @@ func HandleStreamOffline(s *discordgo.Session, e *webTwitch.StreamOfflineEvent) 
 	}
 
 	for _, announcement := range announcements {
-		err = updateAnnouncementMessage(s, announcement.ChannelID, updateEmbed)
+		err = updateAnnouncementMessage(s, announcement, updateEmbed)
 		if err != nil {
 			log.Printf("Error: %v", err)
 		}
 	}
 }
 
-func getAnnouncementMessage(s *discordgo.Session, channel *discordgo.Channel) (msg *discordgo.Message, err error) {
+func getAnnouncementMessage(s *discordgo.Session, announcement *database.Announcement) (msg *discordgo.Message, err error) {
+	channel, err := s.Channel(announcement.ChannelID)
+	if err != nil {
+		return nil, fmt.Errorf("get channel '%s': %v", announcement, err)
+	}
+
 	if channel.LastMessageID == "" {
 		return newAnnouncementMessage(s, channel)
 	}
@@ -116,15 +121,10 @@ func newAnnouncementMessage(s *discordgo.Session, channel *discordgo.Channel) (*
 	return s.ChannelMessageSendEmbed(channel.ID, embed)
 }
 
-func updateAnnouncementMessage(s *discordgo.Session, channelID string, updateEmbed func(embed *discordgo.MessageEmbed)) error {
-	channel, err := s.Channel(channelID)
+func updateAnnouncementMessage(s *discordgo.Session, announcement *database.Announcement, updateEmbed func(embed *discordgo.MessageEmbed)) error {
+	msg, err := getAnnouncementMessage(s, announcement)
 	if err != nil {
-		return fmt.Errorf("get announcement channel '%s': %v", channelID, err)
-	}
-
-	msg, err := getAnnouncementMessage(s, channel)
-	if err != nil {
-		return fmt.Errorf("get announcement in channel '%s': %v", channelID, err)
+		return fmt.Errorf("get announcement in channel '%s': %v", announcement, err)
 	}
 
 	var embed *discordgo.MessageEmbed
@@ -136,9 +136,9 @@ func updateAnnouncementMessage(s *discordgo.Session, channelID string, updateEmb
 
 	updateEmbed(embed)
 
-	_, err = s.ChannelMessageEditEmbed(channelID, msg.ID, embed)
+	_, err = s.ChannelMessageEditEmbed(announcement.ChannelID, msg.ID, embed)
 	if err != nil {
-		return fmt.Errorf("update announcement in channel '%s': %v", channelID, err)
+		return fmt.Errorf("update announcement in channel '%s': %v", announcement, err)
 	}
 	return nil
 }

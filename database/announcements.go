@@ -4,8 +4,50 @@ package database
 //
 // It can be obtained by GetAnnouncement for a given channel on a platform.
 type Announcement struct {
-	ChannelID string
-	Role      string
+	GuildID    string
+	ChannelID  string
+	MessageID  string
+	RoleID     string
+	Platform   Platform
+	PlatformID string
+}
+
+// Platform is the type of platform a Announcement can be made
+type Platform uint16
+
+// Platform types for announcements
+const (
+	AnnouncementPlatformDiscord Platform = iota
+	AnnouncementPlatformTwitch
+	AnnouncementPlatformYoutube
+)
+
+// String implements the fmt.Stringer interface
+func (p Platform) String() string {
+	switch p {
+	case AnnouncementPlatformDiscord:
+		return "Discord"
+	case AnnouncementPlatformTwitch:
+		return "Twitch"
+	case AnnouncementPlatformYoutube:
+		return "YouTube"
+	default:
+		return ""
+	}
+}
+
+// GoString implements the fmt.GoStringer interface
+func (p Platform) GoString() string {
+	switch p {
+	case AnnouncementPlatformDiscord:
+		return "discord"
+	case AnnouncementPlatformTwitch:
+		return "twitch"
+	case AnnouncementPlatformYoutube:
+		return "youtube"
+	default:
+		return ""
+	}
 }
 
 // GetAnnouncement reads all Discord announcement channels from the database for a given channel ID
@@ -14,19 +56,19 @@ type Announcement struct {
 //
 // If no result matches the given platform and channel ID the returned error will be sql.ErrNoRows.
 // Other errors may exist.
-func GetAnnouncement(platform, id string) ([]Announcement, error) {
-	rows, err := Query("SELECT IFNULL(channel, ''),IFNULL(role, '') FROM announcements WHERE type=? AND id=?", platform, id)
+func GetAnnouncement(platform Platform, platformID string) ([]*Announcement, error) {
+	rows, err := Query("guild_id,channel_id,message_id,role_id FROM announcements WHERE platform=? AND platform_id=?", platform, platformID)
 	if err != nil {
-		return []Announcement{}, err
+		return []*Announcement{}, err
 	}
 	defer rows.Close()
-	var announcements []Announcement
+	announcements := make([]*Announcement, 0)
 	for rows.Next() {
-		var channelID, roleID string
-		if err := rows.Scan(&channelID, &roleID); err != nil {
-			return []Announcement{}, err
+		var guildID, channelID, messageID, roleID string
+		if err := rows.Scan(&guildID, &channelID, &messageID, &roleID); err != nil {
+			return []*Announcement{}, err
 		}
-		announcements = append(announcements, Announcement{channelID, roleID})
+		announcements = append(announcements, &Announcement{guildID, channelID, messageID, roleID, platform, platformID})
 	}
 	return announcements, err
 }
