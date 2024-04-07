@@ -57,7 +57,7 @@ func (p Platform) GoString() string {
 // If no result matches the given platform and channel ID the returned error will be sql.ErrNoRows.
 // Other errors may exist.
 func GetAnnouncement(platform Platform, platformID string) ([]*Announcement, error) {
-	rows, err := Query("guild_id,channel_id,message_id,role_id FROM announcements WHERE platform=? AND platform_id=?", platform, platformID)
+	rows, err := Query("SELECT guild_id,channel_id,message_id,role_id FROM announcements WHERE platform=? AND platform_id=?", platform, platformID)
 	if err != nil {
 		return []*Announcement{}, err
 	}

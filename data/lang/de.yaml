@@ -138,8 +138,9 @@ module:
     embed_footer: Adventskalender Giveaway
 
   twitch:
-    embed_category: Ketegorie
+    embed_category: Kategorie
     embed_footer: Twitch Glocke
+    msg.nofification: "%s ist auf Twitch live gegangen!"
 
 youtube:
   embed_footer: YouTube Glocke
