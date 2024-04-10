@@ -23,7 +23,6 @@ import (
 	"cake4everybot/config"
 	"cake4everybot/database"
 	"cake4everybot/event"
-	"cake4everybot/twitch"
 	"cake4everybot/webserver"
 
 	"github.com/bwmarrin/discordgo"
@@ -74,11 +73,11 @@ func main() {
 		log.Printf("Logged in to Discord as %s#%s\n", s.State.User.Username, s.State.User.Discriminator)
 	})
 
-	twitch.Connect()
-	twitchBot := twitchgo.New(viper.GetString("twitch.name"), viper.GetString("twitch.token"))
+	twitchbot := twitchgo.New(viper.GetString("twitch.clientID"), viper.GetString("twitch.clientSecret"))
+	twitchIRC := twitchgo.NewIRC(viper.GetString("twitch.name"), viper.GetString("twitch.token"))
 
 	// adding listeners for events
-	event.AddListeners(discordBot, twitchBot, webChan)
+	event.AddListeners(discordBot, twitchbot, twitchIRC, webChan)
 
 	// open connection and login to Discord and Twitch
 	log.Println("Logging in to Discord")
@@ -89,14 +88,14 @@ func main() {
 	defer discordBot.Close()
 
 	log.Println("Logging in to Twitch")
-	err = twitchBot.Connect()
+	err = twitchIRC.Connect()
 	if err != nil {
 		log.Fatalf("could not open the twitch connection: %v", err)
 	}
-	defer twitchBot.Close()
+	defer twitchIRC.Close()
 
 	// register all events.
-	err = event.PostRegister(discordBot, twitchBot, viper.GetString("discord.guildID"))
+	err = event.PostRegister(discordBot, twitchIRC, viper.GetString("discord.guildID"))
 	if err != nil {
 		log.Printf("Error registering events: %v\n", err)
 	}
