@@ -6,7 +6,7 @@ require (
 	github.com/bwmarrin/discordgo v0.27.1
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/gorilla/mux v1.8.0
-	github.com/kesuaheli/twitchgo v0.2.8-0.20240410222555-96dd5dc3c14f
+	github.com/kesuaheli/twitchgo v0.2.8-0.20240413191324-200d5973ea61
 	github.com/spf13/viper v1.15.0
 )
 
@@ -29,4 +29,3 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-//replace github.com/kesuaheli/twitchgo => ../twitchgo
