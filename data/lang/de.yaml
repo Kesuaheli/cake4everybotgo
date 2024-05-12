@@ -123,6 +123,16 @@ discord.command:
     msg.winner.details: "__Gewinner: %s__\nTickets: %d/24\nGewinnchance: %.2f%%"
     msg.winner.congratulation: "Herzlichen Glückwunsch, %s! :heart:\nFrohe Weihnachten an alle!"
 
+  chess:
+    base: schach
+    base.description: Starte ein Schachspiel
+    display: Schach
+
+    option.opponent: gegner
+    option.opponent.description: Wähle deinen Gegner
+
+    msg.opponent.no_self: Du kannst nicht gegen dich selber spielen! 🙃
+
 module:
   adventcalendar:
     post.message: Noch %d Mal schlafen bis Heilig Abend! Heute öffnet sich das **Türchen %d**.

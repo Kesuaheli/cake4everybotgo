@@ -123,6 +123,16 @@ discord.command:
     msg.winner.details: "__Winner: %s__\nTickets: %d/24\nProbability of winning: %.2f%%"
     msg.winner.congratulation: "Congratulations, %s! :heart:\nMerry XMas everyone!"
 
+  chess:
+    base: chess
+    base.description: Start a game of chess
+    display: Chess
+
+    option.opponent: opponent
+    option.opponent.description: Choose your opponent
+
+    msg.opponent.no_self: You can't play against yourself! 🙃
+
 module:
   adventcalendar:
     post.message: Just sleep %d more times! Its time for **door %d**.

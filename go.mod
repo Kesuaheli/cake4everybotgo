@@ -7,6 +7,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/gorilla/mux v1.8.0
 	github.com/kesuaheli/twitchgo v0.2.7
+	github.com/notnil/chess v1.9.0
 	github.com/spf13/viper v1.15.0
 )
 

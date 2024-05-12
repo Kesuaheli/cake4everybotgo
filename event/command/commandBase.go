@@ -17,6 +17,7 @@ package command
 import (
 	"cake4everybot/modules/adventcalendar"
 	"cake4everybot/modules/birthday"
+	"cake4everybot/modules/chessgame"
 	"cake4everybot/modules/info"
 	"cake4everybot/util"
 	"fmt"
@@ -67,6 +68,7 @@ func Register(s *discordgo.Session, guildID string) error {
 
 	// chat (slash) commands
 	commandsList = append(commandsList, &birthday.Chat{})
+	commandsList = append(commandsList, &chessgame.Chat{})
 	commandsList = append(commandsList, &info.Chat{})
 	commandsList = append(commandsList, &adventcalendar.Chat{})
 	// messsage commands
