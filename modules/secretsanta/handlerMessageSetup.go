@@ -7,32 +7,32 @@ import (
 )
 
 func (cmd MsgCmd) handler() {
-	const emojiName = "👍"
+	joinEmoji := util.GetConfigEmoji("secretsanta")
+	joinEmojiID := joinEmoji.ID
+	if joinEmojiID == "" {
+		joinEmojiID = joinEmoji.Name
+	}
 
 	msg := cmd.data.Resolved.Messages[cmd.data.TargetID]
 	if len(msg.Reactions) == 0 {
-		cmd.ReplyHiddenf(lang.GetDefault(tp+"msg.setup.no_reactions"), emojiName)
+		cmd.ReplyHiddenf(lang.GetDefault(tp+"msg.setup.no_reactions"), joinEmojiID)
 		return
 	}
-	var reaction *discordgo.MessageReactions
+	var hasReaction bool
 	for _, r := range msg.Reactions {
-		if r.Emoji.Name != emojiName {
+		if !util.CompareEmoji(r.Emoji, joinEmoji) {
 			continue
 		}
-		reaction = r
+		hasReaction = true
 		break
 	}
 
-	if reaction == nil {
-		cmd.ReplyHiddenf(lang.GetDefault(tp+"msg.setup.no_reactions"), emojiName)
+	if !hasReaction {
+		cmd.ReplyHiddenf(lang.GetDefault(tp+"msg.setup.no_reactions"), joinEmojiID)
 		return
 	}
 
-	emojiID := reaction.Emoji.ID
-	if emojiID == "" {
-		emojiID = reaction.Emoji.Name
-	}
-	users, err := cmd.Session.MessageReactions(msg.ChannelID, msg.ID, emojiID, 100, "", "")
+	users, err := cmd.Session.MessageReactions(msg.ChannelID, msg.ID, joinEmojiID, 100, "", "")
 	if err != nil {
 		log.Printf("Error on get users: %v\n", err)
 		cmd.ReplyError()
