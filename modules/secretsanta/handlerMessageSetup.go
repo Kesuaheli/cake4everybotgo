@@ -79,6 +79,12 @@ func (cmd MsgCmd) handler() {
 		return
 	}
 
+	components := []discordgo.MessageComponent{
+		discordgo.ActionsRow{Components: []discordgo.MessageComponent{
+			util.CreateButtonComponent("secretsanta.setup.invite", "Invite", discordgo.SuccessButton, nil),
+		}},
+	}
+
 	util.SetEmbedFooter(cmd.Session, tp+"display", e)
-	cmd.ReplyHiddenEmbed(e)
+	cmd.ReplyComponentsHiddenEmbed(components, e)
 }

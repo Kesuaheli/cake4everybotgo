@@ -70,6 +70,18 @@ event:
       #id:
       #animated: true
     secretsanta: vote.yes
+    secretsanta.invite.show_match:
+      name: 🎁
+      #id:
+      #animated: true
+    secretsanta.invite.set_address:
+      name: 🏠
+      #id:
+      #animated: true
+    secretsanta.invite.show_address:
+      name: 🏠
+      #id:
+      #animated: true
 
 webserver:
   favicon: webserver/favicon.png
