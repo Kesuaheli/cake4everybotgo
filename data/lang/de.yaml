@@ -131,6 +131,7 @@ discord.command:
 
     msg.setup.no_reactions: Diese Nachricht hat keine Reaktionen. Nur Leute, die mit %s reagiert haben, werden eingeschlossen.
     msg.setup.not_enough_reactions: Nicht genug Reaktionen um zu starten. Es werden mindestens %d Reaktionen benötigt.
+    msg.setup.users: Teilnehmer
 
 module:
   adventcalendar:

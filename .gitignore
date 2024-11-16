@@ -17,3 +17,8 @@ cake4everybot
 
 # configuration files for tokens, access keys and other connection data
 *env.yaml
+
+# runtime config files (as described in config.yml)
+modules/secretsanta/players.json
+twitch/prizes.json
+twitch/times.json

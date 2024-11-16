@@ -34,6 +34,10 @@ event:
   adventcalendar:
     images: data/images/adventcalendar
 
+  secretsanta:
+    # the filepath for the players
+    players: modules/secretsanta/players.json
+
   twitch_giveaway:
     # The amount of points a single giveaway ticket costs.
     ticket_cost: 1000

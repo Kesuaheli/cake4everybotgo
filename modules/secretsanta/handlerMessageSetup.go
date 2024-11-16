@@ -3,7 +3,9 @@ package secretsanta
 import (
 	"cake4everybot/data/lang"
 	"cake4everybot/util"
+	"fmt"
 
+	"github.com/bwmarrin/discordgo"
 )
 
 func (cmd MsgCmd) handler() {
@@ -43,4 +45,40 @@ func (cmd MsgCmd) handler() {
 		cmd.ReplyHiddenf(lang.GetDefault(tp+"msg.setup.not_enough_reactions"), 2)
 		return
 	}
+
+	e := &discordgo.MessageEmbed{
+		Title: lang.GetDefault(tp + "title"),
+		Color: 0x690042,
+	}
+
+	var (
+		names   string
+		players []*player = make([]*player, 0, len(users))
+	)
+	for _, u := range users {
+		member, err := cmd.Session.GuildMember(cmd.Interaction.GuildID, u.ID)
+		if member == nil {
+			log.Printf("WARN: Could not get member '%s' from guild '%s': %v", u.ID, cmd.Interaction.GuildID, err)
+			continue
+		}
+		players = append(players, &player{Member: member})
+		names += fmt.Sprintf("%s\n", member.Mention())
+	}
+	if len(players) < 2 {
+		cmd.ReplyHiddenf(lang.GetDefault(tp+"msg.setup.not_enough_reactions"), 2)
+		return
+	}
+	util.AddEmbedField(e, lang.GetDefault(tp+"msg.setup.users"), names, false)
+
+	players = derangementMatch(players)
+
+	err = cmd.setPlayers(players)
+	if err != nil {
+		log.Printf("Error on set players: %v\n", err)
+		cmd.ReplyError()
+		return
+	}
+
+	util.SetEmbedFooter(cmd.Session, tp+"display", e)
+	cmd.ReplyHiddenEmbed(e)
 }

@@ -131,6 +131,7 @@ discord.command:
 
     msg.setup.no_reactions: This message doesn't have any vote reactions. Only members who reated with %s are included.
     msg.setup.not_enough_reactions: Not enough votes to start a game. At least %d votes are required.
+    msg.setup.users: Members
 
 module:
   adventcalendar:
