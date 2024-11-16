@@ -123,6 +123,15 @@ discord.command:
     msg.winner.details: "__Gewinner: %s__\nTickets: %d/24\nGewinnchance: %.2f%%"
     msg.winner.congratulation: "Herzlichen Glückwunsch, %s! :heart:\nFrohe Weihnachten an alle!"
 
+  secretsanta:
+    base: wichteln
+    display: Wichteln
+
+    title: Wichteln
+
+    msg.setup.no_reactions: Diese Nachricht hat keine Reaktionen. Nur Leute, die mit %s reagiert haben, werden eingeschlossen.
+    msg.setup.not_enough_reactions: Nicht genug Reaktionen um zu starten. Es werden mindestens %d Reaktionen benötigt.
+
 module:
   adventcalendar:
     post.message: Noch %d Mal schlafen bis Heilig Abend! Heute öffnet sich das **Türchen %d**.

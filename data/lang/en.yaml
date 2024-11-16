@@ -123,6 +123,15 @@ discord.command:
     msg.winner.details: "__Winner: %s__\nTickets: %d/24\nProbability of winning: %.2f%%"
     msg.winner.congratulation: "Congratulations, %s! :heart:\nMerry XMas everyone!"
 
+  secretsanta:
+    setup: Secret Santa
+    display: Secret Santa
+
+    title: Secret Santa
+
+    msg.setup.no_reactions: This message doesn't have any vote reactions. Only members who reated with %s are included.
+    msg.setup.not_enough_reactions: Not enough votes to start a game. At least %d votes are required.
+
 module:
   adventcalendar:
     post.message: Just sleep %d more times! Its time for **door %d**.
