@@ -53,7 +53,7 @@ func (cmd MsgCmd) handler() {
 
 	var (
 		names   string
-		players []*player = make([]*player, 0, len(users))
+		players = map[string]*player{}
 	)
 	for _, u := range users {
 		member, err := cmd.Session.GuildMember(cmd.Interaction.GuildID, u.ID)
@@ -61,7 +61,7 @@ func (cmd MsgCmd) handler() {
 			log.Printf("WARN: Could not get member '%s' from guild '%s': %v", u.ID, cmd.Interaction.GuildID, err)
 			continue
 		}
-		players = append(players, &player{Member: member})
+		players[u.ID] = &player{Member: member}
 		names += fmt.Sprintf("%s\n", member.Mention())
 	}
 	if len(players) < 2 {

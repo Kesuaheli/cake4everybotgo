@@ -31,10 +31,10 @@ func (c Component) Handle(s *discordgo.Session, i *discordgo.InteractionCreate) 
 
 	switch util.ShiftL(ids) {
 	case "setup":
-		c.handleSetup(s, ids)
+		c.handleSetup(ids)
 		return
 	case "invite":
-		c.handleInvite(s, ids)
+		c.handleInvite(ids)
 	default:
 		log.Printf("Unknown component interaction ID: %s", c.data.CustomID)
 	}

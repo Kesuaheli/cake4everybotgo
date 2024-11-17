@@ -8,17 +8,17 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func (c Component) handleSetup(s *discordgo.Session, ids []string) {
+func (c Component) handleSetup(ids []string) {
 	switch util.ShiftL(ids) {
 	case "invite":
-		c.handleSetupInvite(s)
+		c.handleSetupInvite()
 		return
 	default:
 		log.Printf("Unknown component interaction ID: %s", c.data.CustomID)
 	}
 }
 
-func (c Component) handleSetupInvite(s *discordgo.Session) {
+func (c Component) handleSetupInvite() {
 	players, err := c.getPlayers()
 	if err != nil {
 		log.Printf("ERROR: could not get players: %+v", err)
@@ -59,14 +59,14 @@ func (c Component) handleSetupInvite(s *discordgo.Session) {
 	var errCount int
 	for _, player := range players {
 		var DMChannel *discordgo.Channel
-		DMChannel, err = s.UserChannelCreate(player.User.ID)
+		DMChannel, err = c.Session.UserChannelCreate(player.User.ID)
 		if err != nil {
 			log.Printf("ERROR: could not create DM channel for user %s: %+v", player.User.ID, err)
 			errCount++
 			continue
 		}
 
-		_, err = s.ChannelMessageSendComplex(DMChannel.ID, inviteMessage)
+		_, err = c.Session.ChannelMessageSendComplex(DMChannel.ID, inviteMessage)
 		if err != nil {
 			log.Printf("ERROR: could not send invite: %+v", err)
 			errCount++
