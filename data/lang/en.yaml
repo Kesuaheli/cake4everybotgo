@@ -137,9 +137,16 @@ discord.command:
     msg.setup.success: Invites sent!
 
     msg.invite.title: Invite for secret santa.
-    msg.invite.button.show_match: Show match
+    msg.invite.description: You are participating in Cake4Everyone Secret Santa. Click the buttons below to see your partner and set your address.
+    msg.invite.set_address.match: Your partner has set an address
+    msg.invite.set_address: Your address is set
+    msg.invite.button.show_match: Show partner
     msg.invite.button.set_address: Set your address
     msg.invite.button.show_address: Show your partners address
+
+    msg.invite.modal.set_address.title: Set your address
+    msg.invite.modal.set_address.label: Your address will be shown your secret santa
+    msg.invite.modal.set_address.placeholder: "Mr. John Doe\n123 Main Street\nAnytown, USA 12345"
 
 module:
   adventcalendar:

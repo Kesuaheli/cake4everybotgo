@@ -137,9 +137,16 @@ discord.command:
     msg.setup.success: Einladungen wurden verschickt!
 
     msg.invite.title: Einladung zum Wichteln.
+    msg.invite.description: Du nimmst am Cake4Everyone Wichteln teil. Klicke die Knöpfe unten, um deinen Partner zu sehen und deine Adresse einzutragen.
+    msg.invite.set_address.match: Dein Partner hat eine Adresse eingetragen
+    msg.invite.set_address: Deine Adresse wurde eingetragen
     msg.invite.button.show_match: Partner anzeigen
     msg.invite.button.set_address: Deine Adresse eintragen
     msg.invite.button.show_address: Adresse deines Partners anzeigen
+
+    msg.invite.modal.set_address.title: Deine Adresse eintragen
+    msg.invite.modal.set_address.label: Deine Adresse wird deinem Wichtel angezeigt
+    msg.invite.modal.set_address.placeholder: "Max Mustermann\nMusterstraße 1\n12345 Musterstadt"
 
 module:
   adventcalendar:
