@@ -10,7 +10,8 @@ import (
 // The Component of the secret santa package.
 type Component struct {
 	secretSantaBase
-	data discordgo.MessageComponentInteractionData
+	data  discordgo.MessageComponentInteractionData
+	modal discordgo.ModalSubmitInteractionData
 }
 
 // Handle handles the functionality of a component.
@@ -35,10 +36,34 @@ func (c Component) Handle(s *discordgo.Session, i *discordgo.InteractionCreate) 
 		return
 	case "invite":
 		c.handleInvite(ids)
+		return
 	default:
 		log.Printf("Unknown component interaction ID: %s", c.data.CustomID)
 	}
 
+}
+
+// HandleModal handles the functionality of a modal.
+func (c Component) HandleModal(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	c.InteractionUtil = util.InteractionUtil{Session: s, Interaction: i}
+	c.member = i.Member
+	c.user = i.User
+	if i.Member != nil {
+		c.user = i.Member.User
+	} else if i.User != nil {
+		c.member = &discordgo.Member{User: i.User}
+	}
+	//lint:ignore SA4005 assignment to c.modal is intentional
+	c.modal = i.ModalSubmitData()
+
+	ids := strings.Split(c.modal.CustomID, ".")
+	// pop the first level identifier
+	util.ShiftL(ids)
+
+	switch util.ShiftL(ids) {
+	default:
+		log.Printf("Unknown modal submit ID: %s", c.modal.CustomID)
+	}
 }
 
 // ID returns the custom ID of the modal to identify the module

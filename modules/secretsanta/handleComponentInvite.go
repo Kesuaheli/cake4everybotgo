@@ -75,7 +75,7 @@ func (c Component) handleInviteSetAddress(ids []string) {
 		return
 	}
 
-	c.ReplyModal("secretsanta.invite.set_address_modal."+c.Interaction.GuildID, lang.GetDefault(tp+"msg.invite.modal.set_address.title"), discordgo.ActionsRow{Components: []discordgo.MessageComponent{
+	c.ReplyModal("secretsanta.set_address."+c.Interaction.GuildID, lang.GetDefault(tp+"msg.invite.modal.set_address.title"), discordgo.ActionsRow{Components: []discordgo.MessageComponent{
 		discordgo.TextInput{
 			CustomID:    "address",
 			Label:       lang.GetDefault(tp + "msg.invite.modal.set_address.label"),
