@@ -53,7 +53,6 @@ func (c Component) HandleModal(s *discordgo.Session, i *discordgo.InteractionCre
 	} else if i.User != nil {
 		c.member = &discordgo.Member{User: i.User}
 	}
-	//lint:ignore SA4005 assignment to c.modal is intentional
 	c.modal = i.ModalSubmitData()
 
 	ids := strings.Split(c.modal.CustomID, ".")
@@ -61,6 +60,9 @@ func (c Component) HandleModal(s *discordgo.Session, i *discordgo.InteractionCre
 	util.ShiftL(ids)
 
 	switch util.ShiftL(ids) {
+	case "set_address":
+		c.handleModalSetAddress(ids)
+		return
 	default:
 		log.Printf("Unknown modal submit ID: %s", c.modal.CustomID)
 	}

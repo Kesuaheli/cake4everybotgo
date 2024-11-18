@@ -140,6 +140,8 @@ discord.command:
     msg.invite.description: Du nimmst am Cake4Everyone Wichteln teil. Klicke die Knöpfe unten, um deinen Partner zu sehen und deine Adresse einzutragen.
     msg.invite.set_address.match: Dein Partner hat eine Adresse eingetragen
     msg.invite.set_address: Deine Adresse wurde eingetragen
+    msg.invite.set_address.changed: Deine Adresse wurde aktualisiert auf
+    msg.invite.set_address.not_changed: Deine Adresse wurde nicht aktualisiert, weil es die gleiche ist wie vorher.
     msg.invite.button.show_match: Partner anzeigen
     msg.invite.button.set_address: Deine Adresse eintragen
     msg.invite.button.show_address: Adresse deines Partners anzeigen
