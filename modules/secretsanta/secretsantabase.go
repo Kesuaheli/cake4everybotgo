@@ -110,6 +110,7 @@ var allPlayers AllPlayers
 func (allPlayers AllPlayers) MarshalJSON() ([]byte, error) {
 	m := make(AllPlayersUnresolved)
 	for guildID, players := range allPlayers {
+		m[guildID] = make(map[string]*playerUnresolved)
 		for userID, player := range players {
 			m[guildID][userID] = &playerUnresolved{
 				MatchID: player.Match.User.ID,
