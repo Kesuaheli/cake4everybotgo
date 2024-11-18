@@ -46,12 +46,6 @@ func (c Component) handleSetupInvite() {
 					discordgo.SecondaryButton,
 					util.GetConfigComponentEmoji("secretsanta.invite.set_address"),
 				),
-				util.CreateButtonComponent(
-					fmt.Sprintf("secretsanta.invite.show_address.%s", c.Interaction.GuildID),
-					lang.GetDefault(tp+"msg.invite.button.show_address"),
-					discordgo.SecondaryButton,
-					util.GetConfigComponentEmoji("secretsanta.invite.show_address"),
-				),
 			}},
 		},
 	}

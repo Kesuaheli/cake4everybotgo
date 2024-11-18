@@ -78,10 +78,6 @@ event:
       name: 🏠
       #id:
       #animated: true
-    secretsanta.invite.show_address:
-      name: 🏠
-      #id:
-      #animated: true
 
 webserver:
   favicon: webserver/favicon.png

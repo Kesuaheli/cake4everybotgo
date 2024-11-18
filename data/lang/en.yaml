@@ -139,12 +139,15 @@ discord.command:
     msg.invite.title: Invite for secret santa.
     msg.invite.description: You are participating in Cake4Everyone Secret Santa. Click the buttons below to see your partner and set your address.
     msg.invite.set_address.match: Your partner has set an address
+    msg.invite.button.show_match: Show partner
+    msg.invite.show_match.title: Your partner is %s
+    msg.invite.show_match.description: Please prepare and send them a secret gift according to our agreed rules.
+    msg.invite.show_match.address: Address
+    msg.invite.show_match.address_not_set: Your partner has not set an address yet
     msg.invite.set_address: Your address is set
+    msg.invite.button.set_address: Set your address
     msg.invite.set_address.changed: Your address was updated to
     msg.invite.set_address.not_changed: Your address was not updated, because it is the same as before.
-    msg.invite.button.show_match: Show partner
-    msg.invite.button.set_address: Set your address
-    msg.invite.button.show_address: Show your partners address
 
     msg.invite.modal.set_address.title: Set your address
     msg.invite.modal.set_address.label: Your address will be shown your secret santa
