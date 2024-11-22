@@ -70,8 +70,6 @@ func (cmd MsgCmd) handler() {
 	}
 	util.AddEmbedField(e, lang.GetDefault(tp+"msg.setup.users"), names, false)
 
-	players = derangementMatch(players)
-
 	err = cmd.setPlayers(players)
 	if err != nil {
 		log.Printf("Error on set players: %v\n", err)

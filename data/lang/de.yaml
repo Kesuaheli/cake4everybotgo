@@ -148,6 +148,8 @@ discord.command:
     msg.invite.button.set_address: Deine Adresse eintragen
     msg.invite.set_address.changed: Deine Adresse wurde aktualisiert auf
     msg.invite.set_address.not_changed: Deine Adresse wurde nicht aktualisiert, weil es die gleiche ist wie vorher.
+    msg.invite.set_address.match_updated: Dein Partner hat gerade seine/ihre Adresse aktualisiert. Das ist nur um dich zu informieren - Boop Boop 🤖
+    msg.invite.button.delete: Schließen
 
     msg.invite.modal.set_address.title: Deine Adresse eintragen
     msg.invite.modal.set_address.label: Deine Adresse wird deinem Wichtel angezeigt

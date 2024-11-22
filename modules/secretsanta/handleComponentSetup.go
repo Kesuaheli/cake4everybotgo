@@ -26,12 +26,10 @@ func (c Component) handleSetupInvite() {
 		return
 	}
 	c.ReplyDeferedHidden()
+	players = derangementMatch(players)
 
 	inviteMessage := &discordgo.MessageSend{
-		Embeds: []*discordgo.MessageEmbed{{
-			Title:  lang.GetDefault(tp + "msg.invite.title"),
-			Fields: []*discordgo.MessageEmbedField{},
-		}},
+		Embeds: make([]*discordgo.MessageEmbed, 1),
 		Components: []discordgo.MessageComponent{
 			discordgo.ActionsRow{Components: []discordgo.MessageComponent{
 				util.CreateButtonComponent(
@@ -50,27 +48,37 @@ func (c Component) handleSetupInvite() {
 		},
 	}
 
-	var errCount int
+	var failedToSend string
 	for _, player := range players {
 		var DMChannel *discordgo.Channel
 		DMChannel, err = c.Session.UserChannelCreate(player.User.ID)
 		if err != nil {
 			log.Printf("ERROR: could not create DM channel for user %s: %+v", player.User.ID, err)
-			errCount++
+			failedToSend += "\n- " + player.Mention()
 			continue
 		}
 
-		_, err = c.Session.ChannelMessageSendComplex(DMChannel.ID, inviteMessage)
+		inviteMessage.Embeds[0] = player.InviteEmbed(c.Session)
+		var msg *discordgo.Message
+		msg, err = c.Session.ChannelMessageSendComplex(DMChannel.ID, inviteMessage)
 		if err != nil {
 			log.Printf("ERROR: could not send invite: %+v", err)
-			errCount++
+			failedToSend += "\n- " + player.Mention()
 			continue
 		}
+		player.MessageID = msg.ID
 		log.Printf("Sent invite to user %s in channel %s", player.User.ID, DMChannel.ID)
 	}
 
-	if errCount > 0 {
-		c.ReplyHiddenf("Failed to send %d invites!", errCount)
+	if failedToSend != "" {
+		c.ReplyHiddenf("Failed to send invites to:%s", failedToSend)
+		return
+	}
+
+	err = c.setPlayers(players)
+	if err != nil {
+		log.Printf("ERROR: could not save players to file: %+v", err)
+		c.ReplyError()
 		return
 	}
 

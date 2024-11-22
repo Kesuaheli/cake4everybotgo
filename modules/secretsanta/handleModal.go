@@ -42,6 +42,44 @@ func (c Component) handleModalSetAddress(ids []string) {
 		return
 	}
 
+	_, err = c.Session.ChannelMessageEditEmbed(c.Interaction.ChannelID, player.MessageID, player.InviteEmbed(c.Session))
+	if err != nil {
+		log.Printf("ERROR: could not update bot message for %s '%s/%s': %+v", player.DisplayName(), c.Interaction.ChannelID, player.MessageID, err)
+		c.ReplyError()
+		return
+	}
+
+	santaPlayer := c.getSantaForPlayer(player.User.ID)
+	santaChannel, err := c.Session.UserChannelCreate(santaPlayer.User.ID)
+	if err != nil {
+		log.Printf("ERROR: could not get user channel for %s: %+v", santaPlayer.DisplayName(), err)
+		c.ReplyError()
+		return
+	}
+	_, err = c.Session.ChannelMessageEditEmbed(santaChannel.ID, santaPlayer.MessageID, santaPlayer.InviteEmbed(c.Session))
+	if err != nil {
+		log.Printf("ERROR: could not update bot message for %s '%s/%s': %+v", santaPlayer.DisplayName(), santaChannel.ID, santaPlayer.MessageID, err)
+		c.ReplyError()
+		return
+	}
+	_, err = c.Session.ChannelMessageSendComplex(santaChannel.ID, &discordgo.MessageSend{
+		Content:   lang.GetDefault(tp + "msg.invite.set_address.match_updated"),
+		Reference: &discordgo.MessageReference{MessageID: santaPlayer.MessageID},
+		Components: []discordgo.MessageComponent{discordgo.ActionsRow{Components: []discordgo.MessageComponent{
+			util.CreateButtonComponent(
+				"secretsanta.invite.delete",
+				lang.GetDefault(tp+"msg.invite.button.delete"),
+				discordgo.DangerButton,
+				util.GetConfigComponentEmoji("secretsanta.invite.delete"),
+			),
+		}}},
+	})
+	if err != nil {
+		log.Printf("ERROR: could not send address update message for %s '%s/%s': %+v", santaPlayer.DisplayName(), santaChannel.ID, santaPlayer.MessageID, err)
+		c.ReplyError()
+		return
+	}
+
 	e := &discordgo.MessageEmbed{
 		Color: 0x00FF00,
 		Fields: []*discordgo.MessageEmbedField{{

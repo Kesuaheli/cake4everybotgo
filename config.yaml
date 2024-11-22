@@ -78,6 +78,10 @@ event:
       name: 🏠
       #id:
       #animated: true
+    secretsanta.invite.delete:
+      name: 🗑️
+      #id:
+      #animated: true
 
 webserver:
   favicon: webserver/favicon.png

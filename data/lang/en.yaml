@@ -148,6 +148,8 @@ discord.command:
     msg.invite.button.set_address: Set your address
     msg.invite.set_address.changed: Your address was updated to
     msg.invite.set_address.not_changed: Your address was not updated, because it is the same as before.
+    msg.invite.set_address.match_updated: Your partner just updated their address. This is just to inform you - Beep Boop 🤖
+    msg.invite.button.delete: Close
 
     msg.invite.modal.set_address.title: Set your address
     msg.invite.modal.set_address.label: Your address will be shown your secret santa

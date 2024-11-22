@@ -16,6 +16,13 @@ func (c Component) handleInvite(ids []string) {
 	case "set_address":
 		c.handleInviteSetAddress(ids)
 		return
+	case "delete":
+		err := c.Session.ChannelMessageDelete(c.Interaction.ChannelID, c.Interaction.Message.ID)
+		if err != nil {
+			log.Printf("ERROR: could not delete message %s/%s: %+v", c.Interaction.ChannelID, c.Interaction.Message.ID, err)
+			c.ReplyError()
+		}
+		return
 	default:
 		log.Printf("Unknown component interaction ID: %s", c.data.CustomID)
 	}
@@ -49,7 +56,6 @@ func (c Component) handleInviteShowMatch(ids []string) {
 		Value: fmt.Sprintf("```\n%s\n```", player.Match.Address),
 	})
 	if player.Match.Address == "" {
-		log.Printf("%s has no address set: %+v", player.Match.Member.DisplayName(), player.Match)
 		e.Fields[0].Value = lang.GetDefault(tp + "msg.invite.show_match.address_not_set")
 	}
 

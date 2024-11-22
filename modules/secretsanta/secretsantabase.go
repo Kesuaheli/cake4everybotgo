@@ -1,6 +1,7 @@
 package secretsanta
 
 import (
+	"cake4everybot/data/lang"
 	"cake4everybot/util"
 	"encoding/json"
 	"fmt"
@@ -66,6 +67,19 @@ func (ssb secretSantaBase) getPlayers() (map[string]*player, error) {
 	return allPlayers[ssb.Interaction.GuildID], nil
 }
 
+// getSantaForPlayer returns the santa player of the given player for the current guild i.e. the
+// player whose match is the given player.
+//
+// It panics if the player doesn't exist.
+func (ssb secretSantaBase) getSantaForPlayer(playerID string) *player {
+	for _, player := range allPlayers[ssb.Interaction.GuildID] {
+		if player.Match.User.ID == playerID {
+			return player
+		}
+	}
+	panic(fmt.Sprintf("tried to get santa for player that doesn't exist: '%s' in guild '%s'", playerID, ssb.Interaction.GuildID))
+}
+
 // setPlayers sets the players for the current guild.
 func (ssb secretSantaBase) setPlayers(players map[string]*player) (err error) {
 	if _, err = ssb.getPlayers(); err != nil {
@@ -92,11 +106,44 @@ type player struct {
 	Match *player
 	// Address is the address of the player
 	Address string
+	// MessageID is the message the bot sent to the player
+	MessageID string
+}
+
+// InviteEmbed returns an embed for the player to be sent by the bot.
+func (player *player) InviteEmbed(s *discordgo.Session) (e *discordgo.MessageEmbed) {
+	var matchValue, addressValue = "❌", "❌"
+	if player != nil && player.Match.Address != "" {
+		matchValue = "✅"
+	}
+	if player != nil && player.Address != "" {
+		addressValue = "✅"
+	}
+
+	e = &discordgo.MessageEmbed{
+		Title:       lang.GetDefault(tp + "msg.invite.title"),
+		Description: lang.GetDefault(tp + "msg.invite.description"),
+		Fields: []*discordgo.MessageEmbedField{
+			{
+				Name:   lang.GetDefault(tp + "msg.invite.set_address.match"),
+				Value:  matchValue,
+				Inline: true,
+			},
+			{
+				Name:   lang.GetDefault(tp + "msg.invite.set_address"),
+				Value:  addressValue,
+				Inline: true,
+			},
+		},
+	}
+	util.SetEmbedFooter(s, tp+"display", e)
+	return e
 }
 
 type playerUnresolved struct {
-	MatchID string `json:"match"`
-	Address string `json:"address"`
+	MatchID   string `json:"match"`
+	Address   string `json:"address"`
+	MessageID string `json:"message"`
 }
 
 // AllPlayers is a map from guild ID to a list of players
@@ -112,9 +159,14 @@ func (allPlayers AllPlayers) MarshalJSON() ([]byte, error) {
 	for guildID, players := range allPlayers {
 		m[guildID] = make(map[string]*playerUnresolved)
 		for userID, player := range players {
+			var matchID string
+			if player.Match != nil {
+				matchID = player.Match.User.ID
+			}
 			m[guildID][userID] = &playerUnresolved{
-				MatchID: player.Match.User.ID,
-				Address: player.Address,
+				MatchID:   matchID,
+				Address:   player.Address,
+				MessageID: player.MessageID,
 			}
 		}
 	}
@@ -136,9 +188,10 @@ func (allPlayersUnresolved AllPlayersUnresolved) Resolve(s *discordgo.Session) (
 				return fmt.Errorf("failed to get guild member %s/%s: %v", guildID, userID, err)
 			}
 			allPlayers[guildID][userID] = &player{
-				Member:  member,
-				Match:   allPlayers[guildID][up.MatchID],
-				Address: up.Address,
+				Member:    member,
+				Match:     allPlayers[guildID][up.MatchID],
+				Address:   up.Address,
+				MessageID: up.MessageID,
 			}
 		}
 		for userID, rp := range allPlayers[guildID] {
