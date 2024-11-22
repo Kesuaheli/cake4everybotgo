@@ -20,8 +20,8 @@ type MsgCmd struct {
 func (cmd *MsgCmd) AppCmd() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Type:              discordgo.MessageApplicationCommand,
-		Name:              lang.GetDefault(tp + "setup"),
-		NameLocalizations: util.TranslateLocalization(tp + "setup"),
+		Name:              lang.GetDefault(tp + "base"),
+		NameLocalizations: util.TranslateLocalization(tp + "base"),
 	}
 }
 

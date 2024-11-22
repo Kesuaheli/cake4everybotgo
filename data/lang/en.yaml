@@ -124,7 +124,7 @@ discord.command:
     msg.winner.congratulation: "Congratulations, %s! :heart:\nMerry XMas everyone!"
 
   secretsanta:
-    setup: Secret Santa
+    base: Secret Santa
     display: Secret Santa
 
     title: Secret Santa

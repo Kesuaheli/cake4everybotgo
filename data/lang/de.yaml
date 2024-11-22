@@ -124,7 +124,7 @@ discord.command:
     msg.winner.congratulation: "Herzlichen Glückwunsch, %s! :heart:\nFrohe Weihnachten an alle!"
 
   secretsanta:
-    base: wichteln
+    base: Wichteln
     display: Wichteln
 
     title: Wichteln
