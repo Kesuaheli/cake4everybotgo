@@ -26,7 +26,12 @@ func (c Component) handleSetupInvite() {
 		return
 	}
 	c.ReplyDeferedHidden()
-	players = derangementMatch(players)
+	players, err = derangementMatch(players)
+	if err != nil {
+		log.Printf("ERROR: could not match players: %+v", err)
+		c.ReplySimpleEmbed(0xFF0000, lang.GetDefault(tp+"msg.setup.match_error"))
+		return
+	}
 
 	inviteMessage := &discordgo.MessageSend{
 		Embeds: make([]*discordgo.MessageEmbed, 1),
@@ -67,11 +72,10 @@ func (c Component) handleSetupInvite() {
 			continue
 		}
 		player.MessageID = msg.ID
-		log.Printf("Sent invite to user %s in channel %s", player.User.ID, DMChannel.ID)
 	}
 
 	if failedToSend != "" {
-		c.ReplyHiddenf("Failed to send invites to:%s", failedToSend)
+		c.ReplyHiddenSimpleEmbedf(0xFF0000, lang.GetDefault(tp+"msg.setup.invite.error"), failedToSend)
 		return
 	}
 
@@ -82,5 +86,5 @@ func (c Component) handleSetupInvite() {
 		return
 	}
 
-	c.ReplyHidden(lang.GetDefault(tp + "msg.setup.success"))
+	c.ReplyHiddenSimpleEmbed(0x690042, lang.GetDefault(tp+"msg.setup.success"))
 }

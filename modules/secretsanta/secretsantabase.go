@@ -123,6 +123,7 @@ func (player *player) InviteEmbed(s *discordgo.Session) (e *discordgo.MessageEmb
 	e = &discordgo.MessageEmbed{
 		Title:       lang.GetDefault(tp + "msg.invite.title"),
 		Description: lang.GetDefault(tp + "msg.invite.description"),
+		Color:       0x690042,
 		Fields: []*discordgo.MessageEmbedField{
 			{
 				Name:   lang.GetDefault(tp + "msg.invite.set_address.match"),
@@ -205,7 +206,7 @@ func (allPlayersUnresolved AllPlayersUnresolved) Resolve(s *discordgo.Session) (
 }
 
 // derangementMatch matches the players in a way that no one gets matched to themselves.
-func derangementMatch(players map[string]*player) map[string]*player {
+func derangementMatch(players map[string]*player) (map[string]*player, error) {
 	n := len(players)
 	playersSlice := make([]*player, 0, n)
 	for _, p := range players {
@@ -218,5 +219,29 @@ func derangementMatch(players map[string]*player) map[string]*player {
 		playersSlice[i].Match, playersSlice[j].Match = playersSlice[j].Match, playersSlice[i].Match
 	}
 
-	return players
+	blacklistPath := viper.GetString("event.secretsanta.blacklist")
+	blacklistData, err := os.ReadFile(blacklistPath)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return nil, fmt.Errorf("read blacklist file: %w", err)
+		}
+		err = os.WriteFile(blacklistPath, []byte("{}"), 0644)
+		if err != nil {
+			return nil, fmt.Errorf("write blacklist file: %w", err)
+		}
+		return players, nil
+	}
+
+	blacklist := make(map[string][]string)
+	err = json.Unmarshal(blacklistData, &blacklist)
+	if err != nil {
+		return nil, fmt.Errorf("parse blacklist file: %w", err)
+	}
+	for id, blacklisted := range blacklist {
+		if player, ok := players[id]; ok && util.ContainsString(blacklisted, player.Match.User.ID) {
+			return nil, fmt.Errorf("%s has a blacklisted match", player.DisplayName())
+		}
+	}
+
+	return players, nil
 }

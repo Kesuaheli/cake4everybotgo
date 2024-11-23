@@ -132,7 +132,9 @@ discord.command:
     msg.setup.no_reactions: Diese Nachricht hat keine Reaktionen. Nur Leute, die mit %s reagiert haben, werden eingeschlossen.
     msg.setup.not_enough_reactions: Nicht genug Reaktionen um zu starten. Es werden mindestens %d Reaktionen benötigt.
     msg.setup.users: Teilnehmer
+    msg.setup.match_error: Fehler beim Auslosen
     msg.setup.invite: Einladen
+    msg.setup.invite.error: "Einladung(en) konnte(n) nicht verschickt werden an:%s"
     msg.setup.error: "%d Einladungen konnten nicht verschickt werden."
     msg.setup.success: Einladungen wurden verschickt!
 
