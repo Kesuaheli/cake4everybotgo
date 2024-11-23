@@ -205,8 +205,32 @@ func (allPlayersUnresolved AllPlayersUnresolved) Resolve(s *discordgo.Session) (
 	return nil
 }
 
+var blacklist map[string][]string
+
+// loadBlacklist loads the blacklist from the configured file path.
+func loadBlacklist() (err error) {
+	blacklistPath := viper.GetString("event.secretsanta.blacklist")
+	blacklistData, err := os.ReadFile(blacklistPath)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return fmt.Errorf("read blacklist file: %w", err)
+		}
+		if err = os.WriteFile(blacklistPath, []byte("{}"), 0644); err != nil {
+			return fmt.Errorf("write blacklist file: %w", err)
+		}
+		return nil
+	}
+
+	blacklist = make(map[string][]string)
+	if err = json.Unmarshal(blacklistData, &blacklist); err != nil {
+		return fmt.Errorf("unmarshal blacklist file: %w", err)
+	}
+	return nil
+}
+
 // derangementMatch matches the players in a way that no one gets matched to themselves.
 func derangementMatch(players map[string]*player) (map[string]*player, error) {
+	loadBlacklist()
 	n := len(players)
 	playersSlice := make([]*player, 0, n)
 	for _, p := range players {
@@ -219,27 +243,9 @@ func derangementMatch(players map[string]*player) (map[string]*player, error) {
 		playersSlice[i].Match, playersSlice[j].Match = playersSlice[j].Match, playersSlice[i].Match
 	}
 
-	blacklistPath := viper.GetString("event.secretsanta.blacklist")
-	blacklistData, err := os.ReadFile(blacklistPath)
-	if err != nil {
-		if !os.IsNotExist(err) {
-			return nil, fmt.Errorf("read blacklist file: %w", err)
-		}
-		err = os.WriteFile(blacklistPath, []byte("{}"), 0644)
-		if err != nil {
-			return nil, fmt.Errorf("write blacklist file: %w", err)
-		}
-		return players, nil
-	}
-
-	blacklist := make(map[string][]string)
-	err = json.Unmarshal(blacklistData, &blacklist)
-	if err != nil {
-		return nil, fmt.Errorf("parse blacklist file: %w", err)
-	}
 	for id, blacklisted := range blacklist {
 		if player, ok := players[id]; ok && util.ContainsString(blacklisted, player.Match.User.ID) {
-			return nil, fmt.Errorf("%s has a blacklisted match", player.DisplayName())
+			return nil, fmt.Errorf("'%s' has a blacklisted match: '%s'", player.DisplayName(), player.Match.DisplayName())
 		}
 	}
 
