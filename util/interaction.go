@@ -42,9 +42,19 @@ func (i *InteractionUtil) respond() {
 	}
 
 	if i.acknowledged {
-		_, err := i.Session.FollowupMessageCreate(i.Interaction.Interaction, true, &discordgo.WebhookParams{
-			Content: i.response.Data.Content,
-		})
+		data := &discordgo.WebhookParams{
+			AllowedMentions: i.response.Data.AllowedMentions,
+			Components:      i.response.Data.Components,
+			Content:         i.response.Data.Content,
+			Embeds:          i.response.Data.Embeds,
+			Files:           i.response.Data.Files,
+			Flags:           i.response.Data.Flags,
+			TTS:             i.response.Data.TTS,
+		}
+		if i.response.Data.Attachments != nil {
+			data.Attachments = *i.response.Data.Attachments
+		}
+		_, err := i.Session.FollowupMessageCreate(i.Interaction.Interaction, true, data)
 		if err != nil {
 			log.Printf("ERROR: could not send follow up message: %+v\n%s", err, debug.Stack())
 		}
