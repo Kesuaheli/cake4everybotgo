@@ -85,6 +85,10 @@ event:
       name: 🗑️
       #id:
       #animated: true
+    secretsanta.invite.nudge_match:
+      name: 👉
+      #id:
+      #animated: true
 
 webserver:
   favicon: webserver/favicon.png

@@ -108,16 +108,27 @@ type player struct {
 	Address string
 	// MessageID is the message the bot sent to the player
 	MessageID string
+	// PendingNudge is true if the player has received a nugde from their santa and they haven't changed their
+	// address yet i.e. the nudge is still pending.
+	PendingNudge bool
 }
 
 // InviteEmbed returns an embed for the player to be sent by the bot.
 func (player *player) InviteEmbed(s *discordgo.Session) (e *discordgo.MessageEmbed) {
 	var matchValue, addressValue = "❌", "❌"
 	if player != nil && player.Match.Address != "" {
-		matchValue = "✅"
+		if player.Match.PendingNudge {
+			matchValue = fmt.Sprintf("%s %s", "⌛", lang.GetDefault(tp+"msg.invite.nudge_match.pending"))
+		} else {
+			matchValue = "✅"
+		}
 	}
 	if player != nil && player.Address != "" {
-		addressValue = "✅"
+		if player.PendingNudge {
+			addressValue = fmt.Sprintf("%s %s", "⚠️", lang.GetDefault(tp+"msg.invite.nudge_received"))
+		} else {
+			addressValue = "✅"
+		}
 	}
 
 	e = &discordgo.MessageEmbed{

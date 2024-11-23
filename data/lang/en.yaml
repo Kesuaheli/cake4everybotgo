@@ -145,13 +145,23 @@ discord.command:
     msg.invite.show_match.title: Your partner is %s
     msg.invite.show_match.description: Please prepare and send them a secret gift according to our agreed rules.
     msg.invite.show_match.address: Address
-    msg.invite.show_match.address_not_set: Your partner has not set an address yet
+    msg.invite.show_match.address_not_set: Your partner has not set an address yet.
+
+      If some days passed, you can click the "Nudge" button below. Your partner will receive a notification saying that they enter  their address.
+    msg.invite.show_match.nudge_description: If you think the entered address is wrong, you can click the "Nudge" button below. Your partner will receive a notification saying that they should update their address.
     msg.invite.set_address: Your address is set
     msg.invite.button.set_address: Set your address
     msg.invite.set_address.changed: Your address was updated to
     msg.invite.set_address.not_changed: Your address was not updated, because it is the same as before.
     msg.invite.set_address.match_updated: Your partner just updated their address. This is just to inform you - Beep Boop 🤖
     msg.invite.button.delete: Close
+    msg.invite.button.nudge_match: Nudge
+    msg.invite.nudge_match.confirm: Are you sure you want to nudge your partner?
+
+      Please confirm that you want to nudge your partner. They will receive a notification that they should update their address.
+    msg.invite.nudge_match.success: Your partner was nudged!
+    msg.invite.nudge_match.pending: You nudged your partner. I will notify you, when they updated their address.
+    msg.invite.nudge_received: Your santa nudged you. Please enter an address if you haven't done it yet or check your already entered address for any typos.
 
     msg.invite.modal.set_address.title: Set your address
     msg.invite.modal.set_address.label: Your address will be shown your secret santa

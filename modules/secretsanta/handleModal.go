@@ -35,6 +35,7 @@ func (c Component) handleModalSetAddress(ids []string) {
 	}
 
 	player.Address = addressFiled.Value
+	player.PendingNudge = false
 	err = c.setPlayers(players)
 	if err != nil {
 		log.Printf("ERROR: could not set players: %+v", err)
