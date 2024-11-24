@@ -48,7 +48,7 @@ func AuthoredEmbed[T *discordgo.User | *discordgo.Member](s *discordgo.Session, 
 			panic("Given generic type is not an discord user or member")
 		}
 		user = member.User
-		username = member.Nick
+		username = member.DisplayName()
 	}
 
 	if username == "" {
@@ -150,4 +150,47 @@ func GetChannelsFromDatabase(s *discordgo.Session, channelName string) (map[stri
 	}
 
 	return IDMap, nil
+}
+
+// GetConfigComponentEmoji returns a configured [discordgo.ComponentEmoji] for the given name.
+func GetConfigComponentEmoji(name string) *discordgo.ComponentEmoji {
+	e := GetConfigEmoji(name)
+	return &discordgo.ComponentEmoji{
+		Name:     e.Name,
+		ID:       e.ID,
+		Animated: e.Animated,
+	}
+}
+
+// GetConfigEmoji returns a configured [discordgo.Emoji] for the given name.
+func GetConfigEmoji(name string) *discordgo.Emoji {
+	override := viper.GetString("event.emoji." + name)
+	if override != "" && override != name {
+		return GetConfigEmoji(override)
+	}
+	return &discordgo.Emoji{
+		Name:     viper.GetString("event.emoji." + name + ".name"),
+		ID:       viper.GetString("event.emoji." + name + ".id"),
+		Animated: viper.GetBool("event.emoji." + name + ".animated"),
+	}
+}
+
+// CompareEmoji returns true if the two emoji are the same
+func CompareEmoji[E1, E2 *discordgo.Emoji | *discordgo.ComponentEmoji](e1 E1, e2 E2) bool {
+	return *componentEmoji(e1) == *componentEmoji(e2)
+}
+
+// componentEmoji returns a [discordgo.ComponentEmoji] for the given [discordgo.Emoji] or [discordgo.ComponentEmoji].
+func componentEmoji[E *discordgo.Emoji | *discordgo.ComponentEmoji](e E) *discordgo.ComponentEmoji {
+	if ee, ok := any(e).(*discordgo.Emoji); ok {
+		return &discordgo.ComponentEmoji{
+			Name:     ee.Name,
+			ID:       ee.ID,
+			Animated: ee.Animated,
+		}
+	}
+	if ce, ok := any(e).(*discordgo.ComponentEmoji); ok {
+		return ce
+	}
+	panic("Given generic type is not an emoji or component emoji")
 }
