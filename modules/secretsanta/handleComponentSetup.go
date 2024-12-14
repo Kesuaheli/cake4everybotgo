@@ -3,7 +3,6 @@ package secretsanta
 import (
 	"cake4everybot/data/lang"
 	"cake4everybot/util"
-	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -33,26 +32,6 @@ func (c Component) handleSetupInvite() {
 		return
 	}
 
-	inviteMessage := &discordgo.MessageSend{
-		Embeds: make([]*discordgo.MessageEmbed, 1),
-		Components: []discordgo.MessageComponent{
-			discordgo.ActionsRow{Components: []discordgo.MessageComponent{
-				util.CreateButtonComponent(
-					fmt.Sprintf("secretsanta.invite.show_match.%s", c.Interaction.GuildID),
-					lang.GetDefault(tp+"msg.invite.button.show_match"),
-					discordgo.PrimaryButton,
-					util.GetConfigComponentEmoji("secretsanta.invite.show_match"),
-				),
-				util.CreateButtonComponent(
-					fmt.Sprintf("secretsanta.invite.set_address.%s", c.Interaction.GuildID),
-					lang.GetDefault(tp+"msg.invite.button.set_address"),
-					discordgo.SecondaryButton,
-					util.GetConfigComponentEmoji("secretsanta.invite.set_address"),
-				),
-			}},
-		},
-	}
-
 	var failedToSend string
 	for _, player := range players {
 		var DMChannel *discordgo.Channel
@@ -63,9 +42,8 @@ func (c Component) handleSetupInvite() {
 			continue
 		}
 
-		inviteMessage.Embeds[0] = player.InviteEmbed(c.Session)
 		var msg *discordgo.Message
-		msg, err = c.Session.ChannelMessageSendComplex(DMChannel.ID, inviteMessage)
+		msg, err = c.Session.ChannelMessageSendComplex(DMChannel.ID, c.inviteMessage(player))
 		if err != nil {
 			log.Printf("ERROR: could not send invite: %+v", err)
 			failedToSend += "\n- " + player.Mention()

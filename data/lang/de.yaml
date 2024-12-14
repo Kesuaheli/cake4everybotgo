@@ -129,6 +129,14 @@ discord.command:
 
     title: Wichteln
 
+    cmd:
+      base: wichteln
+      base.description: Admin Commands für das Wichteln
+      option.show: auflisten
+      option.show.description: Alle Teilnehmer anzeigen
+      option.update: aktualisieren
+      option.update.description: Die Nachricht all Teilnehmer aktualisieren
+
     msg.setup.no_reactions: Diese Nachricht hat keine Reaktionen. Nur Leute, die mit %s reagiert haben, werden eingeschlossen.
     msg.setup.not_enough_reactions: Nicht genug Reaktionen um zu starten. Es werden mindestens %d Reaktionen benötigt.
     msg.setup.users: Teilnehmer
@@ -137,6 +145,9 @@ discord.command:
     msg.setup.invite.error: "Einladung(en) konnte(n) nicht verschickt werden an:%s"
     msg.setup.error: "%d Einladungen konnten nicht verschickt werden."
     msg.setup.success: Einladungen wurden verschickt!
+
+    msg.cmd.update.error: "%d Einladung(en) konnte(n) nicht aktualisiert werden.%s"
+    msg.cmd.update.success: "%d Einladungen wurden aktualisiert!"
 
     msg.invite.title: Einladung zum Wichteln.
     msg.invite.description: Du nimmst am Cake4Everyone Wichteln teil. Klicke die Knöpfe unten, um deinen Partner zu sehen und deine Adresse einzutragen.

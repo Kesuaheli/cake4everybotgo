@@ -194,3 +194,31 @@ func componentEmoji[E *discordgo.Emoji | *discordgo.ComponentEmoji](e E) *discor
 	}
 	panic("Given generic type is not an emoji or component emoji")
 }
+
+// MessageComplexEdit converts a [discordgo.MessageSend] to a [discordgo.MessageEdit]
+func MessageComplexEdit(src *discordgo.MessageSend, channel, id string) *discordgo.MessageEdit {
+	return &discordgo.MessageEdit{
+		Content:         &src.Content,
+		Components:      &src.Components,
+		Embeds:          &src.Embeds,
+		AllowedMentions: src.AllowedMentions,
+		Flags:           src.Flags,
+		Files:           src.Files,
+
+		Channel: channel,
+		ID:      id,
+	}
+}
+
+// MessageComplexSend converts a [discordgo.MessageEdit] to a [discordgo.MessageSend]
+func MessageComplexSend(src *discordgo.MessageEdit) *discordgo.MessageSend {
+	return &discordgo.MessageSend{
+		Content:         *src.Content,
+		Components:      *src.Components,
+		Embeds:          *src.Embeds,
+		AllowedMentions: src.AllowedMentions,
+		Flags:           src.Flags,
+		Files:           src.Files,
+	}
+
+}

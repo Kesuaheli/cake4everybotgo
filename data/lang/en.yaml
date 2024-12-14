@@ -129,6 +129,14 @@ discord.command:
 
     title: Secret Santa
 
+    cmd:
+      base: secretsanta
+      base.description: Admin commands for the Secret Santa Game
+      option.show: show
+      option.show.description: Show all participants
+      option.update: update
+      option.update.description: Update the message off all participants
+
     msg.setup.no_reactions: This message doesn't have any vote reactions. Only members who reated with %s are included.
     msg.setup.not_enough_reactions: Not enough votes to start a game. At least %d votes are required.
     msg.setup.users: Members
@@ -137,6 +145,9 @@ discord.command:
     msg.setup.invite.error: "Failed to send invite(s) to:%s"
     msg.setup.error: Failed to send %d invites.
     msg.setup.success: Invites sent!
+
+    msg.cmd.update.error: Failed to update %d invites.%s
+    msg.cmd.update.success: "%d invites updated!"
 
     msg.invite.title: Invite for secret santa.
     msg.invite.description: You are participating in Cake4Everyone Secret Santa. Click the buttons below to see your partner and set your address.

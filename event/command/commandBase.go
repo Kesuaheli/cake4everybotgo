@@ -70,6 +70,7 @@ func Register(s *discordgo.Session, guildID string) error {
 	commandsList = append(commandsList, &birthday.Chat{})
 	commandsList = append(commandsList, &info.Chat{})
 	commandsList = append(commandsList, &adventcalendar.Chat{})
+	commandsList = append(commandsList, &secretsanta.Chat{})
 	commandsList = append(commandsList, &secretsanta.MsgCmd{})
 	// messsage commands
 	// user commands

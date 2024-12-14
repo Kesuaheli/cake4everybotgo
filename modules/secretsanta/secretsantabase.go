@@ -98,6 +98,29 @@ func (ssb secretSantaBase) setPlayers(players map[string]*player) (err error) {
 	return nil
 }
 
+// inviteMessage returns the message to send to the player to invite them to play.
+func (ssb secretSantaBase) inviteMessage(p *player) *discordgo.MessageSend {
+	return &discordgo.MessageSend{
+		Embeds: []*discordgo.MessageEmbed{p.InviteEmbed(ssb.Session)},
+		Components: []discordgo.MessageComponent{
+			discordgo.ActionsRow{Components: []discordgo.MessageComponent{
+				util.CreateButtonComponent(
+					fmt.Sprintf("secretsanta.invite.show_match.%s", ssb.Interaction.GuildID),
+					lang.GetDefault(tp+"msg.invite.button.show_match"),
+					discordgo.PrimaryButton,
+					util.GetConfigComponentEmoji("secretsanta.invite.show_match"),
+				),
+				util.CreateButtonComponent(
+					fmt.Sprintf("secretsanta.invite.set_address.%s", ssb.Interaction.GuildID),
+					lang.GetDefault(tp+"msg.invite.button.set_address"),
+					discordgo.SecondaryButton,
+					util.GetConfigComponentEmoji("secretsanta.invite.set_address"),
+				),
+			}},
+		},
+	}
+}
+
 // player is a player in the secret santa game
 type player struct {
 	*discordgo.Member
