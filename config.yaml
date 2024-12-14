@@ -32,7 +32,7 @@ event:
   morning_minute: 0
 
   adventcalendar:
-    images: data/images/adventcalendar
+    images: modules/adventcalendar/images
 
   secretsanta:
     # the filepath for the players

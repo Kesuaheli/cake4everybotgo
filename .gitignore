@@ -19,6 +19,7 @@ cake4everybot
 *env.yaml
 
 # runtime config files (as described in config.yml)
+modules/adventcalendar/images
 modules/secretsanta/backlist.json
 modules/secretsanta/players.json
 twitch/prizes.json
