@@ -20,7 +20,7 @@ cake4everybot
 
 # runtime config files (as described in config.yml)
 modules/adventcalendar/images
-modules/secretsanta/backlist.json
+modules/secretsanta/blacklist.json
 modules/secretsanta/players.json
 twitch/prizes.json
 twitch/times.json

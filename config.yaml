@@ -39,7 +39,7 @@ event:
     players: modules/secretsanta/players.json
     # the filepath for the blacklist
     # the blacklist maps a user ID to a list of user IDs that should not be matched
-    blacklist: modules/secretsanta/backlist.json
+    blacklist: modules/secretsanta/blacklist.json
 
   twitch_giveaway:
     # The amount of points a single giveaway ticket costs.
