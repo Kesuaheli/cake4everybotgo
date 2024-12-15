@@ -100,25 +100,58 @@ func (ssb secretSantaBase) setPlayers(players map[string]*player) (err error) {
 
 // inviteMessage returns the message to send to the player to invite them to play.
 func (ssb secretSantaBase) inviteMessage(p *player) *discordgo.MessageSend {
-	return &discordgo.MessageSend{
-		Embeds: []*discordgo.MessageEmbed{p.InviteEmbed(ssb.Session)},
-		Components: []discordgo.MessageComponent{
-			discordgo.ActionsRow{Components: []discordgo.MessageComponent{
-				util.CreateButtonComponent(
-					fmt.Sprintf("secretsanta.invite.show_match.%s", ssb.Interaction.GuildID),
-					lang.GetDefault(tp+"msg.invite.button.show_match"),
-					discordgo.PrimaryButton,
-					util.GetConfigComponentEmoji("secretsanta.invite.show_match"),
-				),
-				util.CreateButtonComponent(
-					fmt.Sprintf("secretsanta.invite.set_address.%s", ssb.Interaction.GuildID),
-					lang.GetDefault(tp+"msg.invite.button.set_address"),
-					discordgo.SecondaryButton,
-					util.GetConfigComponentEmoji("secretsanta.invite.set_address"),
-				),
-			}},
-		},
+	var components []discordgo.MessageComponent
+	components = append(components, util.CreateButtonComponent(
+		fmt.Sprintf("secretsanta.invite.show_match.%s", ssb.Interaction.GuildID),
+		lang.GetDefault(tp+"msg.invite.button.show_match"),
+		discordgo.PrimaryButton,
+		util.GetConfigComponentEmoji("secretsanta.invite.show_match"),
+	))
+	if sendPackageState := ssb.getSantaForPlayer(p.User.ID).SendPackage; sendPackageState == 0 {
+		components = append(components, util.CreateButtonComponent(
+			fmt.Sprintf("secretsanta.invite.set_address.%s", ssb.Interaction.GuildID),
+			lang.GetDefault(tp+"msg.invite.button.set_address"),
+			discordgo.SecondaryButton,
+			util.GetConfigComponentEmoji("secretsanta.invite.set_address"),
+		))
+	} else if sendPackageState == 1 {
+		components = append(components, util.CreateButtonComponent(
+			fmt.Sprintf("secretsanta.invite.received_package.%s", ssb.Interaction.GuildID),
+			lang.GetDefault(tp+"msg.invite.button.received_package"),
+			discordgo.SuccessButton,
+			util.GetConfigComponentEmoji("secretsanta.invite.received_package"),
+		))
 	}
+
+	return &discordgo.MessageSend{
+		Embeds:     []*discordgo.MessageEmbed{p.InviteEmbed(ssb.Session)},
+		Components: []discordgo.MessageComponent{discordgo.ActionsRow{Components: components}},
+	}
+}
+
+// updateInviteMessage updates the invite message for the player.
+func (ssb secretSantaBase) updateInviteMessage(p *player) (DMChannel *discordgo.Channel, msg *discordgo.Message, ok bool) {
+	DMChannel, err := ssb.Session.UserChannelCreate(p.User.ID)
+	if err != nil {
+		log.Printf("ERROR: could not create DM channel for user %s: %+v", p.User.ID, err)
+		return DMChannel, msg, false
+	}
+
+	if p.MessageID == "" {
+		msg, err = ssb.Session.ChannelMessageSendComplex(DMChannel.ID, ssb.inviteMessage(p))
+		if err != nil {
+			log.Printf("ERROR: could not send invite message for %s: %+v", p.DisplayName(), err)
+			return DMChannel, msg, false
+		}
+		p.MessageID = msg.ID
+	} else {
+		msg, err = ssb.Session.ChannelMessageEditComplex(util.MessageComplexEdit(ssb.inviteMessage(p), DMChannel.ID, p.MessageID))
+		if err != nil {
+			log.Printf("ERROR: could not update bot message for %s '%s/%s': %+v", p.DisplayName(), ssb.Interaction.ChannelID, p.MessageID, err)
+			return DMChannel, msg, false
+		}
+	}
+	return DMChannel, msg, true
 }
 
 // player is a player in the secret santa game
@@ -134,11 +167,17 @@ type player struct {
 	// PendingNudge is true if the player has received a nugde from their santa and they haven't changed their
 	// address yet i.e. the nudge is still pending.
 	PendingNudge bool
+	// SendPackage is the state of the package sent to the player.
+	//
+	//   0 = not sent
+	//   1 = sent
+	//   2 = sent and received by their partner
+	SendPackage int
 }
 
 // InviteEmbed returns an embed for the player to be sent by the bot.
 func (player *player) InviteEmbed(s *discordgo.Session) (e *discordgo.MessageEmbed) {
-	var matchValue, addressValue = "❌", "❌"
+	var matchValue, addressValue, sendPackageValue = "❌", "❌", "❓"
 	if player != nil && player.Match.Address != "" {
 		if player.Match.PendingNudge {
 			matchValue = fmt.Sprintf("%s %s", "⌛", lang.GetDefault(tp+"msg.invite.nudge_match.pending"))
@@ -151,6 +190,16 @@ func (player *player) InviteEmbed(s *discordgo.Session) (e *discordgo.MessageEmb
 			addressValue = fmt.Sprintf("%s %s", "⚠️", lang.GetDefault(tp+"msg.invite.nudge_received"))
 		} else {
 			addressValue = "✅"
+		}
+	}
+	if player != nil {
+		switch player.SendPackage {
+		case 0:
+			sendPackageValue = lang.GetDefault(tp + "msg.invite.send_package.status.not_sent")
+		case 1:
+			sendPackageValue = lang.GetDefault(tp + "msg.invite.send_package.status.sent")
+		case 2:
+			sendPackageValue = lang.GetDefault(tp + "msg.invite.send_package.status.received")
 		}
 	}
 
@@ -169,6 +218,11 @@ func (player *player) InviteEmbed(s *discordgo.Session) (e *discordgo.MessageEmb
 				Value:  addressValue,
 				Inline: true,
 			},
+			{
+				Name:   lang.GetDefault(tp + "msg.invite.send_package.status"),
+				Value:  sendPackageValue,
+				Inline: false,
+			},
 		},
 	}
 	util.SetEmbedFooter(s, tp+"display", e)
@@ -176,9 +230,11 @@ func (player *player) InviteEmbed(s *discordgo.Session) (e *discordgo.MessageEmb
 }
 
 type playerUnresolved struct {
-	MatchID   string `json:"match"`
-	Address   string `json:"address"`
-	MessageID string `json:"message"`
+	MatchID      string `json:"match"`
+	Address      string `json:"address"`
+	MessageID    string `json:"message"`
+	PendingNudge bool   `json:"pending_nudge,omitempty"`
+	SendPackage  int    `json:"send_package,omitempty"`
 }
 
 // AllPlayers is a map from guild ID to a list of players
@@ -199,9 +255,11 @@ func (allPlayers AllPlayers) MarshalJSON() ([]byte, error) {
 				matchID = player.Match.User.ID
 			}
 			m[guildID][userID] = &playerUnresolved{
-				MatchID:   matchID,
-				Address:   player.Address,
-				MessageID: player.MessageID,
+				MatchID:      matchID,
+				Address:      player.Address,
+				MessageID:    player.MessageID,
+				PendingNudge: player.PendingNudge,
+				SendPackage:  player.SendPackage,
 			}
 		}
 	}
@@ -223,10 +281,12 @@ func (allPlayersUnresolved AllPlayersUnresolved) Resolve(s *discordgo.Session) (
 				return fmt.Errorf("failed to get guild member %s/%s: %v", guildID, userID, err)
 			}
 			allPlayers[guildID][userID] = &player{
-				Member:    member,
-				Match:     allPlayers[guildID][up.MatchID],
-				Address:   up.Address,
-				MessageID: up.MessageID,
+				Member:       member,
+				Match:        allPlayers[guildID][up.MatchID],
+				Address:      up.Address,
+				MessageID:    up.MessageID,
+				PendingNudge: up.PendingNudge,
+				SendPackage:  up.SendPackage,
 			}
 		}
 		for userID, rp := range allPlayers[guildID] {

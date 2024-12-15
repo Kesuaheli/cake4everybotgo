@@ -174,6 +174,23 @@ discord.command:
     msg.invite.nudge_match.pending: You nudged your partner. I will notify you, when they updated their address.
     msg.invite.nudge_received: Your santa nudged you. Please enter an address if you haven't done it yet or check your already entered address for any typos.
 
+    msg.invite.button.send_package: Send package
+    msg.invite.send_package.status: Your package status
+    msg.invite.send_package.status.not_sent: You have not sent your package yet.
+    msg.invite.send_package.status.sent: Your package is on the way to your partner.
+    msg.invite.send_package.status.received: Your gift was received by your partner.
+    msg.invite.send_package: Your santa just marked their gift as sent. You no longer have the option to change your address. Instead you can mark your package as received to notify your santa that the package was received successfully. 
+    msg.invite.send_package.confirm: Are you sure you want to mark your package as sent?
+
+      Please confirm that you want to mark your package as sent. Your partner will receive a notification that the package is on the way.
+    msg.invite.send_package.success: Your package was marked as sent!
+    msg.invite.button.received_package: Received package
+    msg.invite.received_package: Your partner just marked your gift as received!
+    msg.invite.received_package.confirm: Are you sure you want to mark your package as received?
+
+      Please confirm that you want to mark your package as received. Your santa will receive a notification that the package was received.
+    msg.invite.received_package.success: You marked the gift as received!
+
     msg.invite.modal.set_address.title: Set your address
     msg.invite.modal.set_address.label: Your address will be shown your secret santa
     msg.invite.modal.set_address.placeholder: "Mr. John Doe\n123 Main Street\nAnytown, USA 12345"

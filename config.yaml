@@ -67,11 +67,12 @@ event:
       name: 👎
       #id:
       #animated: true
-    # Emoji for entering the advent calendar giveaway
-    adventcalendar:
+    vote.check:
       name: ✅
       #id:
       #animated: true
+    # Emoji for entering the advent calendar giveaway
+    adventcalendar: vote.check
     secretsanta: vote.yes
     secretsanta.invite.show_match:
       name: 🎁
@@ -89,6 +90,11 @@ event:
       name: 👉
       #id:
       #animated: true
+    secretsanta.invite.send_package:
+      name: 📦
+      #id:
+      #animated: true
+    secretsanta.invite.received_package: vote.check
 
 webserver:
   favicon: webserver/favicon.png

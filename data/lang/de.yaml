@@ -174,6 +174,23 @@ discord.command:
     msg.invite.nudge_match.pending: Du hast deinen Partner angestupst. Ich melde mich, sobald er/sie die Adresse aktualisiert hat.
     msg.invite.nudge_received: Dein Wichtel hat dich anstupst. Bitte trage eine Adresse ein falls du es noch nicht gemacht hast oder überprüfe deine bereits eingetragene Adresse ob sie eventuell einen Tippfehler oder ähnliches enthält.
 
+    msg.invite.button.send_package: Paket verschicken
+    msg.invite.send_package.status: Dein Paket Status
+    msg.invite.send_package.status.not_sent: Du hast dein Geschenk noch nicht verschickt.
+    msg.invite.send_package.status.sent: Dein Paket ist auf dem Weg zu deinem Partner.
+    msg.invite.send_package.status.received: Dein Geschenk wurde von deinem Partner erhalten.
+    msg.invite.send_package: Dein Wichtel hat gerade das Geschenk als verschickt markiert. Du kannst ab jetzt nicht mehr deine Adresse eintragen. Stattdessen kannst du das Geschenk als erhalten markieren um deinen Wichtel zu informieren, dass das Geschenk bei dir angekommen ist.
+    msg.invite.send_package.confirm: Bis du sicher, dass du dein Geschenk als verschickt markieren möchtest?
+
+      Bestätige, dass du dein Geschenk als verschickt markieren möchtest. Dein Partner bekommt daraufhin einen Hinweis, dass das Paket unterwegs ist.
+    msg.invite.send_package.success: Dein Geschenk wurde als verschickt markiert!
+    msg.invite.button.received_package: Geschenk erhalten
+    msg.invite.received_package: Dein Partner hat das Geschenk gerade als erhalten markiert!
+    msg.invite.received_package.confirm: Bist du sicher, dass du das Geschenk als erhalten markieren möchtest?
+
+      Bestätige, dass du das Geschenk als erhalten markieren möchtest. Dein Wichtel bekommt daraufhin einen Hinweis, dass das Geschenk bei dir angekommen ist.
+    msg.invite.received_package.success: Du hast das Geschenk als erhalten markiert!
+
     msg.invite.modal.set_address.title: Deine Adresse eintragen
     msg.invite.modal.set_address.label: Deine Adresse wird deinem Wichtel angezeigt
     msg.invite.modal.set_address.placeholder: "Max Mustermann\nMusterstraße 1\n12345 Musterstadt"
