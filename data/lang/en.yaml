@@ -190,10 +190,20 @@ discord.command:
 
       Please confirm that you want to mark your package as received. Your santa will receive a notification that the package was received.
     msg.invite.received_package.success: You marked the gift as received!
+    msg.invite.button.add_package_tracking: Add package tracking
+    msg.invite.button.show_package_tracking: Show package tracking
+    msg.invite.package_tracking.title: "The package tracking reference provided by your secret santa is:"
+    msg.invite.add_package_tracking.not_changed: Your package tracking reference was not updated, because it is the same as before.
+    msg.invite.add_package_tracking.success: Your package tracking reference was updated!
+    msg.invite.add_package_tracking.santa_updated: Your secret santa just set a package tracking reference. This is just to inform you - Beep Boop 🤖
 
     msg.invite.modal.set_address.title: Set your address
     msg.invite.modal.set_address.label: Your address will be shown your secret santa
     msg.invite.modal.set_address.placeholder: "Mr. John Doe\n123 Main Street\nAnytown, USA 12345"
+    msg.invite.modal.add_package_tracking.title: Set your package tracking reference
+    msg.invite.modal.add_package_tracking.label: Your tracking reference is shown your parnter
+    msg.invite.modal.add_package_tracking.placeholder: If you have any you can provide a tracking reference.
+      e.g. Tracking number or URL
 
 module:
   adventcalendar:

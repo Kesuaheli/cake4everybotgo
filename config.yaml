@@ -94,7 +94,18 @@ event:
       name: 📦
       #id:
       #animated: true
-    secretsanta.invite.received_package: vote.check
+    secretsanta.invite.received_package:
+      name: 📬
+      #id:
+      #animated: true
+    secretsanta.invite.add_package_tracking:
+      name: 📯
+      #id:
+      #animated: true
+    secretsanta.invite.show_package_tracking:
+      name: 📪
+      #id:
+      #animated: true
 
 webserver:
   favicon: webserver/favicon.png

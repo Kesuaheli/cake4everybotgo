@@ -107,7 +107,8 @@ func (ssb secretSantaBase) inviteMessage(p *player) *discordgo.MessageSend {
 		discordgo.PrimaryButton,
 		util.GetConfigComponentEmoji("secretsanta.invite.show_match"),
 	))
-	if sendPackageState := ssb.getSantaForPlayer(p.User.ID).SendPackage; sendPackageState == 0 {
+	santaPlayer := ssb.getSantaForPlayer(p.User.ID)
+	if sendPackageState := santaPlayer.SendPackage; sendPackageState == 0 {
 		components = append(components, util.CreateButtonComponent(
 			fmt.Sprintf("secretsanta.invite.set_address.%s", ssb.Interaction.GuildID),
 			lang.GetDefault(tp+"msg.invite.button.set_address"),
@@ -115,11 +116,26 @@ func (ssb secretSantaBase) inviteMessage(p *player) *discordgo.MessageSend {
 			util.GetConfigComponentEmoji("secretsanta.invite.set_address"),
 		))
 	} else if sendPackageState == 1 {
+		if santaPlayer.PackageTracking != "" {
+			components = append(components, util.CreateButtonComponent(
+				fmt.Sprintf("secretsanta.invite.show_package_tracking.%s", ssb.Interaction.GuildID),
+				lang.GetDefault(tp+"msg.invite.button.show_package_tracking"),
+				discordgo.SecondaryButton,
+				util.GetConfigComponentEmoji("secretsanta.invite.show_package_tracking"),
+			))
+		}
 		components = append(components, util.CreateButtonComponent(
 			fmt.Sprintf("secretsanta.invite.received_package.%s", ssb.Interaction.GuildID),
 			lang.GetDefault(tp+"msg.invite.button.received_package"),
 			discordgo.SuccessButton,
 			util.GetConfigComponentEmoji("secretsanta.invite.received_package"),
+		))
+	} else if sendPackageState == 2 && santaPlayer.PackageTracking != "" {
+		components = append(components, util.CreateButtonComponent(
+			fmt.Sprintf("secretsanta.invite.show_package_tracking.%s", ssb.Interaction.GuildID),
+			lang.GetDefault(tp+"msg.invite.button.show_package_tracking"),
+			discordgo.SecondaryButton,
+			util.GetConfigComponentEmoji("secretsanta.invite.show_package_tracking"),
 		))
 	}
 
@@ -173,6 +189,8 @@ type player struct {
 	//   1 = sent
 	//   2 = sent and received by their partner
 	SendPackage int
+	// PackageTracking is a shipment tracking reference provided by the player for their partner
+	PackageTracking string
 }
 
 // InviteEmbed returns an embed for the player to be sent by the bot.
@@ -230,11 +248,12 @@ func (player *player) InviteEmbed(s *discordgo.Session) (e *discordgo.MessageEmb
 }
 
 type playerUnresolved struct {
-	MatchID      string `json:"match"`
-	Address      string `json:"address"`
-	MessageID    string `json:"message"`
-	PendingNudge bool   `json:"pending_nudge,omitempty"`
-	SendPackage  int    `json:"send_package,omitempty"`
+	MatchID         string `json:"match"`
+	Address         string `json:"address"`
+	MessageID       string `json:"message"`
+	PendingNudge    bool   `json:"pending_nudge,omitempty"`
+	SendPackage     int    `json:"send_package,omitempty"`
+	PackageTracking string `json:"package_tracking,omitempty"`
 }
 
 // AllPlayers is a map from guild ID to a list of players
@@ -255,11 +274,12 @@ func (allPlayers AllPlayers) MarshalJSON() ([]byte, error) {
 				matchID = player.Match.User.ID
 			}
 			m[guildID][userID] = &playerUnresolved{
-				MatchID:      matchID,
-				Address:      player.Address,
-				MessageID:    player.MessageID,
-				PendingNudge: player.PendingNudge,
-				SendPackage:  player.SendPackage,
+				MatchID:         matchID,
+				Address:         player.Address,
+				MessageID:       player.MessageID,
+				PendingNudge:    player.PendingNudge,
+				SendPackage:     player.SendPackage,
+				PackageTracking: player.PackageTracking,
 			}
 		}
 	}
@@ -281,12 +301,13 @@ func (allPlayersUnresolved AllPlayersUnresolved) Resolve(s *discordgo.Session) (
 				return fmt.Errorf("failed to get guild member %s/%s: %v", guildID, userID, err)
 			}
 			allPlayers[guildID][userID] = &player{
-				Member:       member,
-				Match:        allPlayers[guildID][up.MatchID],
-				Address:      up.Address,
-				MessageID:    up.MessageID,
-				PendingNudge: up.PendingNudge,
-				SendPackage:  up.SendPackage,
+				Member:          member,
+				Match:           allPlayers[guildID][up.MatchID],
+				Address:         up.Address,
+				MessageID:       up.MessageID,
+				PendingNudge:    up.PendingNudge,
+				SendPackage:     up.SendPackage,
+				PackageTracking: up.PackageTracking,
 			}
 		}
 		for userID, rp := range allPlayers[guildID] {

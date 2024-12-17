@@ -63,6 +63,9 @@ func (c Component) HandleModal(s *discordgo.Session, i *discordgo.InteractionCre
 	case "set_address":
 		c.handleModalSetAddress(ids)
 		return
+	case "add_package_tracking":
+		c.handleModalAddPackageTracking(ids)
+		return
 	default:
 		log.Printf("Unknown modal submit ID: %s", c.modal.CustomID)
 	}

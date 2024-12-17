@@ -26,6 +26,12 @@ func (c Component) handleInvite(ids []string) {
 	case "send_package":
 		c.handleInviteSendPackage(ids)
 		return
+	case "add_package_tracking":
+		c.handleAddPackageTracking(ids)
+		return
+	case "show_package_tracking":
+		c.handleShowPackageTracking(ids)
+		return
 	case "confirm_send_package":
 		c.handleInviteConfirmSendPackage(ids)
 		return
@@ -97,6 +103,13 @@ func (c Component) handleInviteShowMatch(ids []string) {
 				util.GetConfigComponentEmoji("secretsanta.invite.send_package"),
 			))
 		}
+	} else {
+		components = append(components, util.CreateButtonComponent(
+			fmt.Sprintf("secretsanta.invite.add_package_tracking.%s", c.Interaction.GuildID),
+			lang.GetDefault(tp+"msg.invite.button.add_package_tracking"),
+			discordgo.SecondaryButton,
+			util.GetConfigComponentEmoji("secretsanta.invite.add_package_tracking"),
+		))
 	}
 	if len(components) == 0 {
 		c.ReplyHiddenEmbed(e)
@@ -233,6 +246,63 @@ func (c Component) handleInviteSendPackage(ids []string) {
 		}}},
 		0x690042,
 		lang.GetDefault(tp+"msg.invite.send_package.confirm"))
+}
+
+func (c Component) handleAddPackageTracking(ids []string) {
+	c.Interaction.GuildID = util.ShiftL(ids)
+	players, err := c.getPlayers()
+	if err != nil {
+		log.Printf("ERROR: could not get players: %+v", err)
+		c.ReplyError()
+		return
+	}
+	if len(players) == 0 {
+		log.Printf("ERROR: no players in guild %s", c.Interaction.GuildID)
+		c.ReplyError()
+		return
+	}
+
+	player, ok := players[c.Interaction.User.ID]
+	if !ok {
+		log.Printf("ERROR: could not find player %s in guild %s: %+v", c.Interaction.User.ID, c.Interaction.GuildID, c.Interaction.User.ID)
+		c.ReplyError()
+		return
+	}
+
+	c.ReplyModal("secretsanta.add_package_tracking."+c.Interaction.GuildID, lang.GetDefault(tp+"msg.invite.modal.add_package_tracking.title"), discordgo.ActionsRow{Components: []discordgo.MessageComponent{
+		discordgo.TextInput{
+			CustomID:    "package_tracking",
+			Label:       lang.GetDefault(tp + "msg.invite.modal.add_package_tracking.label"),
+			Style:       discordgo.TextInputParagraph,
+			Placeholder: lang.GetDefault(tp + "msg.invite.modal.add_package_tracking.placeholder"),
+			Value:       player.PackageTracking,
+			Required:    false,
+		},
+	}})
+}
+
+func (c Component) handleShowPackageTracking(ids []string) {
+	c.Interaction.GuildID = util.ShiftL(ids)
+	players, err := c.getPlayers()
+	if err != nil {
+		log.Printf("ERROR: could not get players: %+v", err)
+		c.ReplyError()
+		return
+	}
+	if len(players) == 0 {
+		log.Printf("ERROR: no players in guild %s", c.Interaction.GuildID)
+		c.ReplyError()
+		return
+	}
+
+	player, ok := players[c.Interaction.User.ID]
+	if !ok {
+		log.Printf("ERROR: could not find player %s in guild %s: %+v", c.Interaction.User.ID, c.Interaction.GuildID, c.Interaction.User.ID)
+		c.ReplyError()
+		return
+	}
+
+	c.ReplyHiddenSimpleEmbedf(0x690042, "## %s\n%s", lang.GetDefault(tp+"msg.invite.package_tracking.title"), c.getSantaForPlayer(player.User.ID).PackageTracking)
 }
 
 func (c Component) handleInviteConfirmSendPackage(ids []string) {

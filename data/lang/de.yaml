@@ -190,10 +190,20 @@ discord.command:
 
       Bestätige, dass du das Geschenk als erhalten markieren möchtest. Dein Wichtel bekommt daraufhin einen Hinweis, dass das Geschenk bei dir angekommen ist.
     msg.invite.received_package.success: Du hast das Geschenk als erhalten markiert!
+    msg.invite.button.add_package_tracking: Sendungsverfolgung eintragen
+    msg.invite.button.show_package_tracking: Sendungsverfolgung anzeigen
+    msg.invite.package_tracking.title: "Die Sendungsverfolgung deines Wichtels ist:"
+    msg.invite.add_package_tracking.not_changed: Deine Sendungsverfolgung wurde nicht aktualisiert, weil es die gleiche ist wie vorher.
+    msg.invite.add_package_tracking.success: Deine Sendungsverfolgung wurde aktualisiert!
+    msg.invite.add_package_tracking.santa_updated: Dein Wichtel hat gerade eine Sendungsverfolgung eingetragen. Das ist nur um dich zu informieren - Boop Boop 🤖
 
     msg.invite.modal.set_address.title: Deine Adresse eintragen
     msg.invite.modal.set_address.label: Deine Adresse wird deinem Wichtel angezeigt
     msg.invite.modal.set_address.placeholder: "Max Mustermann\nMusterstraße 1\n12345 Musterstadt"
+    msg.invite.modal.add_package_tracking.title: Deine Sendungsverfolgung eintragen
+    msg.invite.modal.add_package_tracking.label: Die Sendungsverfolgung geht an deinen Wichtel
+    msg.invite.modal.add_package_tracking.placeholder: Wenn du eine hast, kannst du sie hier deinem Partner schicken
+      zB Sendungsverfolgungsnummer oder Link
 
 module:
   adventcalendar:
