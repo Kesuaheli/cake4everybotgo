@@ -163,16 +163,20 @@ func GetConfigComponentEmoji(name string) *discordgo.ComponentEmoji {
 }
 
 // GetConfigEmoji returns a configured [discordgo.Emoji] for the given name.
-func GetConfigEmoji(name string) *discordgo.Emoji {
+func GetConfigEmoji(name string) (e *discordgo.Emoji) {
 	override := viper.GetString("event.emoji." + name)
 	if override != "" && override != name {
 		return GetConfigEmoji(override)
 	}
-	return &discordgo.Emoji{
+	e = &discordgo.Emoji{
 		Name:     viper.GetString("event.emoji." + name + ".name"),
 		ID:       viper.GetString("event.emoji." + name + ".id"),
 		Animated: viper.GetBool("event.emoji." + name + ".animated"),
 	}
+	if e.Name == "" && e.ID == "" {
+		log.Printf("Warning: tried to get emoji '%s', but its not configured or empty\n", name)
+	}
+	return e
 }
 
 // CompareEmoji returns true if the two emoji are the same
